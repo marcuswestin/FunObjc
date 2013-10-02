@@ -88,10 +88,14 @@
     [self moveToPosition:newOrigin];
 }
 - (void)centerVertically {
-    [self.styler.centerVertically apply];
+    [self moveToY:CGRectGetMidY(self.superview.bounds) - self.height/2];
+}
+- (void)centerHorizontally {
+    [self moveToX:CGRectGetMidX(self.superview.bounds) - self.width/2];
 }
 - (void)centerView {
-    [self.styler.center apply];
+    [self centerVertically];
+    [self centerHorizontally];
 }
 - (CGPoint)topRightCorner {
     CGPoint point = self.frame.origin;
