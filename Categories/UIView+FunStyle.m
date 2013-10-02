@@ -252,11 +252,14 @@ DeclareFloat4Styler(inset, top, right, bottom, left,
 
 DeclareFloatStyler(insetAll, i, return self.inset(i,i,i,i))
 DeclareFloatStyler(insetTop, f, return self.inset(f,0,0,0))
+DeclareFloatStyler(insetRight, f, return self.inset(0,f,0,0))
+DeclareFloatStyler(insetBottom, f, return self.inset(0,0,f,0))
+DeclareFloatStyler(insetLeft, f, return self.inset(0,0,0,f))
 
 DeclareFloatStyler(moveUp, amount, _frame.origin.y -= amount)
 DeclareFloatStyler(moveDown, amount, _frame.origin.y += amount)
 
-DeclareViewFloatStyler(below, view, offset, _frame.origin.y = view.y2 + offset)
+DeclareViewFloatStyler(below, view, offset, if (view) { _frame.origin.y = view.y2 + offset; } )
 DeclareViewFloatStyler(above, view, offset, _frame.origin.y = view.y - _frame.size.height - offset)
 DeclareViewFloatStyler(rightOf, view, offset, _frame.origin.x = view.x2 + offset)
 DeclareViewFloatStyler(leftOf, view, offset, _frame.origin.x = view.x - offset)
