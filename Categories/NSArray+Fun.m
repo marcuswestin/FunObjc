@@ -10,12 +10,20 @@
 
 @implementation NSArray (Fun)
 
-- (NSMutableArray*) map:(MapIntToId)mapFn {
+- (NSMutableArray*) map:(MapIdToId)mapFn {
     NSMutableArray* results = [NSMutableArray arrayWithCapacity:self.count];
     [self each:^(id val, NSUInteger i) {
         [results addObject:mapFn(val, i)];
     }];
     return results;
+}
+
+- (NSInteger)sum:(MapIdToInt)mapper {
+    NSInteger __block sum = 0;
+    [self each:^(id val, NSUInteger i) {
+        sum += mapper(val, i);
+    }];
+    return sum;
 }
 
 - (void) each:(Iterate)iterateFn {

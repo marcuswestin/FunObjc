@@ -10,14 +10,16 @@
 
 #import "FunBase.h"
 
-typedef id (^MapIntToId)(id val, NSUInteger i);
+typedef id (^MapIdToId)(id val, NSUInteger i);
+typedef NSInteger (^MapIdToInt)(id val, NSUInteger i);
 typedef void (^Iterate)(id val, NSUInteger i);
 typedef BOOL (^Filter)(id val, NSUInteger i);
 
 @interface NSArray (Fun)
 
 - (void) each:(Iterate)iterateFn;
-- (NSMutableArray*) map:(MapIntToId)mapper;
+- (NSMutableArray*) map:(MapIdToId)mapper;
+- (NSInteger) sum:(MapIdToInt)mapper;
 - (NSMutableArray*) filter:(Filter)filterFn;
 - (id) pickOne:(Filter)pickFn;
 
