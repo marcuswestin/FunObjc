@@ -67,8 +67,16 @@
     [NSException raise:@"NotImplemented" format:@"Your AppDelegate should conform to the FunApp protocol"];
 }
 - (UIViewController*)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    Class vcClass = NSClassFromString(identifierComponents.lastObject); // TODO Versioning
-    return [[vcClass alloc] initWithCoder:coder];
+    Class ViewControllerClass = NSClassFromString(identifierComponents.lastObject);
+    // TODO Versioning
+    if (!ViewControllerClass) {
+        return nil;
+    }
+    UIViewController* viewController = [[ViewControllerClass alloc] initWithCoder:coder];
+    if (!viewController.restorationIdentifier) {
+        viewController.restorationIdentifier = viewController.className;
+    }
+    return viewController;
 }
 
 // Push notifications
