@@ -1,4 +1,0 @@
-FunGo
-=====
-
-Fun Go
