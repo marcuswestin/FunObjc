@@ -14,6 +14,10 @@
 
 static NSJSONWritingOptions jsonOpts = 0;
 
+- (BOOL)isNull {
+    return self == (id)[NSNull null];
+}
+
 - (NSString *)toJsonString {
     return [[NSString alloc] initWithData:self.toJsonData encoding:NSUTF8StringEncoding];
 }
