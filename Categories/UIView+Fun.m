@@ -114,6 +114,18 @@
 - (CGFloat)y2 {
     return CGRectGetMaxY(self.frame);
 }
+- (void)setX:(CGFloat)x {
+    [self moveToX:x];
+}
+- (void)setY:(CGFloat)y {
+    [self moveToY:y];
+}
+- (void)setX2:(CGFloat)x2 {
+    [self moveToX:x2 - self.width];
+}
+- (void)setY2:(CGFloat)y2 {
+    [self moveToY:y2 - self.height];
+}
 - (CGRect)frameInWindow {
     return [self convertRect:self.bounds toView:self.window];
 }

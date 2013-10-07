@@ -40,6 +40,10 @@
 - (CGFloat)y;
 - (CGFloat)x2;
 - (CGFloat)y2;
+- (void)setX:(CGFloat)x;
+- (void)setY:(CGFloat)y;
+- (void)setX2:(CGFloat)x2;
+- (void)setY2:(CGFloat)y2;
 - (CGRect)frameInWindow;
 - (CGRect)frameOnScreen;
 
