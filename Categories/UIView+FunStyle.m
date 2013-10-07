@@ -342,18 +342,15 @@ DeclareFloatColorStyler(border, w, borderColor,
 }
 /* Labels
  ********/
-- (StylerString1)text {
-    return ^(NSString* text) {
-        if ([_view respondsToSelector:@selector(setText:)]) {
-            [_view performSelector:@selector(setText:) withObject:text];
-        } else if ([_view isKindOfClass:UIButton.class]) {
-            [_buttonView setTitle:text forState:UIControlStateNormal];
-        } else {
-            [NSException raise:@"Error" format:@"Unknown class in text"];
-        }
-        return self;
-    };
-}
+DeclareStringStyler(text, text,
+                    if (text.isNull) { text = nil; }
+                    if ([_view respondsToSelector:@selector(setText:)]) {
+                        [_view performSelector:@selector(setText:) withObject:text];
+                    } else if ([_view isKindOfClass:UIButton.class]) {
+                        [_buttonView setTitle:text forState:UIControlStateNormal];
+                    } else {
+                        [NSException raise:@"Error" format:@"Unknown class in text"];
+                    })
 - (StylerColor1)textColor {
     return ^(UIColor* textColor) {
         if ([_view isKindOfClass:UILabel.class]) {
