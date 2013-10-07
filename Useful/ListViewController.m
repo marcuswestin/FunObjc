@@ -67,6 +67,9 @@ static CGFloat START_Y = 99999.0f;
             [self _extendTop];
         }
     }];
+    if (startAtIndex == 0 && _scrollView.contentInset.top != 0) {
+        _scrollView.contentOffset = CGPointMake(0, -_scrollView.contentInset.top);
+    }
 }
 
 - (void)_setupScrollview {
