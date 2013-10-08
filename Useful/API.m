@@ -110,8 +110,9 @@ static NSMutableArray* errorChecks;
         // BOUNDARY
         [httpData appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
         // HEADERS
-        [httpData appendData:[[NSString stringWithFormat:@"content-disposition: %@\r\n", part.contentDisposition] dataUsingEncoding:NSUTF8StringEncoding]];
-        [httpData appendData:[[NSString stringWithFormat:@"content-type: %@\r\n", part.contentType] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpData appendData:[[NSString stringWithFormat:@"Content-Disposition: %@\r\n", part.contentDisposition] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpData appendData:[[NSString stringWithFormat:@"Content-Type: %@\r\n", part.contentType] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpData appendData:[[NSString stringWithFormat:@"Content-Length: %u\r\n", part.contentData.length] dataUsingEncoding:NSUTF8StringEncoding]];
         // EMPTY
         [httpData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         // CONTENT + newline
