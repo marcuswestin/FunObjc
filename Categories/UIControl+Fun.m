@@ -75,6 +75,15 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
 - (void)onTap:(EventHandler)handler {
     [self on:UIControlEventTouchUpInside handler:handler];
 }
+- (void)onTouchDown:(EventHandler)handler {
+    [self on:UIControlEventTouchDown handler:handler];
+}
+- (void)onTouchUp:(EventHandler)handler {
+    [self on:UIControlEventTouchUpInside handler:handler];
+}
+- (void)onTouchUpOutside:(EventHandler)handler {
+    [self on:UIControlEventTouchUpOutside handler:handler];
+}
 - (void)on:(UIControlEvents)controlEvents handler:(EventHandler)handler {
     UIControlHandler* controlHandler = [[UIControlHandler alloc] init];
     controlHandler.handler = handler;
