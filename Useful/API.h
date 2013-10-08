@@ -8,6 +8,16 @@
 
 #import "FunBase.h"
 
+@interface Multipart : NSObject
++ (instancetype)json:(NSDictionary*)obj;
++ (instancetype)jpg:(UIImage*)image quality:(CGFloat)quality;
++ (instancetype)png:(UIImage*)image;
++ (instancetype)withContent:(NSData*)contentData type:(NSString*)contentType disposition:(NSString*)contentDisposition;
+@property NSData* contentData;
+@property NSString* contentType;
+@property NSString* contentDisposition;
+@end
+
 typedef void (^APICallback)(NSError* err, NSDictionary* res);
 typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res);
 
@@ -18,5 +28,6 @@ typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res)
 + (void)post:(NSString*)path json:(NSDictionary*)json callback:(APICallback)callback;
 + (void)get:(NSString*)path queries:(NSDictionary*)queries callback:(APICallback)callback;
 + (void)upload:(NSString*)path json:(NSDictionary*)json attachments:(NSDictionary*)attachments callback:(APICallback)callback;
++ (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback;
 + (void)addErrorCheck:(APIErrorCheck)errorCheck;
 @end

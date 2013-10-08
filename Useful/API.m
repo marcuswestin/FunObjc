@@ -10,6 +10,25 @@
 
 #define log NSLog
 
+@implementation Multipart
++ (instancetype)json:(NSDictionary *)obj {
+    return [Multipart withContent:obj.toJsonData type:@"application/json" disposition:@"form-data; name=\"jsonParams\""];
+}
++ (instancetype)jpg:(UIImage *)image quality:(CGFloat)quality {
+    return [Multipart withContent:UIImageJPEGRepresentation(image, quality) type:@"image/jpg" disposition:@"form-data; filename=\"image.jpg\"; name=\"image\""];
+}
++ (instancetype)png:(UIImage *)image {
+    return [Multipart withContent:UIImagePNGRepresentation(image) type:@"image/png" disposition:@"form-data; filename=\"image.png\"; name=\"image\""];
+}
++ (instancetype)withContent:(NSData *)contentData type:(NSString *)contentType disposition:(NSString *)contentDisposition {
+    Multipart* instance = [Multipart new];
+    instance.contentData = contentData;
+    instance.contentType = contentType;
+    instance.contentDisposition = contentDisposition;
+    return instance;
+}
+@end
+
 @implementation API
 
 static NSString* server;
@@ -63,7 +82,7 @@ static NSMutableArray* errorChecks;
     }
     
     for (NSString* name in attachments) {
-        NSString* contentDisposition = [NSString stringWithFormat:@"form-data; name=\"%@\" filename=\"%@\"", name, name];
+        NSString* contentDisposition = [NSString stringWithFormat:@"form-data; name=\"%@\"; filename=\"%@\"", name, name];
         [parts addObject:@{
                            @"data": attachments[name],
                            @"content-type": @"application/octet-stream",
@@ -71,28 +90,30 @@ static NSMutableArray* errorChecks;
                            }];
     }
     
-    [API postMultipart:path parts:parts boundary:multipartBoundary callback:callback];
+    [API postMultipart:path parts:parts callback:callback];
 }
 
-+ (void)postMultipart:(NSString *)path parts:(NSArray *)parts boundary:(NSString*)boundary callback:(APICallback)callback {
-    NSString* contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
++ (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback {
+    NSString* boundary = multipartBoundary;
     
     NSMutableData* httpData = [NSMutableData data];
-    for (NSDictionary* part in parts) {
+    for (Multipart* part in parts) {
+        
         // BOUNDARY
         [httpData appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
         // HEADERS
-        [httpData appendData:[[NSString stringWithFormat:@"content-disposition: %@\r\n", [part valueForKey:@"content-disposition"]] dataUsingEncoding:NSUTF8StringEncoding]];
-        [httpData appendData:[[NSString stringWithFormat:@"content-type: %@\r\n", [part valueForKey:@"content-type"]] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpData appendData:[[NSString stringWithFormat:@"content-disposition: %@\r\n", part.contentDisposition] dataUsingEncoding:NSUTF8StringEncoding]];
+        [httpData appendData:[[NSString stringWithFormat:@"content-type: %@\r\n", part.contentType] dataUsingEncoding:NSUTF8StringEncoding]];
         // EMPTY
         [httpData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         // CONTENT + newline
-        [httpData appendData:[NSData dataWithData:[part valueForKey:@"data"]]];
+        [httpData appendData:[NSData dataWithData:part.contentData]];
         [httpData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     }
     
     [httpData appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     
+    NSString* contentType = [@"multipart/form-data; boundary=" stringByAppendingString:boundary];
     [self send:@"POST" path:path contentType:contentType data:httpData callback:callback];
 }
 
