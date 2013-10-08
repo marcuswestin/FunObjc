@@ -83,6 +83,7 @@ static NSString* cacheKeyBase;
 }
 
 + (void)_fetch:(NSString*)url cacheKey:(NSString*)key callback:(DataCallback)callback {
+    if (url.isNull) { return; }
     @synchronized(loading) {
         if (loading[url]) {
             [loading[url] addObject:callback];
