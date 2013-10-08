@@ -181,10 +181,10 @@ static NSMutableArray* errorChecks;
 + (NSDictionary*)headers:(NSString*)contentType data:(NSData*)data {
     NSMutableDictionary* headers = [NSMutableDictionary dictionaryWithDictionary:baseHeaders];
     if (contentType) {
-        headers[@"content-type"] = contentType;
+        headers[@"Content-Type"] = contentType;
     }
     if (data && data.length) {
-        headers[@"content-length"] = [num(data.length) stringValue];
+        headers[@"Content-Length"] = [num(data.length) stringValue];
     }
     return headers;
 }
