@@ -78,29 +78,6 @@ static NSMutableArray* errorChecks;
     [self send:@"GET" path:path contentType:nil data:nil callback:callback];
 }
 
-+ (void) upload:(NSString *)path json:(NSDictionary *)jsonDict attachments:(NSDictionary *)attachments callback:(APICallback)callback {
-    NSMutableArray* parts = [NSMutableArray array];
-    
-    if (jsonDict) {
-        [parts addObject:@{
-                           @"data":jsonDict.toJsonData,
-                           @"content-type":@"application/json",
-                           @"content-disposition":@"form-data; name=\"jsonParams\""
-                           }];
-    }
-    
-    for (NSString* name in attachments) {
-        NSString* contentDisposition = [NSString stringWithFormat:@"form-data; name=\"%@\"; filename=\"%@\"", name, name];
-        [parts addObject:@{
-                           @"data": attachments[name],
-                           @"content-type": @"application/octet-stream",
-                           @"content-disposition": contentDisposition
-                           }];
-    }
-    
-    [API postMultipart:path parts:parts callback:callback];
-}
-
 + (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback {
     NSString* boundary = multipartBoundary;
     
