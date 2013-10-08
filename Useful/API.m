@@ -58,7 +58,7 @@ static NSMutableArray* errorChecks;
         [parts addObject:@{
                            @"data":jsonDict.toJsonData,
                            @"content-type":@"application/json",
-                           @"content-disposition":@"attachment; name=\"jsonParams\""
+                           @"content-disposition":@"form-data; name=\"jsonParams\""
                            }];
     }
     
@@ -79,7 +79,6 @@ static NSMutableArray* errorChecks;
     
     NSMutableData* httpData = [NSMutableData data];
     for (NSDictionary* part in parts) {
-        NSData* data = [part valueForKey:@"data"];
         // BOUNDARY
         [httpData appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
         // HEADERS
@@ -88,7 +87,7 @@ static NSMutableArray* errorChecks;
         // EMPTY
         [httpData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
         // CONTENT + newline
-        [httpData appendData:[NSData dataWithData:data]];
+        [httpData appendData:[NSData dataWithData:[part valueForKey:@"data"]]];
         [httpData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     }
     
