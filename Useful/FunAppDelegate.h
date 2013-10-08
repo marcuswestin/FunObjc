@@ -8,10 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
+#import "FunObjc.h"
 
 @protocol FunApp <NSObject>
+
+@required
+- (void)styleLabels:(UILabelStyles*)labels buttons:(UIButtonStyles*)buttons textFields:(UITextFieldStyles*)textFields textViews:(UITextViewStyles*)textViews;
 - (void)interfaceWillLoad;
 - (ViewController*)rootViewControllerForFreshLoad;
+
+@optional
 - (void)interfaceDidLoad;
 @end
 

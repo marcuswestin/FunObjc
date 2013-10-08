@@ -14,6 +14,7 @@
 // Application launch & state restoration
 /////////////////////////////////////////
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [self styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
     [self interfaceWillLoad];
     return YES;
 }
@@ -53,6 +54,9 @@
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
 }
+- (void)styleLabels:(UILabelStyles *)labels buttons:(UIButtonStyles *)buttons textFields:(UITextFieldStyles *)textFields textViews:(UITextViewStyles *)textViews {
+    [self _notImplemented];
+}
 - (void)interfaceWillLoad {
     [self _notImplemented];
 }
@@ -61,7 +65,7 @@
     return nil;
 }
 - (void)interfaceDidLoad {
-    [self _notImplemented];
+    // Optional
 }
 - (void)_notImplemented {
     [NSException raise:@"NotImplemented" format:@"Your AppDelegate should conform to the FunApp protocol"];
