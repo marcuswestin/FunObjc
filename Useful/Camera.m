@@ -132,13 +132,12 @@ static Camera* camera;
         UISaveVideoAtPathToSavedPhotosAlbum(videoUrl.path, nil, nil, nil);
     }
     
-    AVAsset* videoAsset = [AVAsset assetWithURL:videoUrl];
+    AVAsset* videoAsset = [[AVURLAsset alloc] initWithURL:videoUrl options:@{ AVURLAssetPreferPreciseDurationAndTimingKey:num(1) }];
     AVAssetTrack* videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo][0];
     CGSize videoSize = [videoTrack naturalSize];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:videoAsset];
-    CMTime cmDuration = playerItem.duration;
-    float durationInSeconds = CMTimeGetSeconds(cmDuration);
-    
+    float durationInSeconds = CMTimeGetSeconds(videoAsset.duration);
+
     self.callback(nil, @{@"type":@"video",
                          @"path":videoUrl.path,
                          @"duration":[NSNumber numberWithFloat:durationInSeconds],
@@ -158,20 +157,20 @@ static Camera* camera;
                          @"image":image });
 }
 
-+ (UIImage*)thumbnailForVideoResult:(NSDictionary*)videoResult atTime:(double)time {
++ (UIImage*)thumbnailForVideoResult:(NSDictionary*)videoResult atTime:(double)atTime {
     AVAsset* videoAsset = videoResult[@"asset"];
-    float durationInSeconds = [videoResult[@"duration"] floatValue];
-    AVPlayerItem *playerItem = videoResult[@"playerItem"];
-
+    CMTime cmTime = CMTimeMakeWithSeconds(atTime, videoAsset.duration.timescale);
+    
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:videoAsset];
     imageGenerator.appliesPreferredTrackTransform = YES;
-    
-    if (time > durationInSeconds) { time = durationInSeconds; }
-    CMTime thumbTime = CMTimeMakeWithSeconds(time, playerItem.duration.timescale);
-    
+
     NSError *error = nil;
-    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:thumbTime actualTime:NULL error:&error];
-    if (error) { return nil; }
+    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&error];
+    if (error) {
+        NSLog(@"Error generating thumbnail for video result: %@", error);
+        return nil;
+    }
+    
     UIImage *thumbImage = [[UIImage alloc] initWithCGImage:imageRef];
     CGImageRelease(imageRef);
     

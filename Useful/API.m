@@ -20,6 +20,10 @@
 + (instancetype)png:(UIImage *)image {
     return [Multipart withContent:UIImagePNGRepresentation(image) type:@"image/png" disposition:@"form-data; filename=\"image.png\"; name=\"image\""];
 }
++ (instancetype)avi:(NSString *)path {
+    NSData* data = [NSData dataWithContentsOfFile:path];
+    return [Multipart withContent:data type:@"video/avi" disposition:@"form-data; filename=\"video.mov\"; name=\"video\""];
+}
 + (instancetype)withContent:(NSData *)contentData type:(NSString *)contentType disposition:(NSString *)contentDisposition {
     Multipart* instance = [Multipart new];
     instance.contentData = contentData;
