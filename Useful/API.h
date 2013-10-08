@@ -13,6 +13,7 @@
 + (instancetype)jpg:(UIImage*)image quality:(CGFloat)quality;
 + (instancetype)png:(UIImage*)image;
 + (instancetype)avi:(NSString*)path;
++ (instancetype)m4a:(NSString*)path;
 + (instancetype)withContent:(NSData*)contentData type:(NSString*)contentType disposition:(NSString*)contentDisposition;
 @property NSData* contentData;
 @property NSString* contentType;

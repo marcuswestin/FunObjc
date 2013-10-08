@@ -24,6 +24,10 @@
     NSData* data = [NSData dataWithContentsOfFile:path];
     return [Multipart withContent:data type:@"video/avi" disposition:@"form-data; filename=\"video.mov\"; name=\"video\""];
 }
++ (instancetype)m4a:(NSString *)path {
+    NSData* data = [NSData dataWithContentsOfFile:path];
+    return [Multipart withContent:data type:@"audio/mp4a-latm" disposition:@"form-data; filename=\"audio.m4a\"; name=\"audio\""];
+}
 + (instancetype)withContent:(NSData *)contentData type:(NSString *)contentType disposition:(NSString *)contentDisposition {
     Multipart* instance = [Multipart new];
     instance.contentData = contentData;
