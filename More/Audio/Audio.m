@@ -210,6 +210,11 @@ static AudioGraph* _graph;
     AudioUnitSetParameter(unit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Output, 0, volumeFraction, 0);
 }
 
++ (NSTimeInterval)getDurationForFile:(NSString *)path {
+    AVAudioPlayer * sound = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];
+    return sound.duration;
+}
+
 @end
 
 
