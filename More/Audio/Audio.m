@@ -8,16 +8,18 @@
 
 #import "Audio.h"
 
-static Audio* instance;
+static AVAudioSession* _session;
+static AudioGraph* _graph;
 
-@implementation Audio {
-    AVAudioSession* _session;
-    AudioGraph* _graph;
+@implementation AudioEffects
++ (instancetype)withPitch:(Pitch)pitch {
+    AudioEffects* instance = [AudioEffects new];
+    instance.pitch = pitch;
+    return instance;
 }
+@end
 
-+ (void)load {
-    instance = [Audio new];
-}
+@implementation Audio
 
 /*
  
@@ -88,18 +90,18 @@ static Audio* instance;
  
  */
 
-- (void)addEffects:(AudioEffects)effects {
++ (void)addEffects:(AudioEffects*)effects {
     if (!effects) { return; }
     AudioUnit unit = [_graph getUnitNamed:@"pitch"];
-    float pitch = effects->pitch * 2400; // [-1,1] -> [-2400,2400]
+    float pitch = effects.pitch * 2400; // [-1,1] -> [-2400,2400]
     audioCheck(@"Set pitch", AudioUnitSetParameter(unit, kNewTimePitchParam_Pitch, kAudioUnitScope_Global, 0, pitch, 0));
 }
 
-- (float)readFromFile:(NSString *)fromPath toFile:(NSString *)toPath {
++ (float)readFromFile:(NSString *)fromPath toFile:(NSString *)toPath {
     return [self readFromFile:fromPath toFile:toPath effects:NULL];
 }
 
-- (float)readFromFile:(NSString *)fromPath toFile:(NSString *)toPath effects:(AudioEffects)effects {
++ (float)readFromFile:(NSString *)fromPath toFile:(NSString *)toPath effects:(AudioEffects*)effects {
     _graph = [[AudioGraph alloc] initWithNoIO];
     AudioGraphEnpoints* endpoints = [self addEffectChain:_graph];
     [self addEffects:effects];
@@ -135,11 +137,11 @@ static Audio* instance;
     return (numFrames / fileInfo.fileFormat.mSampleRate * 1000);
 }
 
-- (BOOL)playToSpeakerFromFile:(NSString *)path {
++ (BOOL)playToSpeakerFromFile:(NSString *)path {
     return [self playToSpeakerFromFile:path effects:NULL];
 }
 
-- (BOOL)playToSpeakerFromFile:(NSString *)path effects:(AudioEffects)effects {
++ (BOOL)playToSpeakerFromFile:(NSString *)path effects:(AudioEffects*)effects {
     _graph = [[AudioGraph alloc] initWithSpeaker];
     AudioGraphEnpoints* endpoints = [self addEffectChain:_graph];
     [self addEffects:effects];
@@ -154,11 +156,14 @@ static Audio* instance;
     return [_graph start];
 }
 
-- (BOOL)recordFromMicrophoneToFile:(NSString *)path {
++ (BOOL)recordFromMicrophoneToFile:(NSString *)path {
     _session = audioCreateSession(AVAudioSessionCategoryPlayAndRecord);
-    if (!_session.inputAvailable) { NSLog(@"WARNING Requested input is not available");}
+    if (!_session.inputAvailable) {
+        NSLog(@"Audio: WARNING Requested input is not available");
+        return NO;
+    }
 
-    _graph = [[AudioGraph alloc] initWithSpeaker];
+    _graph = [[AudioGraph alloc] initWithSpeakerAndMicrophoneInput];
     AudioGraphEnpoints* endpoints = [self addEffectChain:_graph];
     [self addEffects:NULL];
 
@@ -175,12 +180,12 @@ static Audio* instance;
     return [_graph start];
 }
 
-- (void) stopRecordingFromMicrophone {
-    [_graph stopRecordingToFileAndScheduleStop];
++ (void) stopRecordingFromMicrophone:(Block)callback {
+    [_graph stopRecordingToFile:callback];
 }
 
 //////////////////
-- (AudioGraphEnpoints*) addEffectChain:(AudioGraph*)graph {
++ (AudioGraphEnpoints*) addEffectChain:(AudioGraph*)graph {
     // Create pitch node
     AUNode pitchNode = [graph addNodeNamed:@"pitch" type:kAudioUnitType_FormatConverter subType:kAudioUnitSubType_NewTimePitch];
     AudioUnit pitchUnit = [graph getUnit:pitchNode];
@@ -200,9 +205,9 @@ static Audio* instance;
     return [AudioGraphEnpoints withGraph:graph firstNode:pitchNode lastNode:volumeNode];
 }
 
-- (void) setVolume:(NSNumber*)volumeFraction { // 0 - 1
++ (void) setVolume:(float)volumeFraction { // 0 - 1
     AudioUnit unit = [_graph getUnitNamed:@"volume"];
-    AudioUnitSetParameter(unit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Output, 0, [volumeFraction floatValue], 0);
+    AudioUnitSetParameter(unit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Output, 0, volumeFraction, 0);
 }
 
 @end

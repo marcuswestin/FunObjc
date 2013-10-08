@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "Audio.h"
-#import "FunObjc.h"
+#import "FunTypes.h"
 
 const AudioUnitElement RIOInputFromMic;
 const AudioUnitElement RIOInputFromApp;
@@ -45,13 +45,14 @@ const AudioUnitElement RIOOutputToApp;
 
 - (AudioGraphFileInfo*) readFile:(NSString*)filepath toNode:(AUNode)node bus:(AudioUnitElement)bus;
 - (void) recordFromNode:(AUNode)node bus:(AudioUnitElement)bus toFile:(NSString *)filepath;
-- (void) stopRecordingToFileAndScheduleStop;
+- (void) stopRecordingToFile:(Block)callback;
 - (void) cleanupRecording;
 
-BOOL audioSetOutputStreamFormat(AudioUnit unit, AudioUnitElement bus, AudioStreamBasicDescription asbd);
-BOOL audioSetInputStreamFormat(AudioUnit unit, AudioUnitElement bus, AudioStreamBasicDescription asbd);
-AudioStreamBasicDescription audioGetInputStreamFormat(AudioUnit unit, AudioUnitElement bus);
-AudioStreamBasicDescription audioGetOutputStreamFormat(AudioUnit unit, AudioUnitElement bus);
+BOOL audioSetOutputStreamFormat(AudioUnit audioUnit, AudioUnitElement bus, AudioStreamBasicDescription asbd);
+BOOL audioSetInputStreamFormat(AudioUnit audioUnit, AudioUnitElement bus, AudioStreamBasicDescription asbd);
+AudioStreamBasicDescription audioGetInputStreamFormat(AudioUnit audioUnit, AudioUnitElement bus);
+AudioStreamBasicDescription audioGetOutputStreamFormat(AudioUnit audioUnit, AudioUnitElement bus);
+
 AVAudioSession* audioCreateSession(NSString* category);
 BOOL audioCheck(NSString* str, OSStatus status);
 @end

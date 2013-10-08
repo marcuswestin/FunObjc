@@ -40,6 +40,7 @@
     // Volume monitoring
     NSTimer* _volumeMeterTimer;
     Float32 _lastDbLevel;
+    Block _recordingStoppedCallback;
 }
 /* Initialize
  ************/
@@ -160,8 +161,9 @@
 //    NSDictionary* info = @{ @"decibelLevel":[NSNumber numberWithFloat:_lastDbLevel] };
 //    [BTAppDelegate notify:@"BTAudio.decibelMeter" info:info];
 }
-- (void)stopRecordingToFileAndScheduleStop {
+- (void)stopRecordingToFile:(Block)callback {
     _recording = NO;
+    _recordingStoppedCallback = callback;
 }
 static OSStatus recordFromUnitToFile (void *inRefCon, AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
     BOOL isPostRender = (*ioActionFlags & kAudioUnitRenderAction_PostRender);
@@ -182,6 +184,8 @@ static OSStatus recordFromUnitToFile (void *inRefCon, AudioUnitRenderActionFlags
     audioCheck(@"Dispose of recording file", ExtAudioFileDispose(_recordToAudioExtFileRef));
     _recordToAudioExtFileRef = nil;
     [self stop];
+    _recordingStoppedCallback();
+    _recordingStoppedCallback = nil;
 }
 
 
@@ -270,7 +274,9 @@ void audioError(NSString* errorString, OSStatus status) {
     NSLog(@"*** %@ error: %s\n", errorString, str);
 }
 BOOL audioCheck(NSString* str, OSStatus status) {
-    if (status != noErr) { audioError(str, status); }
+    if (status != noErr) {
+        audioError(str, status);
+    }
     return status == noErr;
 }
 
