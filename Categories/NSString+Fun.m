@@ -39,4 +39,8 @@
     return self.length == 0;
 }
 
+- (BOOL)is:(NSString *)string {
+    return [self isEqualToString:string];
+}
+
 @end
