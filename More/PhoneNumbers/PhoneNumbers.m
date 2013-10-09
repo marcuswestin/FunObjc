@@ -61,7 +61,7 @@ static NSString* locale;
 }
 
 + (void)autoFormat:(UITextField*)textField onValid:(void(^)(NSString* phoneNumber))handler {
-    [textField onEditingChanged:^(UIEvent *event) {
+    [textField onChange:^(UIEvent *event) {
         NSString* formatted = [PhoneNumbers format:textField.text];
         if (!formatted) { return; }
         textField.text = formatted;

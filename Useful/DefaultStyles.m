@@ -89,6 +89,9 @@ DeclareClassDefaultStyles(UITextField, UITextFieldStyles, uiTextFieldStyles)
         [textField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, _pad, 0)]];
         [textField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, _pad, 0)]];
     }
+    if (_borderStyle) {
+        [textField setBorderStyle:_borderStyle];
+    }
 }
 @end
 

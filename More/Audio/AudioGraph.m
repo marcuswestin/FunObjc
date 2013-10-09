@@ -138,7 +138,7 @@
     destinationFormat.mSampleRate = 16000.0;
     UInt32 size = sizeof(destinationFormat);
     OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &destinationFormat);
-    if(result) printf("AudioFormatGetProperty %ld \n", result);
+    if(result) printf("AudioFormatGetProperty %d \n", (int)result);
     
     AudioStreamBasicDescription fileFormat = destinationFormat;
     audioCheck(@"ExtAudioFileCreateWithURL",
@@ -217,7 +217,7 @@ static OSStatus recordFromUnitToFile (void *inRefCon, AudioUnitRenderActionFlags
     rgn.mAudioFile = inputFile;
     rgn.mLoopCount = 0;
     rgn.mStartFrame = 0;
-    rgn.mFramesToPlay = nPackets * fileFormat.mFramesPerPacket;
+    rgn.mFramesToPlay = (UInt32)(nPackets * fileFormat.mFramesPerPacket);
     
     audioCheck(@"Set audio player file region",
           AudioUnitSetProperty(fileAU, kAudioUnitProperty_ScheduledFileRegion, kAudioUnitScope_Global, 0,&rgn, sizeof(rgn)));

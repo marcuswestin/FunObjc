@@ -8,6 +8,7 @@
 
 #import "Files.h"
 #import "FunObjc.h"
+#import "NSObject+Fun.h"
 
 @implementation Files
 
@@ -19,13 +20,13 @@ static NSString* _cachesDirectory;
     _cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 }
 + (id)readJsonDocument:(NSString *)filename {
-    return [Files readDocument:filename].toJsonObject;
+    return [JSON parseData:[Files readDocument:filename]];
 }
 + (id)readJsonDocument:(NSString *)filename property:(NSString *)property {
     return [Files readJsonDocument:filename][property];
 }
 + (void)writeJsonDocument:(NSString *)filename data:(id)data {
-    [Files writeDocument:filename data:[JSON toData:data]];
+    [Files writeDocument:filename data:[JSON serialize:data]];
 }
 + (void)writeJsonDocument:(NSString *)filename property:(NSString *)property data:(id)data {
     id readDoc = [Files readJsonDocument:filename];

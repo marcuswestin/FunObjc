@@ -116,7 +116,7 @@ static AudioGraph* _graph;
     // Render the audio until done (this is instead of the typical [graph start])
     AudioUnitRenderActionFlags flags = kAudioOfflineUnitRenderAction_Render;
     AudioBufferList bufferList;
-    UInt32 numFrames = fileInfo.fileFormat.mFramesPerPacket * fileInfo.numPackets;
+    UInt32 numFrames = (UInt32)(fileInfo.fileFormat.mFramesPerPacket * fileInfo.numPackets);
     UInt32 framesPerBuffer = 1024;
     bufferList.mNumberBuffers = endpoints.lastFormat.mChannelsPerFrame;
     for (int i=0; i<endpoints.lastFormat.mChannelsPerFrame; i++) {

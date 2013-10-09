@@ -69,7 +69,7 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
 }
 @end
 @implementation UIControl (UIControlFun)
-- (void)onEditingChanged:(EventHandler)handler {
+- (void)onChange:(EventHandler)handler {
     [self on:UIControlEventEditingChanged handler:handler];
 }
 - (void)onTap:(EventHandler)handler {
@@ -85,9 +85,16 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
     [self on:UIControlEventTouchUpOutside handler:handler];
 }
 - (void)on:(UIControlEvents)controlEvents handler:(EventHandler)handler {
-    UIControlHandler* controlHandler = [[UIControlHandler alloc] init];
+    NSMutableArray* handlers = objc_getAssociatedObject(self, KeyHandlers);
+    if (!handlers) {
+        handlers = [NSMutableArray array];
+        objc_setAssociatedObject(self, KeyHandlers, handlers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    UIControlHandler* controlHandler = [UIControlHandler new];
     controlHandler.handler = handler;
-    objc_setAssociatedObject(self, KeyHandlers, controlHandler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [handlers addObject:controlHandler];
+    
     [self addTarget:controlHandler action:@selector(_handle:event:) forControlEvents:controlEvents];
 }
 @end

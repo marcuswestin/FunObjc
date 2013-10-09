@@ -12,7 +12,7 @@
 
 @implementation Multipart
 + (instancetype)json:(NSDictionary *)obj {
-    return [Multipart withContent:obj.toJsonData type:@"application/json" disposition:@"form-data; name=\"jsonParams\""];
+    return [Multipart withContent:[JSON serialize:obj] type:@"application/json" disposition:@"form-data; name=\"jsonParams\""];
 }
 + (instancetype)jpg:(UIImage *)image quality:(CGFloat)quality {
     return [Multipart withContent:UIImageJPEGRepresentation(image, quality) type:@"image/jpg" disposition:@"form-data; filename=\"image.jpg\"; name=\"image\""];
@@ -45,6 +45,7 @@ static NSString* multipartBoundary;
 static NSMutableDictionary* baseHeaders;
 static int numRequests = 0;
 static NSMutableArray* errorChecks;
+static NSString* uuidHeader;
 
 + (void)load {
     baseHeaders = [NSMutableDictionary dictionary];
@@ -69,8 +70,12 @@ static NSMutableArray* errorChecks;
     }
 }
 
-+ (void)post:(NSString *)path json:(NSDictionary *)json callback:(APICallback)callback {
-    [self send:@"POST" path:path contentType:@"application/json" data:json.toJsonData callback:callback];
++ (void)setUUIDHeaderName:(NSString *)uuidHeaderName {
+    uuidHeader = uuidHeaderName;
+}
+
++ (void)post:(NSString *)path json:(NSDictionary *)obj callback:(APICallback)callback {
+    [self send:@"POST" path:path contentType:@"application/json" data:[JSON serialize:obj] callback:callback];
 }
 
 + (void)get:(NSString *)path queries:(NSDictionary *)queries callback:(APICallback)callback {
@@ -105,11 +110,12 @@ static NSMutableArray* errorChecks;
 
 
 + (void) send:(NSString*)method path:(NSString*)path contentType:(NSString*)contentType data:(NSData*)data callback:(APICallback)callback {
+    NSString* url = [server stringByAppendingString:path];
 
     if ([contentType isEqualToString:@"application/json"]) {
-        NSLog(@"API %@ %@ SEND:\n%@", method, path, data.toString);
+        NSLog(@"API %@ %@ SEND:\n%@", method, url, data.toString);
     } else {
-        NSLog(@"API %@ %@ SEND", method, path);
+        NSLog(@"API %@ %@ SEND", method, url);
     }
     NSDictionary* devInterceptRes = [API _devIntercept:path];
     if (devInterceptRes) {
@@ -119,7 +125,6 @@ static NSMutableArray* errorChecks;
     }
     
     if (!server) { [NSException raise:@"MissingServer" format:@"You must do [API setup:@\"https://your.server.com\""]; }
-    NSString* url = [server stringByAppendingString:path];
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     request.HTTPMethod = method;
     request.HTTPBody = data;
@@ -152,6 +157,7 @@ static NSMutableArray* errorChecks;
     if (!contentType) {
         err = makeError(@"Missing Content-Type header");
     } else if ([contentType hasPrefix:@"application/json"] || [contentType hasPrefix:@"application/javascript"]) {
+        
         res = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
     } else if ([contentType hasPrefix:@"text/"]) {
         res = @{ @"text":[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] };
@@ -180,6 +186,9 @@ static NSMutableArray* errorChecks;
 
 + (NSDictionary*)headers:(NSString*)contentType data:(NSData*)data {
     NSMutableDictionary* headers = [NSMutableDictionary dictionaryWithDictionary:baseHeaders];
+    if (uuidHeader) {
+        headers[uuidHeader] = [NSString UUID];
+    }
     if (contentType) {
         headers[@"Content-Type"] = contentType;
     }

@@ -12,13 +12,17 @@
 
 @implementation State
 
-+ (id)fromDict:(NSDictionary*)dict {
++ (instancetype)fromDict:(NSDictionary*)dict {
     if ([dict isKindOfClass:State.class]) {
         return (State*)dict;
     } else {
         id instance = [[[self class] alloc] initWithDict:dict];
         return instance;
     }
+}
+
++ (instancetype)withDict:(NSDictionary *)dict {
+    return [self fromDict:dict];
 }
 
 - (instancetype)initWithDict:(NSDictionary*)dict {
@@ -75,5 +79,10 @@
     return [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
 }
 
+- (instancetype)copyWithDictionary:(NSDictionary *)dict {
+    id copy = [self copy];
+    [copy setValuesForKeysWithDictionary:dict];
+    return copy;
+}
 
 @end

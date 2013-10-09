@@ -15,8 +15,4 @@
     return [[NSString alloc] initWithData:self encoding:NSUTF8StringEncoding];
 }
 
-- (id)toJsonObject {
-    return [JSON parseData:self];
-}
-
 @end

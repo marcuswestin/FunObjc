@@ -10,6 +10,13 @@
 
 @implementation NSString (Fun)
 
++ (NSString *)UUID {
+    CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    return (__bridge NSString *)string;
+}
+
 - (NSArray *)splitByComma {
     return [self split:@","];
 }
@@ -22,8 +29,12 @@
     return [self dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (NSString *)stringByRemoving:(NSString *)needles {
-    return [self stringByReplacingOccurrencesOfString:needles withString:@""];
+- (NSString *)stringByRemoving:(NSString *)needle {
+    return [self stringByReplacingOccurrencesOfString:needle withString:@""];
+}
+
+- (NSString *)trim {
+    return [self stringByTrimmingWhitespace];
 }
 
 - (NSString *)encodedURIComponent {
@@ -41,6 +52,10 @@
 
 - (BOOL)is:(NSString *)string {
     return [self isEqualToString:string];
+}
+
+- (NSString *)append:(NSString *)string {
+    return [self stringByAppendingString:string];
 }
 
 @end

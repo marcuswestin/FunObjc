@@ -27,6 +27,7 @@ typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res)
 
 + (void)setup:(NSString*)serverUrl;
 + (void)setHeaders:(NSDictionary*)headers;
++ (void)setUUIDHeaderName:(NSString*)uuidHeaderName;
 + (void)post:(NSString*)path json:(NSDictionary*)json callback:(APICallback)callback;
 + (void)get:(NSString*)path queries:(NSDictionary*)queries callback:(APICallback)callback;
 + (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback;

@@ -39,6 +39,7 @@
 @property UIColor* textColor;
 @property UIFont* font;
 @property CGFloat pad;
+@property UITextBorderStyle borderStyle;
 @end
 @interface UITextField (DefaultStyles);
 + (UITextFieldStyles*)styles;

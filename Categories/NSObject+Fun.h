@@ -9,12 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface NSObject (Fun)
-
-- (NSString *)toJsonString;
-- (NSData*)toJsonData;
 - (NSString*)className;
 - (BOOL)isNull;
-+ (NSObject*)parseJsonData:(NSData*)jsonData;
-+ (NSObject*)parseJsonString:(NSString*)jsonString;
-
 @end

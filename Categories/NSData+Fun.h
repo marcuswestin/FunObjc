@@ -11,6 +11,5 @@
 @interface NSData (Fun)
 
 - (NSString*) toString;
-- (id) toJsonObject;
 
 @end

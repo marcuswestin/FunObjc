@@ -12,20 +12,60 @@
 
 @implementation JSON
 
-+ (NSData*)toData:(NSObject*)obj {
-    return obj.toJsonData;
+static NSJSONWritingOptions jsonOpts = 0;
+
++ (NSData*)serialize:(id)obj {
+    NSError* err;
+    @try {
+        obj = [self sanitize:obj];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Threw in [JSON serialize:] %@", exception);
+        [exception raise];
+        return nil;
+    }
+    NSData* data = [NSJSONSerialization dataWithJSONObject:obj options:jsonOpts error:&err];
+    if (err) { return [Log error:err]; }
+    return data;
 }
 
-+ (NSString *)toString:(NSObject*)obj {
-    return obj.toJsonString;
++ (NSString *)stringify:(id)obj {
+    return [[NSString alloc] initWithData:[JSON serialize:obj] encoding:NSUTF8StringEncoding];
 }
 
 + (id)parseData:(NSData *)data {
-    return [NSObject parseJsonData:data];
+    NSError* err;
+    id result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
+    if (err) { return [Log error:err]; }
+    return result;
+
 }
 
 + (id)parseString:(NSString *)string {
-    return [NSObject parseJsonString:string];
+    return [JSON parseData:string.toData];
+}
+
++ (id)sanitize:(id)obj {
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary* res = [NSMutableDictionary dictionaryWithDictionary:obj];
+        for (id key in obj) {
+            res[key] = [JSON sanitize:obj[key]];
+        }
+        return res;
+        
+    } else if ([obj isKindOfClass:[NSArray class]]) {
+        NSMutableArray* res = [NSMutableArray arrayWithArray:obj];
+        for (int i=0; i<res.count; i++) {
+            res[i] = [JSON sanitize:res[i]];
+        }
+        return res;
+        
+    } else if ([obj isKindOfClass:[State class]]) {
+        return [JSON sanitize:((State*)obj).toDictionary];
+        
+    } else {
+        return obj;
+    }
 }
 
 @end

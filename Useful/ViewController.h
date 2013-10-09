@@ -11,6 +11,7 @@
 
 @interface ViewController : UIViewController
 + (instancetype)withoutState;
++ (instancetype)withState:(State*) state;
 - (instancetype)initWithState:(id<NSCoding>)state;
 @property id<NSCoding> state;
 - (void)render:(BOOL)animated;

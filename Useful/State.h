@@ -9,9 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface State : NSObject <NSCoding>
++ (instancetype) withDict:(NSDictionary*)dict;
 + (instancetype) fromDict:(NSDictionary*)dict;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
 - (NSDictionary*)toDictionary;
 + (State*)fromArchiveDocument:(NSString*)archiveDocName;
+- (instancetype) copyWithDictionary:(NSDictionary*)dict;
 @end
 

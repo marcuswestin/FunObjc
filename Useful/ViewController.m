@@ -17,6 +17,10 @@
     return [[[self class] alloc] initWithState:nil];
 }
 
++ (instancetype)withState:(State *)state {
+    return [[[self class] alloc] initWithState:state];
+}
+
 - (instancetype)initWithState:(id<NSCoding>)state {
     if (self = [super initWithNibName:nil bundle:nil]) {
         self.state = state;

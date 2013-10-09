@@ -10,8 +10,8 @@
 
 @interface JSON : FunBase
 
-+ (NSString*)toString:(id)obj;
-+ (NSData*)toData:(id)obj;
++ (NSString*)stringify:(id)obj;
++ (NSData*)serialize:(id)obj;
 + (id)parseString:(NSString*)string;
 + (id)parseData:(NSData*)data;
 
