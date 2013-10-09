@@ -22,7 +22,6 @@
 @end
 
 @interface FunAppDelegate : UIResponder<UIApplicationDelegate, FunApp>
-
 @property (strong, nonatomic) UIWindow *window;
-
+@property id<FunApp>funApp;
 @end
