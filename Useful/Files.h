@@ -21,8 +21,10 @@
 + (BOOL)writeCache:(NSString*)filename data:(NSData*)data;
 + (NSString*)cachePath:(NSString*)filename;
 + (NSString*)documentPath:(NSString*)filename;
-+ (NSString*)readResource:(NSString*)name;
 + (BOOL)removeDocument:(NSString*)name;
 + (BOOL)removeCache:(NSString*)name;
+
++ (NSData*)readResource:(NSString*)name;
++ (NSData*)readResource:(NSString*)resourceName ofType:(NSString*)type;
 
 @end

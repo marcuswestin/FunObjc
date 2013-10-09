@@ -17,4 +17,5 @@
 - (NSString*)encodedURIComponent;
 - (NSString*)stringByTrimmingWhitespace;
 - (BOOL)isEmpty;
+- (BOOL)is:(NSString*)string;
 @end

@@ -26,6 +26,7 @@
 #import "DefaultStyles.h"
 #import "UIImage+Fun.h"
 
+#import "Fonts.h"
 #import "ViewController.h"
 #import "ListViewController.h"
 #import "API.h"

@@ -15,13 +15,13 @@
 @required
 - (void)styleLabels:(UILabelStyles*)labels buttons:(UIButtonStyles*)buttons textFields:(UITextFieldStyles*)textFields textViews:(UITextViewStyles*)textViews;
 - (void)interfaceWillLoad;
-- (ViewController*)rootViewControllerForFreshLoad;
+- (UIViewController*)rootViewControllerForFreshLoad;
 
 @optional
 - (void)interfaceDidLoad;
 @end
 
-@interface FunAppDelegate : UIResponder<UIApplicationDelegate, FunApp>
+@interface FunAppDelegate : UIResponder<UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
 @property id<FunApp>funApp;
 @end

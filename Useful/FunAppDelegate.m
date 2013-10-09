@@ -14,20 +14,24 @@
 // Application launch & state restoration
 /////////////////////////////////////////
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [self styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
-    [self interfaceWillLoad];
+    _funApp = (id<FunApp>) self;
+    
+    [_funApp styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
+    [_funApp interfaceWillLoad];
     return YES;
 }
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (!self.window) {
-        UIViewController* rootVC = [self rootViewControllerForFreshLoad];
+        UIViewController* rootVC = [_funApp rootViewControllerForFreshLoad];
         if (!rootVC.restorationIdentifier) {
             rootVC.restorationIdentifier = rootVC.className;
         }
         [self _loadInterfaceWithRootViewController:rootVC];
     }
     [self handleLaunchNotification:launchOptions];
-    [self interfaceDidLoad];
+    if ([_funApp respondsToSelector:@selector(interfaceDidLoad)]) {
+        [_funApp interfaceDidLoad];
+    }
     return YES;
 }
 // View state saving
@@ -53,22 +57,6 @@
     self.window.restorationIdentifier = NSStringFromClass([self class]);
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
-}
-- (void)styleLabels:(UILabelStyles *)labels buttons:(UIButtonStyles *)buttons textFields:(UITextFieldStyles *)textFields textViews:(UITextViewStyles *)textViews {
-    [self _notImplemented];
-}
-- (void)interfaceWillLoad {
-    [self _notImplemented];
-}
-- (ViewController *)rootViewControllerForFreshLoad {
-    [self _notImplemented];
-    return nil;
-}
-- (void)interfaceDidLoad {
-    // Optional
-}
-- (void)_notImplemented {
-    [NSException raise:@"NotImplemented" format:@"Your AppDelegate should conform to the FunApp protocol"];
 }
 - (UIViewController*)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     Class ViewControllerClass = NSClassFromString(identifierComponents.lastObject);

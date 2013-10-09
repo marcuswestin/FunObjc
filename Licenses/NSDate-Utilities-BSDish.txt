@@ -1,0 +1,3 @@
+Erica Sadun, http://ericasadun.com
+iPhone Developer's Cookbook 3.x and beyond
+BSD License, Use at your own risk
