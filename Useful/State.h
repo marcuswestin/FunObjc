@@ -12,6 +12,7 @@
 + (instancetype) state;
 + (instancetype) fromDict:(NSDictionary*)dict;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
+- (NSDictionary*)toDictionary;
 + (State*)fromArchiveDocument:(NSString*)archiveDocName;
 @end
 

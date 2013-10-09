@@ -30,10 +30,10 @@
 }
 
 - (id)copy {
-    return [[self class] fromDict:[self _dict]];
+    return [[self class] fromDict:[self toDictionary]];
 }
 
-- (NSDictionary*)_dict {
+- (NSDictionary*)toDictionary {
     unsigned count;
     objc_property_t *properties = class_copyPropertyList([self class], &count);
     NSMutableArray *rv = [NSMutableArray arrayWithCapacity:count];
@@ -47,7 +47,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:[self _dict] forKey:@"FunStateDict"];
+    [aCoder encodeObject:[self toDictionary] forKey:@"FunStateDict"];
     NSString* className = self.className;
     [aCoder encodeObject:className forKey:@"FunStateClass"];
 }
