@@ -9,11 +9,16 @@
 #import "FunBase.h"
 #import "Events.h"
 
-typedef NSDictionary* Notification;
+@interface PushAuthorization : State
+@property NSString* vendor;
+@property NSString* token;
+@end
 
-@interface Notifications : FunBase
+typedef void (^PushAuthorizationCallback)(NSError* err, PushAuthorization* auth);
+
+@interface PushNotifications : NSObject
 + (BOOL) deviceSupportsRemoteNotifications;
-+ (void) register:(Callback)callback;
++ (void) authorize:(PushAuthorizationCallback)callback;
 + (NSDictionary*) status;
 + (NSInteger) getBadgeNumber;
 + (void) setBadgeNumber:(NSInteger)number;

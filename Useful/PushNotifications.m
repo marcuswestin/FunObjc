@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "Notifications.h"
+#import "PushNotifications.h"
 
 #if defined PLATFORM_OSX
 #define NotificationTypes (UIRemoteNotificationTypeBadge)
@@ -18,9 +18,18 @@
 #define PUSH_TYPE @"ios"
 #endif
 
-@implementation Notifications
+#if defined DEBUG
+#define PUSH_MODE @"_sandbox"
+#else
 
-static Callback registerCallback;
+#endif
+
+@implementation PushAuthorization
+@end
+
+static PushAuthorizationCallback authorizationCallback;
+
+@implementation PushNotifications
 
 + (BOOL)deviceSupportsRemoteNotifications {
     return !isSimulator;
@@ -28,16 +37,18 @@ static Callback registerCallback;
 
 + (void)load {
     [Events on:@"Application.didRegisterForRemoteNotificationsWithDeviceToken" callback:^(NSData* deviceToken) {
-        NSString* tokenAsString = [deviceToken description];
-        tokenAsString = [tokenAsString stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-        tokenAsString = [tokenAsString stringByReplacingOccurrencesOfString:@" " withString:@""];
-        NSDictionary* info = @{ @"token":tokenAsString, @"type":PUSH_TYPE };
-        registerCallback(nil, info);
-        registerCallback = nil;
+        NSString* tokenAsString = [[[deviceToken description]
+                                    stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]]
+                                   stringByReplacingOccurrencesOfString:@" "
+                                   withString:@""];
+        PushAuthorization* auth = [PushAuthorization new];
+        auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios, ios-sandbox, osx, osx-sandbox
+        auth.token = tokenAsString;
+        authorizationCallback(nil, auth);
     }];
     [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" callback:^(NSError* err) {
-        registerCallback(err, nil);
-        registerCallback = nil;
+        authorizationCallback(err, nil);
+        authorizationCallback = nil;
     }];
     [Events on:@"Application.didReceiveRemoteNotification" callback:^(NSDictionary* notification) {
         [Events fire:@"Notifications.notification" info:@{ @"notification":notification }];
@@ -48,8 +59,8 @@ static Callback registerCallback;
     }];
 }
 
-+ (void)register:(Callback)callback {
-    registerCallback = callback;
++ (void)authorize:(PushAuthorizationCallback)callback {
+    authorizationCallback = callback;
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:NotificationTypes];
 }
 
