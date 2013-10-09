@@ -12,9 +12,6 @@
 
 @implementation State
 
-+(instancetype)state {
-    return [[self class] alloc];
-}
 + (id)fromDict:(NSDictionary*)dict {
     if ([dict isKindOfClass:State.class]) {
         return (State*)dict;
