@@ -51,10 +51,6 @@ static NSString* _cachesDirectory;
 + (NSString*)documentPath:(NSString*)filename {
     return [_documentsDirectory stringByAppendingPathComponent:filename];
 }
-+ (NSString *)readResource:(NSString *)name {
-    NSString* path = [[NSBundle mainBundle] pathForResource:name ofType:nil];
-    return [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-}
 + (BOOL)removeCache:(NSString *)name {
     return [Files removeFile:[Files cachePath:name]];
 }
@@ -63,5 +59,12 @@ static NSString* _cachesDirectory;
 }
 + (BOOL)removeFile:(NSString*)path {
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+}
++ (NSData *)readResource:(NSString *)name {
+    return [Files readResource:name ofType:nil];
+}
++ (NSData *)readResource:(NSString *)name ofType:(NSString *)type {
+    NSString* path = [[NSBundle mainBundle] pathForResource:name ofType:type];
+    return [NSData dataWithContentsOfFile:path];
 }
 @end
