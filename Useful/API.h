@@ -15,6 +15,7 @@
 + (instancetype)avi:(NSString*)path;
 + (instancetype)m4a:(NSString*)path;
 + (instancetype)withContent:(NSData*)contentData type:(NSString*)contentType disposition:(NSString*)contentDisposition;
++ (void)setMultipartNamesJson:(NSString*)jsonName image:(NSString*)imageName video:(NSString*)videoName audio:(NSString*)audioName;
 @property NSData* contentData;
 @property NSString* contentType;
 @property NSString* contentDisposition;
