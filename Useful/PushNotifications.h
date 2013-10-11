@@ -19,7 +19,7 @@ typedef void (^PushAuthorizationCallback)(NSError* err, PushAuthorization* auth)
 @interface PushNotifications : NSObject
 + (BOOL) deviceSupportsRemoteNotifications;
 + (void) authorize:(PushAuthorizationCallback)callback;
-+ (NSDictionary*) status;
++ (NSDictionary*) authorizationStatus;
 + (NSInteger) getBadgeNumber;
 + (void) setBadgeNumber:(NSInteger)number;
 + (void) incrementBadgeNumber:(NSInteger)incrementBy;

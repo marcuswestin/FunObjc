@@ -33,14 +33,18 @@ static const BOOL isSimulator = NO;
 
 typedef void (^Block)();
 typedef void (^Callback)(NSError* err, NSDictionary* res);
-typedef void (^StringCallback)(NSError* err, NSString* res);
-typedef void (^ArrayCallback)(NSError* err, NSArray* res);
+typedef void (^StringErrorCallback)(NSError* err, NSString* res);
+typedef void (^StringCallback)(NSString* res);
+typedef void (^ArrayErrorCallback)(NSError* err, NSArray* res);
+typedef void (^ArrayCallback)(NSArray* array);
 typedef void (^DataCallback)(NSError* err, NSData* data);
 typedef void (^ImageCallback)(NSError* err, UIImage* image);
 typedef void (^ViewCallback)(NSError* err, UIView* view);
 typedef void (^CGPointBlock)(CGPoint point);
 typedef void (^CGPointVectorBlock)(CGPoint point, CGPoint vector);
 typedef void (^NSUIntegerBlock)(NSUInteger i);
+typedef void (^ErrorCallback)(NSError* err);
+typedef void (^AuthorizeCallback)(NSError* err, BOOL authorized);
 
 void error(NSError* err);
 NSError* makeError(NSString* localMessage);

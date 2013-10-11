@@ -49,7 +49,7 @@ static const NSString* CbKey = @"Cb";
 
 + (void)fire:(NSString *)signal info:(id)info {
     NSArray* callbacks = [signals[signal] copy];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    asyncMain(^{
         if (info) {
             NSLog(@"@ Event %@, Info: %@", signal, info);
         } else {

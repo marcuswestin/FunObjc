@@ -10,6 +10,6 @@
 
 @interface Videos : FunBase
 
-+ (instancetype)playVideo:(NSString*)url fromView:(UIView*)view callback:(StringCallback)callback;
++ (instancetype)playVideo:(NSString*)url fromView:(UIView*)view callback:(StringErrorCallback)callback;
 
 @end

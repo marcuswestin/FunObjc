@@ -64,7 +64,7 @@ static PushAuthorizationCallback authorizationCallback;
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:NotificationTypes];
 }
 
-+ (NSDictionary*)status {
++ (NSDictionary*)authorizationStatus {
     UIRemoteNotificationType types = [UIApplication.sharedApplication enabledRemoteNotificationTypes];
     if (types == UIRemoteNotificationTypeNone) { return nil; }
     

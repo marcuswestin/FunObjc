@@ -13,10 +13,10 @@ static Videos* instance;
 
 @implementation Videos {
     MPMoviePlayerController* _moviePlayer;
-    StringCallback _playbackCallback;
+    StringErrorCallback _playbackCallback;
 }
 
-- initWithUrl:(NSString*)url fromView:(UIView*)fromView callback:(StringCallback)callback {
+- initWithUrl:(NSString*)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
     _moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
 //    _moviePlayer.controlStyle = MPMovieControlStyleFullscreen;
     [_moviePlayer prepareToPlay];
@@ -32,7 +32,7 @@ static Videos* instance;
     return self;
 }
 
-+ (instancetype)playVideo:(NSString *)url fromView:(UIView*)fromView callback:(StringCallback)callback {
++ (instancetype)playVideo:(NSString *)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
     return instance = [[Videos alloc] initWithUrl:url fromView:fromView callback:callback];
 }
 
