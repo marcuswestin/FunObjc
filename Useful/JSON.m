@@ -24,7 +24,9 @@ static NSJSONWritingOptions jsonOpts = 0;
         [exception raise];
         return nil;
     }
-    NSData* data = [NSJSONSerialization dataWithJSONObject:obj options:jsonOpts error:&err];
+    NSData* data = ([obj isNull]
+                    ? [NSData data]
+                    : [NSJSONSerialization dataWithJSONObject:obj options:jsonOpts error:&err]);
     if (err) { return [Log error:err]; }
     return data;
 }
@@ -46,7 +48,9 @@ static NSJSONWritingOptions jsonOpts = 0;
 }
 
 + (id)sanitize:(id)obj {
-    if ([obj isKindOfClass:[NSDictionary class]]) {
+    if (!obj) {
+        return [NSNull null];
+    } if ([obj isKindOfClass:[NSDictionary class]]) {
         NSMutableDictionary* res = [NSMutableDictionary dictionaryWithDictionary:obj];
         for (id key in obj) {
             res[key] = [JSON sanitize:obj[key]];
