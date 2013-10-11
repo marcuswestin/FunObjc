@@ -33,6 +33,12 @@
     }
 }
 
+- (void)asyncEach:(Iterate)iterateFn {
+    [self enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        iterateFn(obj, idx);
+    }];
+}
+
 - (NSMutableArray *)filter:(Filter)filterFn {
     NSMutableArray* results = [NSMutableArray array];
     [self each:^(id val, NSUInteger i) {
