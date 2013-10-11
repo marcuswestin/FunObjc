@@ -15,5 +15,6 @@
 - (NSDictionary*)toDictionary;
 + (State*)fromArchiveDocument:(NSString*)archiveDocName;
 - (instancetype) copyWithDictionary:(NSDictionary*)dict;
+- (void)setDefaults;
 @end
 

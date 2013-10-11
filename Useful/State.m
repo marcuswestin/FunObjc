@@ -25,8 +25,11 @@
     return [self fromDict:dict];
 }
 
+- (void)setDefaults{}
+
 - (instancetype)initWithDict:(NSDictionary*)dict {
     [self setValuesForKeysWithDictionary:dict];
+    [self setDefaults];
     return self;
 }
 
@@ -56,6 +59,7 @@
     NSString* className = [aDecoder decodeObjectForKey:@"FunStateClass"];
     Class class = NSClassFromString(className);
     NSDictionary* dict = [aDecoder decodeObjectForKey:@"FunStateDict"];
+    [self setDefaults];
     return [[class alloc] initWithDict:dict];
 }
 
