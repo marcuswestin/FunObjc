@@ -77,3 +77,11 @@
 - (void)blur;
 - (void)blur:(UIColor*)color;
 @end
+
+@interface UITextField (Fun)
+- (void)bindTextTo:(NSMutableString*)str;
+@end
+
+@interface UILabel (Fun)
+- (void)wrapText;
+@end

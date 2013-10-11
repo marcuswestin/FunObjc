@@ -22,6 +22,7 @@ typedef ViewStyler* (^StylerColor1)(UIColor* color);
 typedef ViewStyler* (^StylerPoint)(CGPoint point);
 typedef ViewStyler* (^StylerRect)(CGRect rect);
 typedef ViewStyler* (^StylerString1)(NSString* string);
+typedef ViewStyler* (^StylerMString1)(NSMutableString* string);
 typedef ViewStyler* (^StylerInteger1)(NSInteger integer);
 typedef ViewStyler* (^StylerTextAlignment)(NSTextAlignment textAlignment);
 typedef ViewStyler* (^StylerColorFloat2)(UIColor* color, CGFloat f1, CGFloat f2);
@@ -29,6 +30,7 @@ typedef ViewStyler* (^StylerColorFloat)(UIColor* color, CGFloat f);
 typedef ViewStyler* (^StylerFont)(UIFont* font);
 typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
 typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
+typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
 
 @interface ViewStyler : FunBase
 
@@ -59,17 +61,25 @@ typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 - (StylerRect)frame;
 - (StylerFloat4)inset;
 - (StylerFloat1)insetAll;
+- (StylerFloat1)insetSides;
 - (StylerFloat1)insetTop;
 - (StylerFloat1)insetRight;
 - (StylerFloat1)insetLeft;
 - (StylerFloat1)insetBottom;
+- (StylerFloat4)outset;
+- (StylerFloat1)outsetAll;
+- (StylerFloat1)outsetSides;
+- (StylerFloat1)outsetTop;
+- (StylerFloat1)outsetRight;
+- (StylerFloat1)outsetLeft;
+- (StylerFloat1)outsetBottom;
 - (StylerFloat1)moveUp;
 - (StylerFloat1)moveDown;
 - (StylerViewFloat)below;
 - (StylerViewFloat)above;
 - (StylerViewFloat)leftOf;
 - (StylerViewFloat)rightOf;
-- (StylerView)fillRightOf;
+- (StylerViewFloat)fillRightOf;
 
 /* Size
  ******/
@@ -87,8 +97,9 @@ typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 - (StylerColor1)bg;
 - (StylerFloat3)shadow;
 - (StylerFloat1)radius;
+- (ViewStyler*)round;
 - (StylerFloatColor)border;
-- (StylerFloat4)borderWidths;
+- (StylerFloat4Color)edges;
 - (ViewStyler*)hide;
 - (ViewStyler*)clipToBounds;
 
@@ -108,6 +119,7 @@ typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 /* Text inputs
  *************/
 - (StylerString1)placeholder;
+- (StylerMString1)bindText;
 @end
 
 
@@ -120,5 +132,9 @@ typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 + (StylerRect) frame;
 - (ViewStyler*) styler;
 - (void)render;
-- (UIView*)viewWithName:(NSString*)name;
+- (UIView*)viewByName:(NSString*)name;
+- (UILabel*)labelByName:(NSString*)name;
+@end
+@interface UIButton (FunStyler)
++ (ViewStyler*) styler;
 @end

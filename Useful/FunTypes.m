@@ -18,7 +18,7 @@ void error(NSError* err) {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString* message = err.localizedDescription;
         NSLog(@"ERROR %@ %@", message, err);
-        [UILabel.appendTo([Overlay show]).fillW.inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
+        [UILabel.appendTo([Overlay show]).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
     });
 }
 

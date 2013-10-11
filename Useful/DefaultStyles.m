@@ -46,12 +46,12 @@ DeclareClassDefaultStyles(UIView, UIViewStyles, uiViewStyles)
     if (_backgroundColor) {
         view.backgroundColor = _backgroundColor;
     }
-    if (_cornerRadius) {
-        view.layer.cornerRadius = _cornerRadius;
-    }
     if (_borderColor && _borderWidth) {
         view.layer.borderColor = [_borderColor CGColor];
         view.layer.borderWidth = _borderWidth;
+    }
+    if (_cornerRadius) {
+        view.layer.cornerRadius = _cornerRadius;
     }
 }
 @end

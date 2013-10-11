@@ -42,6 +42,12 @@
         STYLER_CODE; return self;\
     };\
 }
+#define DeclareMStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
+-(StylerMString1) STYLER_NAME {\
+    return ^(NSMutableString* STRING_ARG_NAME) {\
+        STYLER_CODE; return self;\
+    };\
+}
 #define DeclarePointStyler(STYLER_NAME, POINT_ARG_NAME, STYLER_CODE)\
 -(StylerPoint) STYLER_NAME {\
     return ^(CGPoint POINT_ARG_NAME) {\
@@ -109,44 +115,20 @@ STYLER_CODE; return self;\
         STYLER_CODE; return self;\
     };\
 }
+// Arity 5
+//////////
+#define DeclareFloat4ColorStyler(STYLER_NAME, f1NAME, f2NAME, f3NAME, f4NAME, COLOR_ARG_NAME, STYLER_CODE)\
+-(StylerFloat4Color)STYLER_NAME { \
+    return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME, CGFloat f4NAME, UIColor* COLOR_ARG_NAME) {\
+        STYLER_CODE; return self;\
+    };\
+}
 
 static NSMutableArray* tagIntegerToTagName;
 static NSMutableDictionary* tagNameToTagNumber;
 
 @interface ViewStyler ()
 - (instancetype)initWithView:(UIView*)view;
-@end
-
-/* UIView helpers
- ****************/
-@implementation UIView (FunStyler)
-+ (StylerView)appendTo {
-    return self.styler.appendTo;
-}
-+ (StylerView)prependTo {
-    return self.styler.prependTo;
-}
-- (ViewStyler *)styler {
-    return [[ViewStyler alloc] initWithView:self];
-}
-- (void)render {}
-
-+ (StylerRect)frame {
-    return self.styler.frame;
-}
-+ (ViewStyler*)styler {
-    UIView* instance = [[[self class] alloc] initWithFrame:CGRectZero];
-#if defined DEBUG && FALSE
-    return instance.styler.bg(RANDOM_COLOR);
-#else
-    return instance.styler;
-#endif
-}
-- (UIView *)viewWithName:(NSString *)name {
-    NSNumber* tagNumber = tagNameToTagNumber[name];
-    if (!tagNumber) { return nil; }
-    return [self viewWithTag:[tagNumber integerValue]];
-}
 @end
 
 // Type helpers
@@ -158,8 +140,8 @@ static NSMutableDictionary* tagNameToTagNumber;
 @implementation ViewStyler {
     UIView* _view;
     CGRect _frame;
-    UIEdgeInsets _borderWidths;
-    UIColor* _borderColor;
+    UIEdgeInsets _edgeWidths;
+    UIColor* _edgeColor;
 }
 
 + (void)load {
@@ -178,7 +160,7 @@ static NSMutableDictionary* tagNameToTagNumber;
 
 - (void)apply {
     _view.frame = _frame;
-    [self _makeBorders];
+    [self _makeEdges];
 }
 
 - (id)render {
@@ -249,12 +231,20 @@ DeclareFloat4Styler(inset, top, right, bottom, left,
                     _frame.size.width -= left;
                     _frame.size.width -= right;
                     )
+DeclareFloatStyler(insetAll, i, self.inset(i,i,i,i))
+DeclareFloatStyler(insetSides, f, self.inset(0,f,0,f))
+DeclareFloatStyler(insetTop, f, self.inset(f,0,0,0))
+DeclareFloatStyler(insetRight, f, self.inset(0,f,0,0))
+DeclareFloatStyler(insetBottom, f, self.inset(0,0,f,0))
+DeclareFloatStyler(insetLeft, f, self.inset(0,0,0,f))
 
-DeclareFloatStyler(insetAll, i, return self.inset(i,i,i,i))
-DeclareFloatStyler(insetTop, f, return self.inset(f,0,0,0))
-DeclareFloatStyler(insetRight, f, return self.inset(0,f,0,0))
-DeclareFloatStyler(insetBottom, f, return self.inset(0,0,f,0))
-DeclareFloatStyler(insetLeft, f, return self.inset(0,0,0,f))
+DeclareFloat4Styler(outset, t, r, b, l, self.inset(-t, -r, -b, -l))
+DeclareFloatStyler(outsetAll, f, self.outset(f,f,f,f))
+DeclareFloatStyler(outsetSides, f, self.outset(0,f,0,f))
+DeclareFloatStyler(outsetTop, f, self.outset(f,0,0,0))
+DeclareFloatStyler(outsetRight, f, self.outset(0,f,0,0))
+DeclareFloatStyler(outsetBottom, f, self.outset(0,0,f,0))
+DeclareFloatStyler(outsetLeft, f, self.outset(0,0,0,f))
 
 DeclareFloatStyler(moveUp, amount, _frame.origin.y -= amount)
 DeclareFloatStyler(moveDown, amount, _frame.origin.y += amount)
@@ -263,9 +253,9 @@ DeclareViewFloatStyler(below, view, offset, if (view) { _frame.origin.y = view.y
 DeclareViewFloatStyler(above, view, offset, _frame.origin.y = view.y - _frame.size.height - offset)
 DeclareViewFloatStyler(rightOf, view, offset, _frame.origin.x = view.x2 + offset)
 DeclareViewFloatStyler(leftOf, view, offset, _frame.origin.x = view.x - offset)
-DeclareViewStyler(fillRightOf, view,
-                  _frame.origin.x = view.x2;
-                  _frame.size.width = _view.superview.width - view.x2;
+DeclareViewFloatStyler(fillRightOf, view, offset,
+                  _frame.origin.x = view.x2 + offset;
+                  _frame.size.width = _view.superview.width - view.x2 - offset;
                   )
 
 /* Size
@@ -301,36 +291,40 @@ DeclareFloat3Styler(shadow, xOffset, yOffset, radius,
                     _view.layer.shadowOpacity = 0.5;
                     )
 DeclareFloatStyler(radius, radius, _view.layer.cornerRadius = radius)
-- (StylerFloat4)borderWidths {
-    return ^(CGFloat top, CGFloat right, CGFloat bottom, CGFloat left) {
-        _borderWidths = UIEdgeInsetsMake(top, left, bottom, right);
-        return self;
-    };
-}
-DeclareFloatColorStyler(border, w, borderColor,
-                        _borderWidths = UIEdgeInsetsMake(w, w, w, w);
-                        _borderColor = borderColor;
+
+DeclareFloatColorStyler(border, width, color,
+                        _view.layer.borderWidth = width;
+                        _view.layer.borderColor = [color CGColor];
                         )
 
-- (void)_makeBorders {
-    if (_borderWidths.top) {
-        [self _addBorder:CGRectMake(0, 0, _frame.size.width, _borderWidths.top)];
+DeclareStyler(round,
+              CGFloat radius = MIN(_frame.size.width, _frame.size.height);
+              _view.layer.cornerRadius = radius/2;
+              _view.clipsToBounds = YES;
+              )
+
+DeclareFloat4ColorStyler(edges, w1,w2,w3,w4, color,
+                        _edgeWidths = UIEdgeInsetsMake(w1,w2,w3,w4);
+                        _edgeColor = color)
+- (void)_makeEdges {
+    if (_edgeWidths.top) {
+        [self _addEdge:CGRectMake(0, 0, _frame.size.width, _edgeWidths.top)];
     }
-    if (_borderWidths.right) {
-        [self _addBorder:CGRectMake(_frame.size.width - _borderWidths.right, 0, _borderWidths.right, _frame.size.height)];
+    if (_edgeWidths.right) {
+        [self _addEdge:CGRectMake(_frame.size.width - _edgeWidths.right, 0, _edgeWidths.right, _frame.size.height)];
     }
-    if (_borderWidths.bottom) {
-        [self _addBorder:CGRectMake(0, _frame.size.height - _borderWidths.bottom, _frame.size.width, _borderWidths.bottom)];
+    if (_edgeWidths.bottom) {
+        [self _addEdge:CGRectMake(0, _frame.size.height - _edgeWidths.bottom, _frame.size.width, _edgeWidths.bottom)];
     }
-    if (_borderWidths.left) {
-        [self _addBorder:CGRectMake(0, 0, _borderWidths.left, _frame.size.height)];
+    if (_edgeWidths.left) {
+        [self _addEdge:CGRectMake(0, 0, _edgeWidths.left, _frame.size.height)];
     }
 }
-- (void)_addBorder:(CGRect)rect {
-    CALayer* border = [CALayer layer];
-    border.frame = rect;
-    border.backgroundColor = _borderColor.CGColor;
-    [_view.layer addSublayer:border];
+- (void)_addEdge:(CGRect)rect {
+    CALayer* edge = [CALayer layer];
+    edge.frame = rect;
+    edge.backgroundColor = _edgeColor.CGColor;
+    [_view.layer addSublayer:edge];
 }
 - (ViewStyler *)hide {
     _view.hidden = YES;
@@ -351,18 +345,18 @@ DeclareStringStyler(text, text,
                     } else {
                         [NSException raise:@"Error" format:@"Unknown class in text"];
                     })
-- (StylerColor1)textColor {
-    return ^(UIColor* textColor) {
-        if ([_view isKindOfClass:UILabel.class]) {
-            _labelView.textColor = textColor;
-        } else if ([_view isKindOfClass:UIButton.class]) {
-            [_buttonView setTitleColor:textColor forState:UIControlStateNormal];
-        } else {
-            [NSException raise:@"Error" format:@"Unknown class in textColor"];
-        }
-        return self;
-    };
-}
+DeclareMStringStyler(bindText, string, [_textField bindTextTo:string]);
+
+DeclareColorStyler(textColor, textColor,
+                   if ([_view isKindOfClass:UILabel.class]) {
+                       NSLog(@"HERE %@", textColor);
+                       _labelView.textColor = textColor;
+                   } else if ([_view isKindOfClass:UIButton.class]) {
+                       [_buttonView setTitleColor:textColor forState:UIControlStateNormal];
+                   } else {
+                       [NSException raise:@"Error" format:@"Unknown class in textColor"];
+                   })
+
 - (StylerTextAlignment)textAlignment {
     return ^(NSTextAlignment textAlignment) {
         _labelView.textAlignment = textAlignment;
@@ -386,15 +380,56 @@ DeclareStyler(textCenter, self.textAlignment(NSTextAlignmentCenter))
 DeclareIntegerStyler(textLines, lines,
                      _labelView.numberOfLines = lines;
                      )
-DeclareStyler(wrapText,
-              _labelView.numberOfLines = 0;
-              _labelView.lineBreakMode = NSLineBreakByWordWrapping;
-              [self sizeToFit]
-              )
+DeclareStyler(wrapText, [_labelView wrapText]; [self sizeToFit])
 DeclareStyler1(keyboardType, UIKeyboardType, type, _textField.keyboardType = type)
 DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.keyboardAppearance = appearance)
 
 /* Text inputs
  *************/
 DeclareStringStyler(placeholder, placeholder, _textField.placeholder = placeholder)
+@end
+
+
+/* UIView helpers
+ ****************/
+@implementation UIView (FunStyler)
++ (StylerView)appendTo {
+    return ^(UIView* view) {
+        return self.styler.appendTo(view).fillW;
+    };
+}
++ (StylerView)prependTo {
+    return ^(UIView* view) {
+        return self.styler.prependTo(view).fillW;
+    };
+}
+- (ViewStyler *)styler {
+    return [[ViewStyler alloc] initWithView:self];
+}
+- (void)render {}
+
++ (StylerRect)frame {
+    return self.styler.frame;
+}
++ (ViewStyler*)styler {
+    UIView* instance = [[[self class] alloc] initWithFrame:CGRectZero];
+#if defined DEBUG && FALSE
+    return instance.styler.bg(RANDOM_COLOR);
+#else
+    return instance.styler;
+#endif
+}
+- (UIView *)viewByName:(NSString *)name {
+    NSNumber* tagNumber = tagNameToTagNumber[name];
+    if (!tagNumber) { return nil; }
+    return [self viewWithTag:[tagNumber integerValue]];
+}
+- (UILabel *)labelByName:(NSString *)name {
+    return (UILabel*)[self viewByName:name];
+}
+@end
+@implementation UIButton (FunStyler)
++ (ViewStyler *)styler {
+    return [[UIButton buttonWithType:UIButtonTypeCustom] styler];
+}
 @end

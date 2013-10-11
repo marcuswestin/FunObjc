@@ -62,7 +62,7 @@
 
 - (void)beforeRender:(BOOL)animated{} // Private hook - see e.g. ListViewController
 - (void)render:(BOOL)animated {
-    [UILabel.appendTo(self.view).fillW.text(@"You should implement -render in your ViewController").wrapText.center render];
+    [UILabel.appendTo(self.view).text(@"You should implement -render in your ViewController").wrapText.center render];
 }
 - (void)afterRender:(BOOL)animated{} // Private hook - see e.g. ListViewController
 

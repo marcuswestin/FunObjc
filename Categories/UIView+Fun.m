@@ -318,3 +318,24 @@ static CGFloat STATIC = 0.5f;
     [self addSubview:[[FunBlurView alloc] initWithSuperview:self color:color]];
 }
 @end
+
+@implementation UITextField (Fun)
+- (void)bindTextTo:(NSMutableString *)str {
+    if (!str || str.isNull) {
+        NSLog(@"WARNING UITextField -bindTextTo: got nil string");
+        return;
+    }
+    self.text = str;
+    [self onChange:^(UIEvent *event) {
+        [str setString:self.text];
+    }];
+}
+@end
+
+@implementation UILabel (Fun)
+- (void)wrapText {
+    self.numberOfLines = 0;
+    self.lineBreakMode = NSLineBreakByWordWrapping;
+    [self sizeToFit];
+}
+@end
