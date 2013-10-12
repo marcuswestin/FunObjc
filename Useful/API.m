@@ -192,8 +192,8 @@ static NSString* uuidHeader;
         }
     }
     
-    if (httpRes.statusCode < 200 && httpRes.statusCode >= 300) {
-        err = makeError([NSString stringWithFormat:@"API received non-200 status code: %d", httpRes.statusCode]);
+    if (httpRes.statusCode < 200 || httpRes.statusCode >= 300) {
+        err = makeError(res[@"text"]);
         return callback(err, nil);
     }
     
