@@ -349,7 +349,6 @@ DeclareMStringStyler(bindText, string, [_textField bindTextTo:string]);
 
 DeclareColorStyler(textColor, textColor,
                    if ([_view isKindOfClass:UILabel.class]) {
-                       NSLog(@"HERE %@", textColor);
                        _labelView.textColor = textColor;
                    } else if ([_view isKindOfClass:UIButton.class]) {
                        [_buttonView setTitleColor:textColor forState:UIControlStateNormal];
