@@ -25,6 +25,7 @@
 #import "UIView+FunStyle.h"
 #import "DefaultStyles.h"
 #import "UIImage+Fun.h"
+#import "NSDate-Utilities.h"
 
 #import "Fonts.h"
 #import "ViewController.h"
