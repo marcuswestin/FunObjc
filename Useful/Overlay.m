@@ -15,6 +15,11 @@ static UIWindow* overlayWindow;
 static UIWindow* previousWindow;
 
 + (UIWindow *)show {
+    return [self showWithTapHandler:^(UITapGestureRecognizer *sender) {
+        [Overlay hide];
+    }];
+}
++ (UIWindow *)showWithTapHandler:(TapHandler)tapHandler {
     [Overlay hide];
     previousWindow = [UIApplication sharedApplication].keyWindow;
     previousWindow.opaque = YES;
@@ -22,9 +27,7 @@ static UIWindow* previousWindow;
     overlayWindow = [[UIWindow alloc] initWithFrame:previousWindow.frame];
     overlayWindow.windowLevel = UIWindowLevelStatusBar + 1;
     [overlayWindow makeKeyAndVisible];
-    [overlayWindow onTap:^(UITapGestureRecognizer *sender) {
-        [Overlay hide];
-    }];
+    [overlayWindow onTap:tapHandler];
 
     overlayWindow.alpha = 0;
     

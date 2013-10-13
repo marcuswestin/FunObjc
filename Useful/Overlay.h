@@ -12,6 +12,7 @@
 
 + (UIWindow*)show;
 + (UIWindow*)showMessage:(NSString*)message;
++ (UIWindow*)showWithTapHandler:(TapHandler)tapHandler;
 + (void)hide;
 
 @end
