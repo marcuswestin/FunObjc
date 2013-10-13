@@ -7,8 +7,26 @@
 //
 
 #import "FunBase.h"
+#import <AVFoundation/AVFoundation.h>
 
-typedef void (^CameraCaptureCallback)(NSError* err, NSDictionary* result);
+@interface CameraVideo : State
+@property NSString* path;
+@property float duration;
+@property CGSize size;
+@property AVAsset* asset;
+@property AVPlayerItem* playerItem;
+@end
+
+@interface CameraPicture : State
+@property UIImage* image;
+@end
+
+@interface CameraResult : State
+@property CameraVideo* video;
+@property CameraPicture* picture;
+@end
+
+typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
 @interface Camera : FunBase <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property UIImagePickerController* picker;
@@ -31,6 +49,15 @@ typedef void (^CameraCaptureCallback)(NSError* err, NSDictionary* result);
                                animated:(BOOL)animated
                                callback:(CameraCaptureCallback)callback
 ;
+
++ (void)showModalPickerInViewController:(UIViewController*)viewController
+                             sourceType:(UIImagePickerControllerSourceType)sourceType
+                             cameraDevice:(UIImagePickerControllerCameraDevice)cameraDevice
+                           allowEditing:(BOOL)allowEditing
+                               animated:(BOOL)animated
+                               callback:(CameraCaptureCallback)callback
+;
+
 
 + (void)showCameraForPhotoInView:(UIView *)inView
                          device:(UIImagePickerControllerCameraDevice)device

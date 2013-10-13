@@ -10,6 +10,33 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <AVFoundation/AVFoundation.h>
 
+@implementation CameraVideo
+@end
+@implementation CameraPicture
+@end
+@implementation CameraResult
++ (instancetype) withVideoUrl:(NSURL*)videoUrl {
+    AVAsset* videoAsset = [[AVURLAsset alloc] initWithURL:videoUrl options:@{ AVURLAssetPreferPreciseDurationAndTimingKey:num(1) }];
+    AVAssetTrack* videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo][0];
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:videoAsset];
+    float durationInSeconds = CMTimeGetSeconds(videoAsset.duration);
+    CameraResult* instance = [CameraResult new];
+    CameraVideo* video = instance.video = [CameraVideo new];
+    video.path = videoUrl.path;
+    video.duration = durationInSeconds;
+    video.size = videoTrack.naturalSize;
+    video.asset = videoAsset;
+    video.playerItem = playerItem;
+    return instance;
+}
++ (instancetype) withImage:(UIImage*)image {
+    CameraResult* instance = [CameraResult new];
+    CameraPicture* picture = instance.picture = [CameraPicture new];
+    picture.image = image;
+    return instance;
+}
+@end
+
 @implementation Camera
 
 static Camera* camera;
@@ -79,11 +106,22 @@ static Camera* camera;
                                animated:(BOOL)animated
                                callback:(CameraCaptureCallback)callback
 {
+    return [Camera showModalPickerInViewController:viewController sourceType:sourceType cameraDevice:0 allowEditing:allowEditing animated:animated callback:callback];
+}
++ (void)showModalPickerInViewController:(UIViewController *)viewController
+                             sourceType:(UIImagePickerControllerSourceType)sourceType
+                           cameraDevice:(UIImagePickerControllerCameraDevice)cameraDevice
+                           allowEditing:(BOOL)allowEditing
+                               animated:(BOOL)animated
+                               callback:(CameraCaptureCallback)callback {
     [Camera _reset:callback modalViewController:viewController];
     
     camera.picker.sourceType = sourceType;
     camera.picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     camera.picker.allowsEditing = allowEditing;
+    if ([UIImagePickerController isCameraDeviceAvailable:cameraDevice]) {
+        camera.picker.cameraDevice = cameraDevice;
+    }
     
     [viewController presentViewController:camera.picker animated:animated completion:nil];
 }
@@ -123,7 +161,7 @@ static Camera* camera;
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    self.callback(nil, nil);
+    [self _finishWith:nil];
 }
 
 - (void) _handleCapturedVideo:(NSDictionary*)info {
@@ -131,20 +169,7 @@ static Camera* camera;
     if (self.saveToAlbum) {
         UISaveVideoAtPathToSavedPhotosAlbum(videoUrl.path, nil, nil, nil);
     }
-    
-    AVAsset* videoAsset = [[AVURLAsset alloc] initWithURL:videoUrl options:@{ AVURLAssetPreferPreciseDurationAndTimingKey:num(1) }];
-    AVAssetTrack* videoTrack = [videoAsset tracksWithMediaType:AVMediaTypeVideo][0];
-    CGSize videoSize = [videoTrack naturalSize];
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:videoAsset];
-    float durationInSeconds = CMTimeGetSeconds(videoAsset.duration);
-
-    self.callback(nil, @{@"type":@"video",
-                         @"path":videoUrl.path,
-                         @"duration":[NSNumber numberWithFloat:durationInSeconds],
-                         @"width":num(videoSize.width),
-                         @"height":num(videoSize.height),
-                         @"asset":videoAsset,
-                         @"playerItem":playerItem });
+    [self _finishWith:[CameraResult withVideoUrl:videoUrl]];
 }
 
 - (void)_handleCapturedPicture:(NSDictionary*)info {
@@ -152,9 +177,12 @@ static Camera* camera;
         UIImageWriteToSavedPhotosAlbum(info[UIImagePickerControllerOriginalImage], nil, nil, nil);
     }
     UIImage* image = info[(self.picker.allowsEditing ? UIImagePickerControllerEditedImage : UIImagePickerControllerOriginalImage)];
-    
-    self.callback(nil, @{@"type":@"picture",
-                         @"image":image });
+    [self _finishWith:[CameraResult withImage:image]];
+}
+
+- (void)_finishWith:(CameraResult*)result {
+    _callback(nil, result);
+    [Camera hide];
 }
 
 + (UIImage*)thumbnailForVideoResult:(NSDictionary*)videoResult atTime:(double)atTime {
