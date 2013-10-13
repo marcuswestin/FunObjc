@@ -33,6 +33,7 @@ static char const * const KeyTapHandler = "Fun_TapHandler";
     UITapGestureRecognizer* tap = [self _addFunGesture:UITapGestureRecognizer.class Key:KeyTapHandler selector:@selector(_handleFunTap:) handler:handler];
     tap.numberOfTapsRequired = numberOfTapsRequires;
     tap.numberOfTouchesRequired = numberOfTouchesRequired;
+    self.userInteractionEnabled = YES;
     return tap;
 }
 - (void) _handleFunTap:(UITapGestureRecognizer*)sender {
