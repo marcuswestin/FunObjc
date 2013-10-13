@@ -44,3 +44,28 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) reloadDataWithStartIndex:(NSInteger)startIndex;
 - (void) stopScrolling;
 @end
+
+// Sample implementation
+//- (id)listItemForIndex:(NSInteger)index {
+//    return nil;
+//}
+//
+//- (UIView *)listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width {
+//    return nil;
+//}
+//
+//- (UIView *)listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width {
+//    return nil;
+//}
+//
+//- (NSInteger)listStartIndex {
+//    return 0;
+//}
+//
+//- (void)listSelectGroupWithId:(id)groupId withItem:(id)item {
+//    
+//}
+//
+//- (void)listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView *)itemView {
+//    
+//}
