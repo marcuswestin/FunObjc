@@ -102,7 +102,6 @@ static NSArray* allContacts;
             }
             
             NSUInteger numPeople = (NSUInteger)ABAddressBookGetPersonCount(addressBook);
-            NSLog(@"HERE %d", numPeople);
             CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
             NSMutableArray* entries = [NSMutableArray arrayWithCapacity:numPeople];
             NSArray* emptyArray = @[];
