@@ -28,7 +28,7 @@
 - (NSError*)schema:(NSString*)sql;
 @end
 
-typedef void (^MigrationBlock)(SQLConn* conn);
+typedef NSError* (^MigrationBlock)(SQLConn* conn);
 @interface SQLMigrations : FunBase
 @property SQLConn* conn;
 - (void) registerMigration:(NSString*)name withBlock:(MigrationBlock)migrationBlock;
@@ -46,7 +46,7 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (void)transact:(SQLTransactionBlock)block;
 + (SQLRes*)select:(NSString*)sql args:(NSArray*)args;
 + (SQLRes*)selectOne:(NSString*)sql args:(NSArray*)args;
-+ (void)open:(NSString*)path withMigrations:(SQLRegisterMigrations)migrationsFn;
++ (void)openDocument:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (NSString*) joinSelect:(NSDictionary*)tableColumns;
 @end
 

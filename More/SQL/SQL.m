@@ -21,11 +21,12 @@ static NSMutableDictionary* columnsCache;
     NSMutableArray* _completedMigrations;
     NSUInteger _migrationIndex;
     NSMutableArray* _newMigrations;
+    NSString* _name;
 }
-static NSString* MigrationDoc = @"SQLMigrationInfo";
-- (id)init {
+- (id)initWithName:(NSString*)name {
     if (self = [super init]) {
-        NSDictionary* migrationInfo = [Files readJsonDocument:MigrationDoc];
+        _name = name;
+        NSDictionary* migrationInfo = [Files readJsonDocument:[self migrationDoc]];
         _migrationIndex = 0;
         _newMigrations = [NSMutableArray array];
         if (migrationInfo) {
@@ -35,6 +36,9 @@ static NSString* MigrationDoc = @"SQLMigrationInfo";
         }
     }
     return self;
+}
+- (NSString*)migrationDoc {
+    return [_name append:@"-MigrationInfo"];
 }
 - (void)registerMigration:(NSString *)name withBlock:(MigrationBlock)block {
     if (_migrationIndex < _completedMigrations.count) {
@@ -53,18 +57,22 @@ static NSString* MigrationDoc = @"SQLMigrationInfo";
         NSLog(@"Running migration %@", migration[@"name"]);
         [SQL transact:^(SQLConn *conn, SQLRollbackBlock rollback) {
             MigrationBlock migrationBlock = migration[@"block"];
+            NSError* err;
             @try {
-                migrationBlock(conn);
+                err = migrationBlock(conn);
             }
             @catch (NSException *exception) {
-                [Log error:makeError(exception.reason)];
+                err = makeError(exception.reason);
+            }
+            if (err) {
+                [Log error:err];
                 rollback();
             }
         }];
         [_completedMigrations addObject:migration[@"name"]];
     }];
     
-    [Files writeJsonDocument:MigrationDoc data:@{@"completedMigrations": _completedMigrations}];
+    [Files writeJsonDocument:[self migrationDoc] data:@{@"completedMigrations": _completedMigrations}];
 }
 @end
 
@@ -72,10 +80,10 @@ static NSString* MigrationDoc = @"SQLMigrationInfo";
 
 static FMDatabaseQueue* queue;
 
-+ (void) open:(NSString*)path withMigrations:(SQLRegisterMigrations)migrationsFn {
-    queue = [FMDatabaseQueue databaseQueueWithPath:path];
++ (void) openDocument:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
+    queue = [FMDatabaseQueue databaseQueueWithPath:[Files documentPath:name]];
     columnsCache = [NSMutableDictionary dictionary];
-    SQLMigrations* migrations = [[SQLMigrations alloc] init];
+    SQLMigrations* migrations = [[SQLMigrations alloc] initWithName:name];
     migrationsFn(migrations);
     [migrations _finish];
 }
