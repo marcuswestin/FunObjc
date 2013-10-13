@@ -28,7 +28,26 @@
 - (void)setDefaults{}
 
 - (instancetype)initWithDict:(NSDictionary*)dict {
-    [self setValuesForKeysWithDictionary:dict];
+    NSDictionary* props = [self classProperties];
+    
+    for (NSString* key in dict) {
+        if (!props[key]) {
+            NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
+            continue;
+        }
+        
+        id val = dict[key];
+
+        if (![val isNull]) {
+            Class class = NSClassFromString(props[key]);
+            if ([class isSubclassOfClass:[State class]]) {
+                val = [class fromDict:val];
+            }
+        }
+        
+        [self setValue:val forKey:key];
+    }
+    
     [self setDefaults];
     return self;
 }
@@ -79,7 +98,7 @@
     return [NSKeyedArchiver archiveRootObject:self toFile:[Files documentPath:archiveDocName]];
 }
 
-+ (State*)fromArchiveDocument:(NSString*)archiveDocName {
++ (instancetype)fromArchiveDocument:(NSString*)archiveDocName {
     return [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
 }
 

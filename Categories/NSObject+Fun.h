@@ -11,4 +11,5 @@
 @interface NSObject (Fun)
 - (NSString*)className;
 - (BOOL)isNull;
+- (NSDictionary *)classProperties;
 @end

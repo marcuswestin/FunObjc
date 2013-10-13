@@ -13,7 +13,7 @@
 + (instancetype) fromDict:(NSDictionary*)dict;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
 - (NSDictionary*)toDictionary;
-+ (State*)fromArchiveDocument:(NSString*)archiveDocName;
++ (instancetype)fromArchiveDocument:(NSString*)archiveDocName;
 - (instancetype) copyWithDictionary:(NSDictionary*)dict;
 - (void)setDefaults;
 @end
