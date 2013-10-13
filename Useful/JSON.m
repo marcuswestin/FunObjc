@@ -36,6 +36,7 @@ static NSJSONWritingOptions jsonOpts = 0;
 }
 
 + (id)parseData:(NSData *)data {
+    if (!data) { return nil; }
     NSError* err;
     id result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
     if (err) { return [Log error:err]; }
