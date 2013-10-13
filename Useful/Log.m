@@ -11,11 +11,11 @@
 @implementation Log
 
 + (void)event:(NSString *)event data:(NSDictionary *)data {
-    NSLog(@"EVENT %@ %@", event, data);
+    NSLog(@"Log: EVENT %@ %@", event, data);
 }
 
 + (id)error:(NSError *)error {
-    NSLog(@"ERROR %@", error);
+    NSLog(@"Log: ERROR %@", error);
     return nil;
 }
 
