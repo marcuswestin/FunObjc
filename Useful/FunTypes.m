@@ -13,12 +13,25 @@
 
 #include <stdio.h>
 
+void fatal(NSError* err) {
+    if (!err) { return; }
+    asyncMain(^{
+        NSString* message = err.localizedDescription;
+        NSLog(@"FATAL %@ %@", message, err);
+        UIWindow* overlay = [Overlay showWithTapHandler:^(UITapGestureRecognizer *sender) {
+            // Do nothing
+        }];
+        [UILabel.appendTo(overlay).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
+    });
+}
+
 void error(NSError* err) {
     if (!err) { return; }
-    dispatch_async(dispatch_get_main_queue(), ^{
+    asyncMain(^{
         NSString* message = err.localizedDescription;
         NSLog(@"ERROR %@ %@", message, err);
-        [UILabel.appendTo([Overlay show]).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
+        UIWindow* overlay = [Overlay show];
+        [UILabel.appendTo(overlay).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
     });
 }
 

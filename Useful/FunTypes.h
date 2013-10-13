@@ -47,6 +47,7 @@ typedef void (^ErrorCallback)(NSError* err);
 typedef void (^AuthorizeCallback)(NSError* err, BOOL authorized);
 
 void error(NSError* err);
+void fatal(NSError* err);
 NSError* makeError(NSString* localMessage);
 void after(NSTimeInterval delayInSeconds, Block block);
 void every(NSTimeInterval delayInSeconds, Block block);
