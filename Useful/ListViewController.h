@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
 
+typedef NSInteger ListItemIndex;
+
 enum ListViewLocation { TOP=1, BOTTOM=2 };
 typedef enum ListViewLocation ListViewLocation;
 
@@ -45,7 +47,7 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) reloadDataWithStartIndex:(NSInteger)startIndex;
 - (void) stopScrolling;
 
-- (void) listAppendItemWithIndex:(NSInteger)itemIndex;
+- (void) listAppendItemsStartingAtIndex:(ListItemIndex)firstIndex count:(NSUInteger)count;
 @end
 
 // Sample implementation

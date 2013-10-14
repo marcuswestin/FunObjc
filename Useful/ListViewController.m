@@ -320,17 +320,24 @@ static CGFloat START_Y = 99999.0f;
     }];
 }
 
-- (void)listAppendItemWithIndex:(NSInteger)itemIndex {
-    if (itemIndex <= _bottomItemIndex) {
+- (void)listAppendItemsStartingAtIndex:(ListItemIndex)firstIndex count:(NSUInteger)count {
+    if (count == 0) {
+        return;
+    }
+    
+    if (firstIndex <= _bottomItemIndex) {
         [NSException raise:@"Invalid state" format:@"Appended item with index <= current bottom item index"];
         return;
     }
-
-    CGFloat changeInHeight = 0;
     
-    id item = [_delegate listItemForIndex:itemIndex];
-    UIView* view = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
-    changeInHeight += view.height;
+    CGFloat changeInHeight = 0;
+
+    for (NSUInteger i=0; i<count; i++) {
+        ListItemIndex itemIndex = firstIndex + i;
+        id item = [_delegate listItemForIndex:itemIndex];
+        UIView* view = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
+        changeInHeight += view.height;
+    }
     
     if (_hasReachedTheVeryBottom) {
         CGSize size = _scrollView.contentSize;
