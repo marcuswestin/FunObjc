@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FunBase.h"
-
 typedef id (^MapIdToId)(id val, NSUInteger i);
 typedef NSInteger (^MapIdToInt)(id val, NSUInteger i);
 typedef void (^Iterate)(id val, NSUInteger i);

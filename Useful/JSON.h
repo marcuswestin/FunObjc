@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 
-@interface JSON : FunBase
+@interface JSON : NSObject
 
 + (NSString*)stringify:(id)obj;
 + (NSData*)serialize:(id)obj;

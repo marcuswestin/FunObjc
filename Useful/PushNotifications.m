@@ -7,6 +7,7 @@
 //
 
 #import "PushNotifications.h"
+#import "FunTypes.h"
 
 #if defined PLATFORM_OSX
 #define NotificationTypes (UIRemoteNotificationTypeBadge)
@@ -24,6 +25,18 @@
 
 #endif
 
+@implementation PushNotification
+- (NSString *)alert {
+    return _data[@"alert"];
+}
+- (NSUInteger)badge {
+    return (_data[@"badge"] ? [_data[@"badge"] unsignedIntegerValue] : 0);
+}
+- (NSString *)sound {
+    return _data[@"sound"];
+}
+@end
+
 @implementation PushAuthorization
 @end
 
@@ -31,32 +44,55 @@ static PushAuthorizationCallback authorizationCallback;
 
 @implementation PushNotifications
 
++ (void)onPushNotification:(EventSubscriber)subscriber callback:(PushNotificationCallback)callback {
+    [Events on:@"Application.didReceiveRemoteNotification" subscriber:subscriber callback:^(id info) {
+        callback([self _pushNotificationInfo:info]);
+    }];
+}
+
++ (void)onLaunchNotification:(EventSubscriber)subscriber callback:(PushNotificationCallback)callback {
+    [Events on:@"Application.didLaunchWithNotification" subscriber:subscriber callback:^(id info) {
+        callback([self _pushNotificationInfo:info]);
+    }];
+}
+
++ (void)offPushNotification:(EventSubscriber)subscriber {
+    [Events off:@"Application.didReceiveRemoteNotification" subscriber:subscriber];
+}
+
++ (void)offLaunchNotification:(EventSubscriber)subscriber {
+    [Events off:@"Application.didLaunchWithNotification" subscriber:subscriber];
+}
+
++ (PushNotification*)_pushNotificationInfo:(NSDictionary*)notificationData {
+    PushNotification* info = [PushNotification new];
+    info.data = notificationData;
+    return info;
+}
+
 + (BOOL)deviceSupportsRemoteNotifications {
     return !isSimulator;
 }
 
-+ (void)load {
-    [Events on:@"Application.didRegisterForRemoteNotificationsWithDeviceToken" callback:^(NSData* deviceToken) {
-        NSString* tokenAsString = [[[deviceToken description]
-                                    stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]]
-                                   stringByReplacingOccurrencesOfString:@" "
-                                   withString:@""];
++ (void)initialize {
+    [Events on:@"Application.didRegisterForRemoteNotificationsWithDeviceToken" subscriber:self callback:^(NSData* deviceToken) {
         PushAuthorization* auth = [PushAuthorization new];
         auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios, ios-sandbox, osx, osx-sandbox
-        auth.token = tokenAsString;
+        auth.token = [PushNotifications tokenString:deviceToken];
         authorizationCallback(nil, auth);
     }];
-    [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" callback:^(NSError* err) {
+    
+    [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" subscriber:self callback:^(NSError* err) {
         authorizationCallback(err, nil);
         authorizationCallback = nil;
     }];
-    [Events on:@"Application.didReceiveRemoteNotification" callback:^(NSDictionary* notification) {
-        [Events fire:@"Notifications.notification" info:@{ @"notification":notification }];
-    }];
-    [Events on:@"Application.didLaunchWithNotification" callback:^(NSDictionary* notification) {
-        [Events fire:@"Notifications.notification" info:@{ @"notification":notification,
-                                                           @"didBringAppIntoForeground":num(1) }];
-    }];
+}
+
++ (NSString*)tokenString:(NSData*)deviceToken {
+    return [[[deviceToken description]
+             stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]]
+            stringByReplacingOccurrencesOfString:@" "
+            withString:@""];
 }
 
 + (void)authorize:(PushAuthorizationCallback)callback {

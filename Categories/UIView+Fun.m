@@ -7,6 +7,7 @@
 //
 
 #import "UIView+Fun.h"
+#import "FunObjc.h"
 
 @class FunBlurView;
 
@@ -286,6 +287,12 @@ static CGFloat STATIC = 0.5f;
     } completion:^(BOOL finished) {
         completionCallback(nil, ghostView);
     }];
+}
+
+/* Animations
+ ************/
++ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations {
+    return [UIView animateWithDuration:duration delay:delay options:options animations:animations completion:nil];
 }
 @end
 

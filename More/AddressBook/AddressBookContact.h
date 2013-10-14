@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AddressBook/AddressBook.h>
-#import "State.h"
+#import "FunObjc.h"
 
 @interface AddressBookContact : State
 @property ABRecordID recordId;

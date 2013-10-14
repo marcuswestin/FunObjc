@@ -8,6 +8,13 @@
 
 #import "ListViewController.h"
 #import "UIView+FunStyle.h"
+#import "FunTypes.h"
+#import "UIColor+Fun.h"
+#import "Keyboard.h"
+#import "UIScrollView+Fun.h"
+#import "UIView+FunStyle.h"
+#import "UIView+Fun.h"
+#import "NSArray+Fun.h"
 
 // Used to differentiate group head views from item views
 @interface ListGroupHeadView : UIView;
@@ -21,6 +28,8 @@ static CGFloat START_Y = 99999.0f;
 @implementation ListViewController {
     UIView* _topGroupView;
     NSUInteger _withoutScrollEventStack;
+    BOOL _hasReachedTheVeryTop;
+    BOOL _hasReachedTheVeryBottom;
 }
 
 - (void)beforeRender:(BOOL)animated {
@@ -39,6 +48,35 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)afterRender:(BOOL)animated {
     [self reloadDataWithStartIndex:[_delegate listStartIndex]];
+    [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
+        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+            if ([self shouldMoveWithKeyboard]) {
+                [_scrollView addContentInsetTop:info.height];
+                [self.view moveByY:-info.height];
+            } else {
+                [_scrollView addContentInsetBottom:info.height];
+            }
+        }];
+    }];
+    [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
+        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+            if ([self shouldMoveWithKeyboard]) {
+                [_scrollView addContentInsetTop:-info.height];
+                [self.view moveByY:info.height];
+            } else {
+                [_scrollView addContentInsetBottom:-info.height];
+            }
+        }];
+    }];
+}
+
+- (BOOL)shouldMoveWithKeyboard {
+    return ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)] && [_delegate listShouldMoveWithKeyboard]);
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [Keyboard offWillShow:self];
+    [Keyboard offWillHide:self];
 }
 
 - (void)reloadDataWithStartIndex:(NSInteger)startAtIndex {
@@ -262,10 +300,13 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)_didReachTheVeryBottom {
+    _hasReachedTheVeryBottom = YES;
     _scrollView.contentSize = CGSizeMake(_scrollView.width, CGRectGetMaxY([self bottomView].frame));
 }
 
 - (void)_didReachTheVeryTop {
+    _hasReachedTheVeryTop = YES;
+    
     CGFloat changeInHeight = CGRectGetMinY([self topView].frame);
     if (changeInHeight == 0) { return; }
     _topY -= changeInHeight;
@@ -277,6 +318,29 @@ static CGFloat START_Y = 99999.0f;
             [subView moveByY:-changeInHeight];
         }
     }];
+}
+
+- (void)listAppendItemWithIndex:(NSInteger)itemIndex {
+    if (itemIndex <= _bottomItemIndex) {
+        [NSException raise:@"Invalid state" format:@"Appended item with index <= current bottom item index"];
+        return;
+    }
+
+    CGFloat changeInHeight = 0;
+    
+    id item = [_delegate listItemForIndex:itemIndex];
+    UIView* view = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
+    changeInHeight += view.height;
+    
+    if (_hasReachedTheVeryBottom) {
+        CGSize size = _scrollView.contentSize;
+        size.height += changeInHeight;
+        _scrollView.contentSize = size;
+    }
+    
+    CGPoint offset = _scrollView.contentOffset;
+    offset.y += changeInHeight;
+    [self.scrollView setContentOffset:offset animated:YES];
 }
 
 - (void)_withoutScrollEvents:(Block)block {

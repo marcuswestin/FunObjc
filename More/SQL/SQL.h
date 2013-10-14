@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import "FunObjc.h"
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
@@ -16,7 +16,7 @@
 @property NSDictionary* row;
 @end
 
-@interface SQLConn : FunBase
+@interface SQLConn : NSObject
 @property FMDatabase* db;
 - (SQLRes*)select:(NSString *)sql args:(NSArray *)args;
 - (SQLRes*)selectOne:(NSString *)sql args:(NSArray *)args;
@@ -29,7 +29,7 @@
 @end
 
 typedef NSError* (^MigrationBlock)(SQLConn* conn);
-@interface SQLMigrations : FunBase
+@interface SQLMigrations : NSObject
 @property SQLConn* conn;
 - (void) registerMigration:(NSString*)name withBlock:(MigrationBlock)migrationBlock;
 @end
@@ -41,7 +41,7 @@ typedef void (^SQLAutocommitBlock)(SQLConn *conn);
 typedef void (^SQLRollbackBlock)();
 typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 
-@interface SQL : FunBase
+@interface SQL : NSObject
 + (void)autocommit:(SQLAutocommitBlock)block;
 + (void)transact:(SQLTransactionBlock)block;
 + (SQLRes*)select:(NSString*)sql args:(NSArray*)args;

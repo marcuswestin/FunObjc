@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 
-@interface Viewport : FunBase
+@interface Viewport : NSObject
 
 + (CGFloat)height;
 + (CGFloat)width;

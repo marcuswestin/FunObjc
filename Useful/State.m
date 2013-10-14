@@ -9,6 +9,7 @@
 #import "State.h"
 #import <objc/runtime.h>
 #import "Files.h"
+#import "FunObjc.h"
 
 @implementation State
 
@@ -43,9 +44,9 @@
             if ([class isSubclassOfClass:[State class]]) {
                 val = [class fromDict:val];
             }
+            
+            [self setValue:val forKey:key];
         }
-        
-        [self setValue:val forKey:key];
     }
     
     [self setDefaults];

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 
 @interface Multipart : NSObject
 + (instancetype)json:(NSDictionary*)obj;
@@ -24,7 +24,7 @@
 typedef void (^APICallback)(NSError* err, NSDictionary* res);
 typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res);
 
-@interface API : FunBase
+@interface API : NSObject
 
 + (void)setup:(NSString*)serverUrl;
 + (void)setHeaders:(NSDictionary*)headers;

@@ -9,6 +9,8 @@
 #import "JSON.h"
 #import "Log.h"
 #import "NSObject+Fun.h"
+#import "NSString+Fun.h"
+#import "State.h"
 
 @implementation JSON
 

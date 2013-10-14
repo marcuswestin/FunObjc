@@ -6,10 +6,13 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunTypes.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import "Overlay.h"
 #import "Viewport.h"
+#import "UIView+FunStyle.h"
+#import "UIControl+Fun.h"
+#import "FunTypes.h"
+#import "UIColor+Fun.h"
 
 #include <stdio.h>
 
@@ -89,4 +92,12 @@ void repeat(NSUInteger times, NSUIntegerBlock block) {
 
 NSError* makeError(NSString* localMessage) {
     return [NSError errorWithDomain:@"Global" code:1 userInfo:@{ NSLocalizedDescriptionKey:localMessage }];
+}
+
+NSRange NSRangeMake(NSUInteger location, NSUInteger length) {
+    return (NSRange){ .location = location, .length = length };
+}
+
+NSString* NSStringFromRange(NSRange range) {
+    return [NSString stringWithFormat:@"{ .location=%d, .length=%d }", range.location, range.length];
 }

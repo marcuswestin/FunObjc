@@ -6,12 +6,13 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 #import "UIImage+Alpha.h"
 #import "UIImage+Resize.h"
 #import "UIImage+RoundedCorner.h"
+#import "FunObjc.h"
 
-@interface Images : FunBase
+@interface Images : NSObject
 
 + (void)load:(NSString*)url resize:(CGSize)size radius:(NSUInteger)radius callback:(ImageCallback)callback;
 + (void)load:(NSString*)url resize:(CGSize)size callback:(ImageCallback)callback;

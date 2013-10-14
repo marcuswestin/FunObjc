@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "FunObjc.h"
 #import <AddressBook/AddressBook.h>
 #import "AddressBookContact.h"

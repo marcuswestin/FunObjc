@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FunBase.h"
 
-@interface Files : FunBase
+@interface Files : NSObject
 
 + (id)readJsonDocument:(NSString*)filename;
 + (id)readJsonDocument:(NSString*)filename property:(NSString*)property;

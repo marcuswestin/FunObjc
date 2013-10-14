@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FunBase.h"
+#import "UIControl+Fun.h"
 
 @class ViewStyler;
 
@@ -32,7 +32,7 @@ typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
 typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
 
-@interface ViewStyler : FunBase
+@interface ViewStyler : NSObject
 
 /* Create & apply
  ****************/

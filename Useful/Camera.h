@@ -6,8 +6,10 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "FunUseful.h"
+#import "State.h"
 
 @interface CameraVideo : State
 @property NSString* path;
@@ -28,7 +30,7 @@
 
 typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
-@interface Camera : FunBase <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface Camera : NSObject <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property UIImagePickerController* picker;
 @property (strong) CameraCaptureCallback callback;
 @property UIViewController* modalViewController;

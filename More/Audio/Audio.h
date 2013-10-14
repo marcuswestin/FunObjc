@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AudioGraph.h"
-#import "FunTypes.h"
+#import "FunObjc.h"
 
 typedef float Pitch; // pitch=[-1,1]
 

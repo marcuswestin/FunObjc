@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FunObjc.h"
+#import "FunTypes.h"
 
 @interface UIView (Fun)
 
@@ -71,6 +71,10 @@
 - (UIView*)ghost;
 - (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback;
 - (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback completion:(ViewCallback)completionCallback;
+
+/* Animations
+ ************/
++ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations;
 @end
 
 @interface UIView (Blur)

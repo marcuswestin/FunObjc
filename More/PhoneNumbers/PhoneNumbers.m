@@ -9,6 +9,7 @@
 #import "PhoneNumbers.h"
 #import "NSString+Fun.h"
 #import "RMPhoneFormat.h"
+#import "FunObjc.h"
 
 @implementation PhoneNumbers
 

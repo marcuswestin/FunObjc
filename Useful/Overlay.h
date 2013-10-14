@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
+#import "UIControl+Fun.h"
 
-@interface Overlay : FunBase
+@interface Overlay : NSObject
 
 + (UIWindow*)show;
 + (UIWindow*)showMessage:(NSString*)message;

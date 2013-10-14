@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunBase.h"
+#import <Foundation/Foundation.h>
 
-@interface Cache : FunBase
+@interface Cache : NSObject
 
 + (void)store:(NSString*)key data:(NSData*)data;
 + (void)store:(NSString*)key data:(NSData*)data cacheInMemory:(BOOL)cacheInMemory;

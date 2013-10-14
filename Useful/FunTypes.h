@@ -61,3 +61,6 @@ NSString* concat(id arg1, ...);
 NSNumber* num(int i);
 NSNumber* numf(float f);
 void repeat(NSUInteger times, NSUIntegerBlock block);
+
+NSRange NSRangeMake(NSUInteger location, NSUInteger length);
+NSString* NSStringFromRange(NSRange range);

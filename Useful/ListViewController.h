@@ -27,6 +27,7 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) listTopGroupViewDidMove:(CGRect)frame;
 - (void) listTopGroupDidChange:(id)topGroupItem withDirection:(ListViewDirection)direction;
 - (void) listSelectGroupWithId:(id)groupId withItem:(id)item;
+- (BOOL) listShouldMoveWithKeyboard;
 @end
 
 
@@ -43,6 +44,8 @@ typedef enum ListViewDirection ListViewDirection;
 @property UIEdgeInsets groupMargins;
 - (void) reloadDataWithStartIndex:(NSInteger)startIndex;
 - (void) stopScrolling;
+
+- (void) listAppendItemWithIndex:(NSInteger)itemIndex;
 @end
 
 // Sample implementation

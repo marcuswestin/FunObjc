@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "Audio.h"
-#import "FunTypes.h"
+#import "FunObjc.h"
 
 const AudioUnitElement RIOInputFromMic;
 const AudioUnitElement RIOInputFromApp;

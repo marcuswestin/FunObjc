@@ -7,7 +7,7 @@
 //
 
 #import "TableViewController.h"
-#import "FunObjc.h"
+#import "FunUseful.h"
 
 @implementation TableViewController
 
