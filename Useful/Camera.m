@@ -185,8 +185,8 @@ static Camera* camera;
     [Camera hide];
 }
 
-+ (UIImage*)thumbnailForVideoResult:(NSDictionary*)videoResult atTime:(double)atTime {
-    AVAsset* videoAsset = videoResult[@"asset"];
++ (UIImage*)thumbnailForVideoResult:(CameraVideo*)videoResult atTime:(double)atTime {
+    AVAsset* videoAsset = videoResult.asset;
     CMTime cmTime = CMTimeMakeWithSeconds(atTime, videoAsset.duration.timescale);
     
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:videoAsset];

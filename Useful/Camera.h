@@ -79,7 +79,7 @@ typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
 + (void)hide;
 
-+ (UIImage*)thumbnailForVideoResult:(NSDictionary*)videoResult atTime:(double)time;
++ (UIImage*)thumbnailForVideoResult:(CameraVideo*)videoResult atTime:(double)time;
 
 + (UIImagePickerController*)picker;
 
