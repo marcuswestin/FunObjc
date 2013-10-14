@@ -10,13 +10,14 @@
 #import "Events.h"
 #import "FunObjc.h"
 
-@interface PushNotification : NSObject
+@interface NotificationInfo : NSObject
 @property NSDictionary* data;
 @property (readonly) NSString* alert;
 @property (readonly) NSUInteger badge;
 @property (readonly) NSString* sound;
+- (id)objectForKeyedSubscript:(id)key;
 @end
-typedef void (^PushNotificationCallback)(PushNotification* info);
+typedef void (^PushNotificationCallback)(NotificationInfo* info);
 
 @interface PushAuthorization : State
 @property NSString* vendor;

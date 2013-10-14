@@ -25,15 +25,18 @@
 
 #endif
 
-@implementation PushNotification
+@implementation NotificationInfo
 - (NSString *)alert {
-    return _data[@"alert"];
+    return _data[@"aps"][@"alert"];
 }
 - (NSUInteger)badge {
-    return (_data[@"badge"] ? [_data[@"badge"] unsignedIntegerValue] : 0);
+    return (_data[@"aps"][@"badge"] ? [_data[@"aps"][@"badge"] unsignedIntegerValue] : 0);
 }
 - (NSString *)sound {
-    return _data[@"sound"];
+    return _data[@"aps"][@"sound"];
+}
+- (id)objectForKeyedSubscript:(id)key {
+    return _data[key];
 }
 @end
 
@@ -64,8 +67,8 @@ static PushAuthorizationCallback authorizationCallback;
     [Events off:@"Application.didLaunchWithNotification" subscriber:subscriber];
 }
 
-+ (PushNotification*)_pushNotificationInfo:(NSDictionary*)notificationData {
-    PushNotification* info = [PushNotification new];
++ (NotificationInfo*)_pushNotificationInfo:(NSDictionary*)notificationData {
+    NotificationInfo* info = [NotificationInfo new];
     info.data = notificationData;
     return info;
 }
@@ -85,6 +88,10 @@ static PushAuthorizationCallback authorizationCallback;
     [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" subscriber:self callback:^(NSError* err) {
         authorizationCallback(err, nil);
         authorizationCallback = nil;
+    }];
+    
+    [PushNotifications onPushNotification:self callback:^(NotificationInfo *info) {
+        [PushNotifications setBadgeNumber:info.badge];
     }];
 }
 
