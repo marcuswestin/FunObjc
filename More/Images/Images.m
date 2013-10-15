@@ -30,7 +30,7 @@ static NSString* cacheKeyBase;
 //    cacheKeyBase = [cacheKeyBase stringByAppendingFormat:@"%f", [NSDate new].timeIntervalSince1970];
 }
 
-+ (UIImage *)get:(NSString *)url resize:(CGSize)resize radius:(NSUInteger)radius {
++ (UIImage *)get:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
     NSString* processedKey = [self _cacheKeyFor:url resize:resize radius:radius];
     NSData* data = [Cache get:processedKey];
     return (data ? [UIImage imageWithData:data] : nil);
@@ -40,7 +40,7 @@ static NSString* cacheKeyBase;
     [Images load:url resize:size radius:0 callback:callback];
 }
 
-+ (void)load:(NSString *)url resize:(CGSize)resize radius:(NSUInteger)radius callback:(ImageCallback)callback {
++ (void)load:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius callback:(ImageCallback)callback {
     // Processed cached
     callback = [self _mainThreadCallback:callback];
     asyncDefault(^{
@@ -119,7 +119,7 @@ static NSString* cacheKeyBase;
     }
 }
 
-+ (void) _processAndCache:(NSString*)url data:(NSData*)data resize:(CGSize)resize radius:(NSUInteger)radius callback:(ImageCallback)callback {
++ (void) _processAndCache:(NSString*)url data:(NSData*)data resize:(CGSize)resize radius:(int)radius callback:(ImageCallback)callback {
     UIImage* image = [UIImage imageWithData:data];
     if (resize.width || resize.height || radius) {
         image = [image thumbnailSize:CGSizeMake(resize.width*2, resize.height*2) transparentBorder:0 cornerRadius:radius interpolationQuality:kCGInterpolationDefault];
@@ -130,8 +130,8 @@ static NSString* cacheKeyBase;
     callback(nil, image);
 }
 
-+ (NSString*)_cacheKeyFor:(NSString*)url resize:(CGSize)resize radius:(NSUInteger)radius {
-    return [NSString stringWithFormat:@"%@:url:%@+resize:%@+radius:%d", cacheKeyBase, url, NSStringFromCGSize(resize), radius];
++ (NSString*)_cacheKeyFor:(NSString*)url resize:(CGSize)resize radius:(CGFloat)radius {
+    return [NSString stringWithFormat:@"%@:url:%@+resize:%@+radius:%f", cacheKeyBase, url, NSStringFromCGSize(resize), radius];
 }
 
 @end

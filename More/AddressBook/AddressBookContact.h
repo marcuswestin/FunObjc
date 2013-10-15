@@ -19,4 +19,5 @@
 @property BOOL hasImage;
 @property NSDate* birthday;
 - (UIImage*)image;
+- (UIImage*)imageWithAddressBook:(ABAddressBookRef)addressBook;
 @end

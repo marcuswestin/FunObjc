@@ -75,8 +75,14 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     [Keyboard offWillShow:self];
     [Keyboard offWillHide:self];
+    NSInteger startIndex = 0;
+    if ([_delegate respondsToSelector:@selector(listStartIndex)]) {
+        startIndex = [_delegate listStartIndex];
+    }
+    [self reloadDataWithStartIndex:startIndex];
 }
 
 - (void)reloadDataWithStartIndex:(NSInteger)startAtIndex {
@@ -120,7 +126,7 @@ static CGFloat START_Y = 99999.0f;
             if (CGRectContainsPoint(view.frame, tapPoint)) {
                 id item = [_delegate listItemForIndex:itemIndex];
                 if (isGroupView) {
-                    id groupId = [_delegate listGroupIdForItem:item];
+                    id groupId = [self groupIdForItem:item];
                     if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withItem:)]) {
                         [_delegate listSelectGroupWithId:(id)groupId withItem:(id)item];
                     }
@@ -137,7 +143,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)_setTopGroupItem:(id)item withDirection:(ListViewDirection)direction {
-    _topGroupId = [_delegate listGroupIdForItem:item];
+    _topGroupId = [self groupIdForItem:item];
     if ([_delegate respondsToSelector:@selector(listTopGroupDidChange:withDirection:)]) {
         [_delegate listTopGroupDidChange:item withDirection:direction];
     }
@@ -153,7 +159,7 @@ static CGFloat START_Y = 99999.0f;
     if (!item) { return NO; }
     
     // Check if the new item falls outside of the group of the current bottom-most item.
-    id groupId = [_delegate listGroupIdForItem:item];
+    id groupId = [self groupIdForItem:item];
     if (![groupId isEqual:_bottomGroupId]) {
         // We reached the beginning of the next-to-be-displayed group at the bottom of the view
         [self _addGroupViewForItem:item withGroupId:groupId atLocation:BOTTOM];
@@ -181,7 +187,7 @@ static CGFloat START_Y = 99999.0f;
     }
     
     // Check if the new item falls outside of the group of the current top-most item.
-    id groupId = [_delegate listGroupIdForItem:nextTopItem];
+    id groupId = [self groupIdForItem:nextTopItem];
     if (![groupId isEqual:_topGroupId]) {
         if ([self _isGroupView:[self topView]]) {
             // The group view was just rendered in the previous _listAddNewTopView call
@@ -210,7 +216,12 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (UIView*) _addGroupViewForItem:(id)item withGroupId:(id)groupId atLocation:(ListViewLocation)location {
-    UIView* view = [_delegate listViewForGroupId:groupId withItem:item withWidth:[self _listWidthForView]];
+    UIView* view;
+    if ([_delegate respondsToSelector:@selector(listViewForGroupId:withItem:withWidth:)]) {
+        view = [_delegate listViewForGroupId:groupId withItem:item withWidth:[self _listWidthForView]];
+    } else {
+        view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [self _listWidthForView], 0)];
+    }
     [view moveToX:_groupMargins.left y:_groupMargins.top + _groupMargins.bottom];
     CGRect frame = view.bounds;
     frame.size.height += _groupMargins.top + _groupMargins.bottom;
@@ -292,10 +303,18 @@ static CGFloat START_Y = 99999.0f;
         _bottomY -= view.height;
         if ([self _isGroupView:view]) {
             id item = [_delegate listItemForIndex:_bottomItemIndex];
-            _bottomGroupId = [_delegate listGroupIdForItem:item];
+            _bottomGroupId = [self groupIdForItem:item];
         } else {
             _bottomItemIndex -= 1;
         }
+    }
+}
+
+- (id)groupIdForItem:(id)item {
+    if ([_delegate respondsToSelector:@selector(listGroupIdForItem:)]) {
+        return [_delegate listGroupIdForItem:item];
+    } else {
+        return nil;
     }
 }
 

@@ -56,6 +56,13 @@
     return nil;
 }
 
+- (id)item:(NSInteger)index {
+    if (index < 0 || index >= self.count) {
+        return nil;
+    }
+    return self[index];
+}
+
 - (NSString*) joinBy:(NSString*)joiner {
     return [self componentsJoinedByString:joiner];
 }

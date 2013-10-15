@@ -14,8 +14,8 @@
 
 @interface Images : NSObject
 
-+ (void)load:(NSString*)url resize:(CGSize)size radius:(NSUInteger)radius callback:(ImageCallback)callback;
++ (void)load:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius callback:(ImageCallback)callback;
 + (void)load:(NSString*)url resize:(CGSize)size callback:(ImageCallback)callback;
-+ (UIImage*)get:(NSString*)url resize:(CGSize)size radius:(NSUInteger)radius;
++ (UIImage*)get:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius;
 
 @end

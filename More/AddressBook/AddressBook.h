@@ -11,6 +11,7 @@
 #import "AddressBookContact.h"
 
 typedef void(^ContactsCallback)(NSArray* contacts);
+typedef void(^AddressBookContactCallback)(AddressBookContact* contact);
 
 @interface AddressBook : NSObject
 

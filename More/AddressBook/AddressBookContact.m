@@ -15,7 +15,11 @@
         NSLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
         return nil;
     }
-    
+    UIImage* image = [self imageWithAddressBook:addressBook];
+    CFRelease(addressBook);
+    return image;
+}
+- (UIImage *)imageWithAddressBook:(ABAddressBookRef)addressBook {
     ABRecordRef person = ABAddressBookGetPersonWithRecordID(addressBook, _recordId);
     NSData* data = (__bridge NSData *)(ABPersonCopyImageData(person));
     return [UIImage imageWithData:data];

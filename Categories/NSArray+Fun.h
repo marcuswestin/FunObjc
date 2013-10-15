@@ -14,13 +14,13 @@ typedef void (^Iterate)(id val, NSUInteger i);
 typedef BOOL (^Filter)(id val, NSUInteger i);
 
 @interface NSArray (Fun)
-
 - (void) each:(Iterate)iterateFn;
 - (void) asyncEach:(Iterate)iterateFn;
 - (NSMutableArray*) map:(MapIdToId)mapper;
 - (NSInteger) sum:(MapIdToInt)mapper;
 - (NSMutableArray*) filter:(Filter)filterFn;
 - (id) pickOne:(Filter)pickFn;
+- (id) item:(NSInteger)index;
 
 - (NSString*)joinBy:(NSString*)joiner;
 - (NSString*)joinedBySpace;

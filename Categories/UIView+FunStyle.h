@@ -86,7 +86,8 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
 - (StylerFloat1)w;
 - (StylerFloat1)h;
 - (StylerFloat2)wh;
-- (StylerSize)size;
+- (StylerSize)bounds;
+- (ViewStyler*)size;
 - (ViewStyler*)sizeToFit;
 - (ViewStyler*)fill;
 - (ViewStyler*)fillW;
@@ -101,7 +102,7 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
 - (StylerFloatColor)border;
 - (StylerFloat4Color)edges;
 - (ViewStyler*)hide;
-- (ViewStyler*)clipToBounds;
+- (ViewStyler*)clip;
 
 /* Labels
  ********/
@@ -121,6 +122,10 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
 - (StylerString1)placeholder;
 - (StylerMString1)bindText;
 - (StylerFloat1)inputPad;
+
+
+
+- (ViewStyler*)blur;
 @end
 
 

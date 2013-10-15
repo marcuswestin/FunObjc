@@ -19,12 +19,12 @@ typedef enum ListViewDirection ListViewDirection;
 
 @protocol ListViewDelegate <NSObject>
 @required
-- (NSInteger) listStartIndex;
 - (id) listItemForIndex:(NSInteger)index;
 - (UIView*) listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width;
-- (UIView*) listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width;
 - (void) listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView*)itemView;
 @optional
+- (NSInteger) listStartIndex;
+- (UIView*) listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width;
 - (id) listGroupIdForItem:(id)item;
 - (void) listTopGroupViewDidMove:(CGRect)frame;
 - (void) listTopGroupDidChange:(id)topGroupItem withDirection:(ListViewDirection)direction;
@@ -57,18 +57,6 @@ typedef enum ListViewDirection ListViewDirection;
 //
 //- (UIView *)listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width {
 //    return nil;
-//}
-//
-//- (UIView *)listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width {
-//    return nil;
-//}
-//
-//- (NSInteger)listStartIndex {
-//    return 0;
-//}
-//
-//- (void)listSelectGroupWithId:(id)groupId withItem:(id)item {
-//    
 //}
 //
 //- (void)listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView *)itemView {

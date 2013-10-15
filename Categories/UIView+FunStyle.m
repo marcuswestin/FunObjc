@@ -267,8 +267,9 @@ DeclareStyler(fill, _frame.size = _view.superview.bounds.size)
 DeclareStyler(fillW, _frame.size.width = _view.superview.width)
 DeclareStyler(fillH, _frame.size.height = _view.superview.height)
 
-DeclareSizeStyler(size, size, _frame.size = size)
+DeclareSizeStyler(bounds, size, _frame.size = size)
 DeclareStyler(sizeToParent, _frame.size = _view.superview.bounds.size)
+DeclareStyler(size, [self sizeToFit])
 DeclareStyler(sizeToFit,
               _view.frame = _frame;
               [_view sizeToFit];
@@ -290,7 +291,9 @@ DeclareFloat3Styler(shadow, xOffset, yOffset, radius,
                     _view.layer.shadowRadius = radius;
                     _view.layer.shadowOpacity = 0.5;
                     )
-DeclareFloatStyler(radius, radius, _view.layer.cornerRadius = radius)
+DeclareFloatStyler(radius, radius,
+                   _view.layer.cornerRadius = radius;
+                   _view.clipsToBounds = YES)
 
 DeclareFloatColorStyler(border, width, color,
                         _view.layer.borderWidth = width;
@@ -330,7 +333,7 @@ DeclareFloat4ColorStyler(edges, w1,w2,w3,w4, color,
     _view.hidden = YES;
     return self;
 }
-- (ViewStyler *)clipToBounds {
+- (ViewStyler *)clip {
     _view.clipsToBounds = YES;
     return self;
 }
@@ -391,6 +394,11 @@ DeclareFloatStyler(inputPad, pad,
                     [_textField setRightViewMode:UITextFieldViewModeAlways];
                     [_textField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]];
                     [_textField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]])
+
+
+
+DeclareStyler(blur, [_view blur]);
+
 @end
 
 
