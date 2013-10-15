@@ -85,6 +85,12 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
 - (void)onTouchUpOutside:(EventHandler)handler {
     [self on:UIControlEventTouchUpOutside handler:handler];
 }
+- (void)onFocus:(EventHandler)handler {
+    [self on:UIControlEventEditingDidBegin handler:handler];
+}
+- (void)onBlur:(EventHandler)handler {
+    [self on:UIControlEventEditingDidEnd handler:handler];
+}
 - (void)on:(UIControlEvents)controlEvents handler:(EventHandler)handler {
     NSMutableArray* handlers = objc_getAssociatedObject(self, KeyHandlers);
     if (!handlers) {

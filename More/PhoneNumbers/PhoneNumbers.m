@@ -35,11 +35,7 @@ static NSString* locale;
 + (NSString *)_normalize:(NSString *)phoneNumber {
     if (!phoneNumber || !phoneNumber.length) { return nil; }
 
-    NSString* normalized = [[[[phoneNumber
-            stringByRemoving:@" "]
-            stringByRemoving:@"-"]
-            stringByRemoving:@"("]
-            stringByRemoving:@")"];
+    NSString* normalized = [phoneNumber stringByRemovingPattern:@"[ \\-\\(\\)]"];
     
     if (normalized.length == 0) {
         return nil;

@@ -120,6 +120,7 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
  *************/
 - (StylerString1)placeholder;
 - (StylerMString1)bindText;
+- (StylerFloat1)inputPad;
 @end
 
 

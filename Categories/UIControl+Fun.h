@@ -33,6 +33,8 @@ typedef void (^PanHandler)(UIPanGestureRecognizer* sender);
 - (void)onTouchDown:(EventHandler)handler;
 - (void)onTouchUp:(EventHandler)handler;
 - (void)onTouchUpOutside:(EventHandler)handler;
+- (void)onFocus:(EventHandler)handler;
+- (void)onBlur:(EventHandler)handler;
 - (void) on:(UIControlEvents)controlEvents handler:(EventHandler)handler;
 @end
 

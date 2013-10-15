@@ -82,8 +82,13 @@
 - (void)blur:(UIColor*)color;
 @end
 
+typedef BOOL (^ShouldChangeStringCallback)(NSString* fromString, NSString* toString, NSRange replacementRange, NSString* replacementString);
+
 @interface UITextField (Fun)
 - (void)bindTextTo:(NSMutableString*)str;
+- (void)excludeInputsMatching:(NSString*)pattern;
+- (void)limitLengthTo:(NSUInteger)maxLength;
+- (void)shouldChange:(ShouldChangeStringCallback)shouldChangeStringCallback;
 @end
 
 @interface UILabel (Fun)

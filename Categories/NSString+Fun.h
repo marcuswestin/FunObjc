@@ -11,15 +11,22 @@
 @interface NSString (Fun)
 
 + (NSString*)UUID;
++ (NSString*)repeat:(NSString*)string times:(NSInteger)times;
+- (NSString*)repeatTimes:(NSInteger)times;
 - (NSArray*)splitByComma;
 - (NSArray*)split:(NSString*)splitter;
 - (NSData*)toData;
-- (NSString*)stringByRemoving:(NSString*)needle;
+- (NSString*)stringByRemovingString:(NSString*)needle;
+- (NSString*)stringByRemovingWhitespace;
 - (NSString*)encodedURIComponent;
 - (NSString*)stringByTrimmingWhitespace;
 - (NSString*)trim;
 - (BOOL)isEmpty;
 - (BOOL)is:(NSString*)string;
 - (NSString*)append:(NSString*)string;
+- (NSString*)stringByReplacingPattern:(NSString*)regexPattern withTemplate:(NSString*)replaceTemplate;
+- (NSString*)stringByRemovingPattern:(NSString*)regexPattern;
+- (NSString*)stringByInjecting:(NSString*)string every:(NSUInteger)nth;
+- (BOOL)matchesPattern:(NSString*)regexPattern;
 
 @end

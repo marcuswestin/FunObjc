@@ -26,6 +26,13 @@
     return [self fromDict:dict];
 }
 
+- (instancetype)init {
+    if (self = [super init]) {
+        [self setDefaults];
+    }
+    return self;
+}
+
 - (void)setDefaults{}
 
 - (instancetype)initWithDict:(NSDictionary*)dict {
@@ -79,7 +86,6 @@
     NSString* className = [aDecoder decodeObjectForKey:@"FunStateClass"];
     Class class = NSClassFromString(className);
     NSDictionary* dict = [aDecoder decodeObjectForKey:@"FunStateDict"];
-    [self setDefaults];
     return [[class alloc] initWithDict:dict];
 }
 
@@ -100,7 +106,9 @@
 }
 
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName {
-    return [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
+    id instance = [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
+    [instance setDefaults];
+    return instance;
 }
 
 - (instancetype)copyWithDictionary:(NSDictionary *)dict {

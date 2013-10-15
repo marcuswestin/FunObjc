@@ -386,6 +386,11 @@ DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.
 /* Text inputs
  *************/
 DeclareStringStyler(placeholder, placeholder, _textField.placeholder = placeholder)
+DeclareFloatStyler(inputPad, pad,
+                    [_textField setLeftViewMode:UITextFieldViewModeAlways];
+                    [_textField setRightViewMode:UITextFieldViewModeAlways];
+                    [_textField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]];
+                    [_textField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]])
 @end
 
 
