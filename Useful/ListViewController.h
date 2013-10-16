@@ -23,7 +23,7 @@ typedef enum ListViewDirection ListViewDirection;
 - (UIView*) listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width;
 - (void) listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView*)itemView;
 @optional
-- (NSInteger) listStartIndex;
+- (ListItemIndex)listStartIndex;
 - (UIView*) listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width;
 - (id) listGroupIdForItem:(id)item;
 - (void) listTopGroupViewDidMove:(CGRect)frame;
@@ -35,17 +35,11 @@ typedef enum ListViewDirection ListViewDirection;
 
 @interface ListViewController : ViewController <UIScrollViewDelegate>
 @property UIScrollView* scrollView;
-@property (weak) id<ListViewDelegate> delegate;
-@property NSInteger topItemIndex;
-@property NSInteger bottomItemIndex;
-@property CGFloat previousContentOffsetY;
-@property (readonly) id bottomGroupId;
-@property (readonly) id topGroupId;
-@property CGFloat topY;
-@property CGFloat bottomY;
-@property UIEdgeInsets groupMargins;
-@property UIEdgeInsets itemMargins;
-- (void) reloadDataWithStartIndex:(NSInteger)startIndex;
+@property UIEdgeInsets listGroupMargins;
+@property UIEdgeInsets listItemMargins;
+@property ListViewLocation listStartLocation;
+
+- (void) reloadData;
 - (void) stopScrolling;
 
 - (void) listAppendItemsStartingAtIndex:(ListItemIndex)firstIndex count:(NSUInteger)count;

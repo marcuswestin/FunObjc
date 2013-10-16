@@ -35,11 +35,23 @@ static CGFloat START_Y = 99999.0f;
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
+    id<ListViewDelegate> _delegate;
+    NSInteger _topItemIndex;
+    NSInteger _bottomItemIndex;
+    CGFloat _previousContentOffsetY;
+    id _bottomGroupId;
+    id _topGroupId;
+    CGFloat _topY;
+    CGFloat _bottomY;
+
 }
 
 - (void)beforeRender:(BOOL)animated {
     if (!_delegate) {
         _delegate = (id<ListViewDelegate>)self;
+    }
+    if (!_listStartLocation) {
+        _listStartLocation = TOP;
     }
     
     self.view.backgroundColor = WHITE;
@@ -52,7 +64,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)afterRender:(BOOL)animated {
-    [self reloadDataWithStartIndex:[_delegate listStartIndex]];
+    [self reloadData];
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self shouldMoveWithKeyboard]) {
@@ -83,14 +95,9 @@ static CGFloat START_Y = 99999.0f;
     [super viewWillDisappear:animated];
     [Keyboard offWillShow:self];
     [Keyboard offWillHide:self];
-    NSInteger startIndex = 0;
-    if ([_delegate respondsToSelector:@selector(listStartIndex)]) {
-        startIndex = [_delegate listStartIndex];
-    }
-    [self reloadDataWithStartIndex:startIndex];
 }
 
-- (void)reloadDataWithStartIndex:(NSInteger)startAtIndex {
+- (void)reloadData {
     [self _withoutScrollEvents:^{
         [self.scrollView empty];
 
@@ -102,22 +109,50 @@ static CGFloat START_Y = 99999.0f;
         _bottomGroupId = nil;
         _topGroupId = nil;
         
-        // All subsequent view calculations depend on the top/bottom current views.
-        // Initialize with first view. It's the first top & bottom view.
-        _topItemIndex = startAtIndex;
-        _bottomItemIndex = startAtIndex - 1;
-        BOOL didAddFirstView = [self _listAddNextBottomView];
-        
-        if (didAddFirstView) {
-            [self _setTopGroupItem:[_delegate listItemForIndex:_topItemIndex] withDirection:DOWN];
-            _bottomGroupId = _topGroupId;
+        if (_listStartLocation == TOP) {
+            // Starting at the top, render items downwards
+            _topItemIndex = [self _getStartIndex];
+            _bottomItemIndex = _topItemIndex - 1;
+            BOOL didAddFirstView = [self _listAddNextBottomView];
             
-            [self _extendBottom];
-            [self _extendTop];
+            if (didAddFirstView) {
+                _bottomGroupId = _topGroupId = [self groupIdForItem:[_delegate listItemForIndex:_topItemIndex]];
+
+                [self _setTopGroupItem:[_delegate listItemForIndex:_topItemIndex] withDirection:DOWN];
+                
+                [self _extendBottom];
+                [self _extendTop];
+            }
+            
+        } else if (_listStartLocation == BOTTOM) {
+            // Starting at the bottom, render items upwards
+            _bottomItemIndex = [self _getStartIndex];
+            _topItemIndex = _bottomItemIndex + 1;
+            BOOL didAddFirstView = [self _listAddNextTopView];
+            
+            if (didAddFirstView) {
+                _bottomGroupId = _topGroupId = [self groupIdForItem:[_delegate listItemForIndex:_bottomItemIndex]];
+
+                [self _extendTop];
+                [self _extendBottom];
+                
+                [self _setTopGroupItem:[_delegate listItemForIndex:_topItemIndex] withDirection:UP];
+            }
+            
+        } else {
+            [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
         }
     }];
-    if (startAtIndex == 0 && _scrollView.contentInset.top != 0) {
+    if ([self _getStartIndex] == 0 && _scrollView.contentInset.top != 0) {
         _scrollView.contentOffset = CGPointMake(0, -_scrollView.contentInset.top);
+    }
+}
+
+- (ListItemIndex)_getStartIndex {
+    if ([_delegate respondsToSelector:@selector(listStartIndex)]) {
+        return [_delegate listStartIndex];
+    } else {
+        return 0;
     }
 }
 
@@ -212,9 +247,9 @@ static CGFloat START_Y = 99999.0f;
 - (UIView*)_getViewForItem:(id)item atIndex:(NSInteger)itemIndex {
     UIView* content = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
     CGRect frame = content.bounds;
-    frame.size.height += _itemMargins.top + _itemMargins.bottom;
-    content.y = _itemMargins.top;
-    content.x = _itemMargins.left + _groupMargins.left;
+    frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
+    content.y = _listItemMargins.top;
+    content.x = _listItemMargins.left + _listGroupMargins.left;
     ListItemView* view = [[ListItemView alloc] initWithFrame:frame];
     [view addSubview:content];
     return view;
@@ -226,7 +261,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (CGFloat)_listWidthForView {
-    return self.view.width - (_groupMargins.left + _groupMargins.right + _itemMargins.left + _itemMargins.right);
+    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
 }
 
 - (UIView*) _addGroupViewForItem:(id)item withGroupId:(id)groupId atLocation:(ListViewLocation)location {
@@ -236,9 +271,9 @@ static CGFloat START_Y = 99999.0f;
     } else {
         view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [self _listWidthForView], 0)];
     }
-    [view moveToX:_groupMargins.left y:_groupMargins.top + _groupMargins.bottom];
+    [view moveToX:_listGroupMargins.left y:_listGroupMargins.top + _listGroupMargins.bottom];
     CGRect frame = view.bounds;
-    frame.size.height += _groupMargins.top + _groupMargins.bottom;
+    frame.size.height += _listGroupMargins.top + _listGroupMargins.bottom;
     ListGroupHeadView* groupView = [[ListGroupHeadView alloc] initWithFrame:frame];
     [groupView addSubview:view];
     [self _addView:groupView at:location];
