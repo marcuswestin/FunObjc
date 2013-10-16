@@ -31,6 +31,8 @@ typedef ViewStyler* (^StylerFont)(UIFont* font);
 typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
 typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
+typedef ViewStyler* (^StylerImage)(UIImage* image);
+
 
 @interface ViewStyler : NSObject
 
@@ -103,6 +105,7 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
 - (StylerFloat4Color)edges;
 - (ViewStyler*)hide;
 - (ViewStyler*)clip;
+- (ViewStyler*)blur;
 
 /* Labels
  ********/
@@ -123,9 +126,9 @@ typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGF
 - (StylerMString1)bindText;
 - (StylerFloat1)inputPad;
 
-
-
-- (ViewStyler*)blur;
+/* Images
+ ********/
+- (StylerImage)image;
 @end
 
 

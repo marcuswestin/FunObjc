@@ -74,9 +74,15 @@
 }
 #define DeclareStyler1(STYLER_NAME, ARG1_TYPE, ARG1_NAME, STYLER_CODE)\
 -(ViewStyler*(^)(ARG1_TYPE)) STYLER_NAME {\
-return ^(ARG1_TYPE ARG1_NAME) {\
-STYLER_CODE; return self;\
-};\
+    return ^(ARG1_TYPE ARG1_NAME) {\
+        STYLER_CODE; return self;\
+    };\
+}
+#define DeclareImageStyler(STYLER_NAME, IMAGE_ARG_NAME, STYLER_CODE)\
+-(StylerImage) STYLER_NAME {\
+    return ^(UIImage* IMAGE_ARG_NAME) {\
+        STYLER_CODE; return self;\
+    };\
 }
 
 // Arity 2
@@ -136,6 +142,7 @@ static NSMutableDictionary* tagNameToTagNumber;
 #define _labelView ((UILabel*)_view)
 #define _buttonView ((UIButton*)_view)
 #define _textField ((UITextField*)_view)
+#define _imageView ((UIImageView*)_view)
 
 @implementation ViewStyler {
     UIView* _view;
@@ -382,7 +389,7 @@ DeclareStyler(textCenter, self.textAlignment(NSTextAlignmentCenter))
 DeclareIntegerStyler(textLines, lines,
                      _labelView.numberOfLines = lines;
                      )
-DeclareStyler(wrapText, [_labelView wrapText]; [self sizeToFit])
+DeclareStyler(wrapText, [_labelView wrapText]; [self size])
 DeclareStyler1(keyboardType, UIKeyboardType, type, _textField.keyboardType = type)
 DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.keyboardAppearance = appearance)
 
@@ -398,6 +405,10 @@ DeclareFloatStyler(inputPad, pad,
 
 
 DeclareStyler(blur, [_view blur]);
+
+/* Image views
+ *************/
+DeclareImageStyler(image, image, _imageView.image = image)
 
 @end
 
