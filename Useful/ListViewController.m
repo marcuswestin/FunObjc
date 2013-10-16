@@ -399,7 +399,10 @@ static CGFloat START_Y = 99999.0f;
     }
     
     CGFloat changeInHeight = 0;
-
+    
+    CGFloat screenVisibleFold = (_scrollView.height - _scrollView.contentInset.bottom);
+    CGFloat offsetVisibleFold = (_scrollView.contentOffset.y + screenVisibleFold);
+    
     for (NSUInteger i=0; i<count; i++) {
         ListItemIndex itemIndex = firstIndex + i;
         id item = [_delegate listItemForIndex:itemIndex];
@@ -407,15 +410,14 @@ static CGFloat START_Y = 99999.0f;
         changeInHeight += view.height;
     }
     
-    if (_hasReachedTheVeryBottom) {
-        CGSize size = _scrollView.contentSize;
-        size.height += changeInHeight;
-        _scrollView.contentSize = size;
-    }
+    [_scrollView addContentHeight:changeInHeight];
     
-    CGPoint offset = _scrollView.contentOffset;
-    offset.y += changeInHeight;
-    [self.scrollView setContentOffset:offset animated:YES];
+    CGFloat scrollAmount = (_bottomY + changeInHeight) - offsetVisibleFold;
+    if (scrollAmount > 0) {
+        [_scrollView addContentOffset:scrollAmount animated:YES];
+    } else {
+        [self _extendBottom];
+    }
 }
 
 - (void)_withoutScrollEvents:(Block)block {

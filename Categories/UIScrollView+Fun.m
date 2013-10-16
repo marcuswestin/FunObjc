@@ -27,4 +27,16 @@
     [self addContentInset:UIEdgeInsetsMake(0, 0, insetBottom, 0)];
 }
 
+- (void)addContentHeight:(CGFloat)addHeight {
+    CGSize contentSize = self.contentSize;
+    contentSize.height += addHeight;
+    self.contentSize = contentSize;
+}
+
+- (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated {
+    CGPoint offset = self.contentOffset;
+    offset.y += addY;
+    [self setContentOffset:offset animated:YES];
+}
+
 @end
