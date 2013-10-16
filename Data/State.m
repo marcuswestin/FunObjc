@@ -107,6 +107,9 @@
 
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName {
     id instance = [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
+    if (!instance) {
+        instance = [[self class] new];
+    }
     [instance setDefaults];
     return instance;
 }
