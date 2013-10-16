@@ -30,6 +30,11 @@ UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b) {
     return alpha;
 }
 
+- (UIColor*)withAlpha:(CGFloat)alpha {
+    const CGFloat *components = CGColorGetComponents(self.CGColor);
+    return [UIColor colorWithRed:components[0] green:components[1] blue:components[2] alpha:alpha];
+}
+
 - (BOOL)hasTransparency {
     return !self.alpha;
 }

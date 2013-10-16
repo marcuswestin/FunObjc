@@ -27,6 +27,7 @@ UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b);
 + (instancetype) randomColor;
 
 - (CGFloat)alpha;
+- (UIColor*)withAlpha:(CGFloat)alpha;
 - (BOOL)hasTransparency;
 
 @end
