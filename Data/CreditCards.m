@@ -57,7 +57,12 @@
             && [_yearInput.text isEmpty]);
 }
 
+- (BOOL)hasPrefill {
+    return !!(_number && _cvv && _zip && _month && _year);
+}
+
 - (NSString *)obscuredNumber {
+    if (!_number) { return @""; }
     return [NSString stringWithFormat:@"Card ending in %@", [_number substringFromIndex:12]];
 }
 - (NSString *)obscuredCvv {
@@ -134,10 +139,14 @@
     [yearInput shouldChange:^BOOL(NSString *fromString, NSString *toString, NSRange replacementRange, NSString *replacementString) {
         return [self checkInput:yearInput obscured:self.obscuredYear toString:toString newAddition:replacementString];
     }];
+    
+    [numberInput onChange:^(UIEvent *event) {
+        numberInput.text = [CreditCard formatNumber:numberInput.text];
+    }];
 }
 
 - (BOOL)checkInput:(UITextField*)input obscured:(NSString*)obscuredString toString:(NSString*)potentialNewString newAddition:(NSString*)replacementString {
-    if ([input.text is:obscuredString]) {
+    if ([self hasPrefill] && [input.text is:obscuredString]) {
         _numberInput.text = @"";
         _cvvInput.text = @"";
         _zipInput.text = @"";
