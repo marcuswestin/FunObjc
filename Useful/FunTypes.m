@@ -13,6 +13,7 @@
 #import "UIControl+Fun.h"
 #import "FunTypes.h"
 #import "UIColor+Fun.h"
+#import "Camera.h"
 
 #include <stdio.h>
 
@@ -30,6 +31,7 @@ void fatal(NSError* err) {
 
 void error(NSError* err) {
     if (!err) { return; }
+    [Camera hide];
     asyncMain(^{
         NSString* message = err.localizedDescription;
         NSLog(@"ERROR %@ %@", message, err);
