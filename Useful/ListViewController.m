@@ -22,6 +22,11 @@
 @implementation ListGroupHeadView
 @end
 
+@interface ListItemView : UIView;
+@end
+@implementation ListItemView
+@end
+
 static CGFloat MAX_Y = 9999999.0f;
 static CGFloat START_Y = 99999.0f;
 
@@ -165,8 +170,7 @@ static CGFloat START_Y = 99999.0f;
         [self _addGroupViewForItem:item withGroupId:groupId atLocation:BOTTOM];
     }
     
-    UIView* view = [_delegate listViewForItem:item atIndex:index withWidth:[self _listWidthForView]];
-    [view moveToX:_groupMargins.left];
+    UIView* view = [self _getViewForItem:item atIndex:index];
     [self _addView:view at:BOTTOM];
     
     _bottomItemIndex = index;
@@ -199,11 +203,21 @@ static CGFloat START_Y = 99999.0f;
         }
     }
     
-    UIView* view = [_delegate listViewForItem:nextTopItem atIndex:nextTopItemIndex withWidth:[self _listWidthForView]];
-    [view moveToX:_groupMargins.left];
+    UIView* view = [self _getViewForItem:nextTopItem atIndex:nextTopItemIndex];
     [self _addView:view at:TOP];
     _topItemIndex = nextTopItemIndex;
     return YES;
+}
+
+- (UIView*)_getViewForItem:(id)item atIndex:(NSInteger)itemIndex {
+    UIView* content = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
+    CGRect frame = content.bounds;
+    frame.size.height += _itemMargins.top + _itemMargins.bottom;
+    content.y = _itemMargins.top;
+    content.x = _itemMargins.left + _groupMargins.left;
+    ListItemView* view = [[ListItemView alloc] initWithFrame:frame];
+    [view addSubview:content];
+    return view;
 }
 
 - (UIView*)_listRenderTopGroup {
@@ -212,7 +226,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (CGFloat)_listWidthForView {
-    return self.view.width - (_groupMargins.left + _groupMargins.right);
+    return self.view.width - (_groupMargins.left + _groupMargins.right + _itemMargins.left + _itemMargins.right);
 }
 
 - (UIView*) _addGroupViewForItem:(id)item withGroupId:(id)groupId atLocation:(ListViewLocation)location {
@@ -354,7 +368,7 @@ static CGFloat START_Y = 99999.0f;
     for (NSUInteger i=0; i<count; i++) {
         ListItemIndex itemIndex = firstIndex + i;
         id item = [_delegate listItemForIndex:itemIndex];
-        UIView* view = [_delegate listViewForItem:item atIndex:itemIndex withWidth:[self _listWidthForView]];
+        UIView* view = [self _getViewForItem:item atIndex:itemIndex];
         changeInHeight += view.height;
     }
     

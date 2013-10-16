@@ -122,5 +122,9 @@ DeclareClassDefaultStyles(UILabel, UILabelStyles, uiLabelStyles)
     if (_font) {
         [label setFont:_font];
     }
+    if (_textShadowColor) {
+        label.shadowColor = [_textShadowColor copy];
+        label.shadowOffset = _textShadowOffset;
+    }
 }
 @end

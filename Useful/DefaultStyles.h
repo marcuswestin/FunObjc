@@ -58,6 +58,8 @@
 @interface UILabelStyles : UIViewStyles
 @property UIColor* textColor;
 @property UIFont* font;
+@property UIColor* textShadowColor;
+@property CGSize textShadowOffset;
 @end
 @interface UILabel (DefaultStyles);
 + (UILabelStyles*)styles;
