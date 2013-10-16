@@ -12,12 +12,34 @@
 
 @implementation Files
 
-static NSString* _documentsDirectory;
-static NSString* _cachesDirectory;
+static NSString* _appDocumentsDirectory;
+static NSString* _appCachesDirectory;
+static NSString* _funDocumentsDirectory;
+static NSString* _funCachesDirectory;
+static NSString* _funPersistPath;
 
-+ (void)load {
-    _documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    _cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
++ (void)initialize {
+    _appDocumentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    _appCachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    _funPersistPath = [_appDocumentsDirectory stringByAppendingPathComponent:@"FunFilesPathPersist"];
+    
+    NSString* funRootName = [NSString stringWithContentsOfFile:_funPersistPath encoding:NSUTF8StringEncoding error:nil];
+    if (funRootName) {
+        [self setFileRootTo:funRootName];
+    } else {
+        [self resetFileRoot];
+    }
+}
++ (void)resetFileRoot {
+    NSString* funRootName = [NSString stringWithFormat:@"FunFileRoot-%@", [NSString UUID]];
+    [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    [self setFileRootTo:funRootName];
+    [[NSFileManager defaultManager] createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+}
++ (void)setFileRootTo:(NSString*)funRootName {
+    _funDocumentsDirectory = [_appDocumentsDirectory stringByAppendingPathComponent:funRootName];
+    _funCachesDirectory = [_appCachesDirectory stringByAppendingPathComponent:funRootName];
 }
 + (id)readJsonDocument:(NSString *)filename {
     return [JSON parseData:[Files readDocument:filename]];
@@ -47,10 +69,10 @@ static NSString* _cachesDirectory;
     return [data writeToFile:[self documentPath:name] atomically:YES];
 }
 + (NSString*)cachePath:(NSString*)filename {
-    return [_cachesDirectory stringByAppendingPathComponent:filename];
+    return [_funCachesDirectory stringByAppendingPathComponent:filename];
 }
 + (NSString*)documentPath:(NSString*)filename {
-    return [_documentsDirectory stringByAppendingPathComponent:filename];
+    return [_funDocumentsDirectory stringByAppendingPathComponent:filename];
 }
 + (BOOL)removeCache:(NSString *)name {
     return [Files removeFile:[Files cachePath:name]];
