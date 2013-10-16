@@ -10,21 +10,15 @@
 
 #define log NSLog
 
-@implementation Multipart
 static NSString* multipartJsonName = @"json";
 static NSString* multipartImageName = @"image";
 static NSString* multipartVideoName = @"video";
 static NSString* multipartAudioName = @"audio";
 
-+ (void)setMultipartNamesJson:(NSString *)jsonName image:(NSString *)imageName video:(NSString *)videoName audio:(NSString *)audioName {
-    multipartJsonName = jsonName;
-    multipartImageName = imageName;
-    multipartVideoName = videoName;
-    multipartAudioName = audioName;
-}
-
+@implementation Multipart
 + (instancetype)json:(NSDictionary *)obj {
-    return [Multipart withContent:[JSON serialize:obj] type:@"application/json" disposition:@"form-data; name=\"json\""];
+    NSString* disposition = [NSString stringWithFormat:@"form-data; name=\"%@\"", multipartJsonName];
+    return [Multipart withContent:[JSON serialize:obj] type:@"application/json" disposition:disposition];
 }
 + (instancetype)jpg:(UIImage *)image quality:(CGFloat)quality {
     NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.jpg\"; name=\"%@\"", multipartImageName, multipartImageName];
@@ -62,6 +56,13 @@ static NSMutableDictionary* baseHeaders;
 static int numRequests = 0;
 static NSMutableArray* errorChecks;
 static NSString* uuidHeader;
+
++ (void)setMultipartNamesJson:(NSString *)jsonName image:(NSString *)imageName video:(NSString *)videoName audio:(NSString *)audioName {
+    multipartJsonName = jsonName;
+    multipartImageName = imageName;
+    multipartVideoName = videoName;
+    multipartAudioName = audioName;
+}
 
 + (void)load {
     baseHeaders = [NSMutableDictionary dictionary];
