@@ -31,11 +31,17 @@ static NSString* _funPersistPath;
     }
 }
 + (void)resetFileRoot {
+    NSFileManager* fileMgr = [NSFileManager defaultManager];
+
+    // Remove current state
+    [fileMgr removeItemAtPath:_funDocumentsDirectory error:nil];
+    [fileMgr removeItemAtPath:_funCachesDirectory error:nil];
+    
     NSString* funRootName = [NSString stringWithFormat:@"FunFileRoot-%@", [NSString UUID]];
     [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     [self setFileRootTo:funRootName];
-    [[NSFileManager defaultManager] createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    [fileMgr createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
 }
 + (void)setFileRootTo:(NSString*)funRootName {
     _funDocumentsDirectory = [_appDocumentsDirectory stringByAppendingPathComponent:funRootName];
