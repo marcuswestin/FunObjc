@@ -69,6 +69,7 @@ static NSMutableDictionary* columnsCache;
                 rollback();
             }
         }];
+        NSLog(@"Completed migration %@", migration[@"name"]);
         [_completedMigrations addObject:migration[@"name"]];
     }];
     
