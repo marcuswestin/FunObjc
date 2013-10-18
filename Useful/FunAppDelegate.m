@@ -20,6 +20,7 @@
     [_funApp interfaceWillLoad];
     return YES;
 }
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (!self.window) {
         UIViewController* rootVC = [_funApp rootViewControllerForFreshLoad];
