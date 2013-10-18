@@ -23,7 +23,7 @@
 }
 
 + (instancetype)withDict:(NSDictionary *)dict {
-    return [self fromDict:dict];
+    return [[self class] fromDict:dict];
 }
 
 - (instancetype)init {
@@ -48,6 +48,9 @@
 
         if (![val isNull]) {
             Class class = NSClassFromString(props[key]);
+            if (!class) {
+                NSLog(@"WARNING Saw unknown class %@ for key %@. Did you forget '@implementation %@'?", props[key], key, props[key]);
+            }
             if ([class isSubclassOfClass:[State class]]) {
                 val = [class fromDict:val];
             }
@@ -107,10 +110,11 @@
 
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName {
     id instance = [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
-    if (!instance) {
+    if (instance) {
+        [instance setDefaults];
+    } else {
         instance = [[self class] new];
     }
-    [instance setDefaults];
     return instance;
 }
 
