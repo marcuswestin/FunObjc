@@ -42,16 +42,33 @@
 - (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height {
     [self resizeByAddingWidth:-width height:-height];
 }
-- (CGSize)sizeToContainSubviews {
-    CGSize size = self.bounds.size;
+- (void)containSubviews {
+    CGPoint move = CGPointZero;
     for (UIView* view in self.subviews) {
-        CGSize subSize = [view sizeToContainSubviews];
-        CGFloat maxX = view.frame.origin.x + subSize.width;
-        CGFloat maxY = view.frame.origin.y + subSize.height;
-        if (maxX > size.width) { size.width = maxX; }
-        if (maxY > size.height) { size.height = maxY; }
+        CGRect subFrame = view.frame;
+        if (subFrame.origin.x < move.x) {
+            move.x = subFrame.origin.x;
+        }
+        if (subFrame.origin.y < move.y) {
+            move.y = subFrame.origin.y;
+        }
     }
-    return self.size = size;
+    [self moveByX:move.x y:move.y];
+    CGRect frame = self.frame;
+    CGFloat maxX = frame.size.width;
+    CGFloat maxY = frame.size.height;
+    for (UIView* view in self.subviews) {
+        [view moveByX:-move.x y:-move.y];
+        if (view.x2 > maxX) {
+            maxX = view.x2;
+        }
+        if (view.y2 > maxY) {
+            maxY = view.y2;
+        }
+    }
+    frame.size.width = maxX;
+    frame.size.height = maxY;
+    self.frame = frame;
 }
 
 /* Position
