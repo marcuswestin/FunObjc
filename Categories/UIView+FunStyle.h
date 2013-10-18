@@ -82,6 +82,7 @@ typedef ViewStyler* (^StylerImage)(UIImage* image);
 - (StylerViewFloat)leftOf;
 - (StylerViewFloat)rightOf;
 - (StylerViewFloat)fillRightOf;
+- (StylerViewFloat)fillLeftOf;
 
 /* Size
  ******/
