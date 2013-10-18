@@ -39,11 +39,11 @@ static Keyboard* instance;
 }
 
 - (void)_keyboardWillShow:(NSNotification*)notification {
-    [Events fire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
+    [Events syncFire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
 }
 
 - (void)_keyboardWillHide:(NSNotification*)notification {
-    [Events fire:@"KeyboardWillHide" info:[self _keyboardInfo:notification isShowing:NO]];
+    [Events syncFire:@"KeyboardWillHide" info:[self _keyboardInfo:notification isShowing:NO]];
 }
 
 - (KeyboardEventInfo*)_keyboardInfo:(NSNotification*)notif isShowing:(BOOL)isShowing {

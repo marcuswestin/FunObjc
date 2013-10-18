@@ -17,4 +17,5 @@ typedef id EventSubscriber;
 + (void)off:(NSString*)signal subscriber:(EventSubscriber)subscriber;
 + (void)fire:(NSString*)signal info:(id)info;
 + (void)fire:(NSString*)signal;
++ (void)syncFire:(NSString*)signal info:(id)info;
 @end

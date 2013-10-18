@@ -45,16 +45,24 @@ static const NSString* CbKey = @"Cb";
 + (void)fire:(NSString *)signal info:(id)info {
     NSArray* callbacks = [signals[signal] copy];
     asyncMain(^{
-        if (info) {
-            NSLog(@"@ Event %@, Info: %@", signal, info);
-        } else {
-            NSLog(@"@ Event %@", signal);
-        }
-        for (NSDictionary* obj in callbacks) {
-            EventCallback callback = obj[CbKey];
-            callback(info);
-        }
+        [self syncFire:signal callbacks:callbacks info:info];
     });
 }
 
++ (void)syncFire:(NSString *)signal info:(id)info {
+    NSArray* callbacks = [signals[signal] copy];
+    [Events syncFire:signal callbacks:callbacks info:info];
+}
+
++ (void)syncFire:(NSString *)signal callbacks:(NSArray*)callbacks info:(id)info {
+    if (info) {
+        NSLog(@"@ Event %@, Info: %@", signal, info);
+    } else {
+        NSLog(@"@ Event %@", signal);
+    }
+    for (NSDictionary* obj in callbacks) {
+        EventCallback callback = obj[CbKey];
+        callback(info);
+    }
+}
 @end
