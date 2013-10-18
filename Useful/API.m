@@ -17,27 +17,47 @@ static NSString* multipartAudioName = @"audio";
 
 @implementation Multipart
 + (instancetype)json:(NSDictionary *)obj {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; name=\"%@\"", multipartJsonName];
+    return [Multipart json:obj name:multipartJsonName];
+}
++ (instancetype)json:(NSDictionary *)obj name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; name=\"%@\"", name];
     return [Multipart withContent:[JSON serialize:obj] type:@"application/json" disposition:disposition];
 }
+
 + (instancetype)jpg:(UIImage *)image quality:(CGFloat)quality {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.jpg\"; name=\"%@\"", multipartImageName, multipartImageName];
+    return [Multipart jpg:image quality:quality name:multipartImageName];
+}
++ (instancetype)jpg:(UIImage *)image quality:(CGFloat)quality name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.jpg\"; name=\"%@\"", name, name];
     return [Multipart withContent:UIImageJPEGRepresentation(image, quality) type:@"image/jpg" disposition:disposition];
 }
+
 + (instancetype)png:(UIImage *)image {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.png\"; name=\"%@\"", multipartImageName, multipartImageName];
+    return [Multipart png:image name:multipartImageName];
+}
++ (instancetype)png:(UIImage *)image name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.png\"; name=\"%@\"", name, name];
     return [Multipart withContent:UIImagePNGRepresentation(image) type:@"image/png" disposition:disposition];
 }
+
 + (instancetype)avi:(NSString *)path {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.mov\"; name=\"%@\"", multipartVideoName, multipartVideoName];
+    return [Multipart avi:path name:multipartVideoName];
+}
++ (instancetype)avi:(NSString *)path name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.mov\"; name=\"%@\"", name, name];
     NSData* data = [NSData dataWithContentsOfFile:path];
     return [Multipart withContent:data type:@"video/avi" disposition:disposition];
 }
+
 + (instancetype)m4a:(NSString *)path {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.m4a\"; name=\"%@\"", multipartAudioName, multipartAudioName];
+    return [Multipart m4a:path name:multipartAudioName];
+}
++ (instancetype)m4a:(NSString *)path name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.m4a\"; name=\"%@\"", name, name];
     NSData* data = [NSData dataWithContentsOfFile:path];
     return [Multipart withContent:data type:@"audio/mp4a-latm" disposition:disposition];
 }
+
 + (instancetype)withContent:(NSData *)contentData type:(NSString *)contentType disposition:(NSString *)contentDisposition {
     Multipart* instance = [Multipart new];
     instance.contentData = contentData;
