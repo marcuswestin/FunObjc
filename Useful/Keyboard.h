@@ -12,9 +12,9 @@
 @interface KeyboardEventInfo : NSObject
 @property NSTimeInterval duration;
 @property UIViewAnimationOptions curve;
-@property CGFloat height;
 @property CGRect frameBegin;
 @property CGRect frameEnd;
+@property CGFloat keyboardHeight;
 @end
 
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
@@ -24,4 +24,5 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (void)onWillHide:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)offWillShow:(EventSubscriber)subscriber;
 + (void)offWillHide:(EventSubscriber)subscriber;
++ (CGFloat)height;
 @end

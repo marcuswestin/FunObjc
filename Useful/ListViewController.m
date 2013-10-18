@@ -68,20 +68,20 @@ static CGFloat START_Y = 99999.0f;
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self shouldMoveWithKeyboard]) {
-                [_scrollView addContentInsetTop:info.height];
-                [self.view moveByY:-info.height];
+                [_scrollView addContentInsetTop:info.keyboardHeight];
+                [self.view moveByY:-info.keyboardHeight];
             } else {
-                [_scrollView addContentInsetBottom:info.height];
+                [_scrollView addContentInsetBottom:info.keyboardHeight];
             }
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self shouldMoveWithKeyboard]) {
-                [_scrollView addContentInsetTop:-info.height];
-                [self.view moveByY:info.height];
+                [_scrollView addContentInsetTop:-info.keyboardHeight];
+                [self.view moveByY:info.keyboardHeight];
             } else {
-                [_scrollView addContentInsetBottom:-info.height];
+                [_scrollView addContentInsetBottom:-info.keyboardHeight];
             }
         }];
     }];
