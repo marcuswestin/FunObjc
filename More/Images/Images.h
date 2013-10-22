@@ -16,6 +16,7 @@
 
 + (void)load:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius callback:(ImageCallback)callback;
 + (void)load:(NSString*)url resize:(CGSize)size callback:(ImageCallback)callback;
-+ (UIImage*)get:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius;
++ (UIImage*)getLocal:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius;
++ (UIImage*)getLocal:(NSString*)url;
 
 @end

@@ -12,6 +12,7 @@
 
 typedef void(^ContactsCallback)(NSArray* contacts);
 typedef void(^AddressBookContactCallback)(AddressBookContact* contact);
+typedef void(^AddressBookRecordIdCallback)(ABRecordID recordId, NSError* error);
 
 @interface AddressBook : NSObject
 
@@ -24,4 +25,6 @@ typedef void(^AddressBookContactCallback)(AddressBookContact* contact);
 + (void)findContactsWithPhoneNumber:(NSString*)phoneNumber callback:(ContactsCallback)callback;
 + (void)findContactsWithEmailAddress:(NSString*)emailAddress callback:(ContactsCallback)callback;
 
++ (void)addRecordWithPhoneNumber:(NSString*)phoneNumber firstName:(NSString*)firstName lastName:(NSString*)lastName image:(UIImage*)image callback:(AddressBookRecordIdCallback)callback;
++ (void)removeRecord:(ABRecordID)recordId callback:(ErrorCallback)callback;
 @end

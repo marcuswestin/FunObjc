@@ -26,14 +26,18 @@ static NSString* cacheKeyBase;
     noResize = CGSizeMake(0,0);
     noRadius = 0;
     
-    cacheKeyBase = @"ImagesCache";
+    cacheKeyBase = @"FunImagesCache";
 //    cacheKeyBase = [cacheKeyBase stringByAppendingFormat:@"%f", [NSDate new].timeIntervalSince1970];
 }
 
-+ (UIImage *)get:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
++ (UIImage *)getLocal:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
     NSString* processedKey = [self _cacheKeyFor:url resize:resize radius:radius];
     NSData* data = [Cache get:processedKey];
     return (data ? [UIImage imageWithData:data] : nil);
+}
+
++ (UIImage *)getLocal:(NSString *)url {
+    return [self getLocal:url resize:noResize radius:noRadius];
 }
 
 + (void)load:(NSString *)url resize:(CGSize)size callback:(ImageCallback)callback {

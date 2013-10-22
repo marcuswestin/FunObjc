@@ -157,4 +157,97 @@ static NSArray* allContacts;
     });
 }
 
++ (void)addRecordWithPhoneNumber:(NSString *)phoneNumber firstName:(NSString *)firstName lastName:(NSString *)lastName image:(UIImage *)image callback:(AddressBookRecordIdCallback)_callback {
+    void (^callback)(ABRecordID, CFErrorRef) = ^(ABRecordID recordId, CFErrorRef error) {
+        return _callback(recordId,(__bridge NSError *)(error));
+    };
+    
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
+    if (!addressBook) {
+        return callback(0, nil);
+    }
+    ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+        if (error != NULL) {
+            return callback(0, error);
+        }
+        if (!granted) {
+            return callback(0, NULL);
+        }
+        
+        ABRecordRef newPerson = ABPersonCreate();
+        
+        if (firstName) {
+            if (!ABRecordSetValue(newPerson, kABPersonFirstNameProperty, (__bridge CFTypeRef)(firstName), &error)) {
+                return callback(0, error);
+            }
+        }
+        
+        if (lastName) {
+            if (!ABRecordSetValue(newPerson, kABPersonLastNameProperty, (__bridge CFTypeRef)(lastName), &error)) {
+                return callback(0, error);
+            }
+        }
+        
+        if (phoneNumber) {
+            ABMutableMultiValueRef multiPhone = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+            ABMultiValueAddValueAndLabel(multiPhone, (__bridge CFTypeRef)(phoneNumber), kABPersonPhoneMainLabel, NULL);
+            bool success = ABRecordSetValue(newPerson, kABPersonPhoneProperty, multiPhone, &error);
+            CFRelease(multiPhone);
+            if (!success) {
+                return callback(0, error);
+            }
+        }
+
+        if (image) {
+            NSData *dataRef = UIImagePNGRepresentation(image);
+            if (!ABPersonSetImageData(newPerson, (__bridge CFDataRef)dataRef, &error)) {
+                return callback(0, error);
+            }
+        }
+        
+        if (!ABAddressBookAddRecord(addressBook, newPerson, &error)) {
+            return callback(0, error);
+        }
+        
+        if (!ABAddressBookSave(addressBook, &error)) {
+            return callback(0, error);
+        }
+        
+        ABRecordID recordId = ABRecordGetRecordID(newPerson);
+        CFRelease(newPerson);
+        CFRelease(addressBook);
+
+        callback(recordId, nil);
+    });
+}
+
++ (void)removeRecord:(ABRecordID)recordId callback:(ErrorCallback)_callback {
+    void (^callback)(CFErrorRef) = ^(CFErrorRef error) {
+        return _callback((__bridge NSError *)(error));
+    };
+
+    CFErrorRef error;
+
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+    if (!addressBook) {
+        return callback(error);
+    }
+    
+    ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+        if (error) {
+            return callback(error);
+        }
+        if (!granted) {
+            return _callback(makeError(@"Could not open address book"));
+        }
+        
+        ABRecordRef record = ABAddressBookGetPersonWithRecordID(addressBook, recordId);
+        ABAddressBookRemoveRecord(addressBook, record, &error);
+        CFRelease(record);
+        CFRelease(addressBook);
+        
+        callback(error);
+    });
+}
+
 @end
