@@ -69,6 +69,7 @@ static NSMutableDictionary* columnsCache;
                 rollback();
             }
         }];
+        NSLog(@"Completed migration %@", migration[@"name"]);
         [_completedMigrations addObject:migration[@"name"]];
     }];
     
@@ -188,10 +189,10 @@ static NSMutableDictionary* columns;
 }
 
 - (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items {
-    if (!items || items.count == 0) { return nil; }
+    if (!items || [items isNull] || items.count == 0) { return nil; }
     
     NSArray* columns = [self _columns:table];
-    NSString* questionMarks = [@"?" stringByPaddingToLength:columns.count*2-1 withString:@",?" startingAtIndex:0];
+    NSString* questionMarks = [@"?" append:[NSString repeat:@",?" times:columns.count-1]];
     NSString* columnNames = [columns map:^id(id name, NSUInteger i) { return name; }].joinedByCommaSpace;
     NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@)", table, columnNames, questionMarks];
 

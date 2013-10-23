@@ -10,6 +10,11 @@
 #endif
 #define IS_DISTRIBUTION (MODE == MODE_DISTRIBUTION)
 
+NSMutableSet* __AUTOs;
+#define ACTIVATE_AUTO(AUTO_NAME) NSLog(@"Activate AUTO: %@", AUTO_NAME); if (!__AUTOs) { __AUTOs=[NSMutableSet set]; } [__AUTOs addObject:AUTO_NAME];
+#define AUTO(AUTO_NAME, AUTO_CODE) if ([__AUTOs containsObject:AUTO_NAME]) { NSLog(@"Run AUTO: %@", AUTO_NAME); after(0.6, ^{ AUTO_CODE ; }); }
+
+
 
 #define CLIP(X,min,max) MIN(MAX(X, min), max)
 

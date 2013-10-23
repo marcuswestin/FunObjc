@@ -10,8 +10,8 @@
 
 typedef void (^EventHandler)(UIEvent* event);
 
-typedef void (^TapHandler)(UITapGestureRecognizer* sender);
-typedef void (^PanHandler)(UIPanGestureRecognizer* sender);
+typedef void (^TapHandler)(UITapGestureRecognizer* tap);
+typedef void (^PanHandler)(UIPanGestureRecognizer* pan);
 
 @interface UIView (UIControlFun)
 - (UITapGestureRecognizer*) onTap:(TapHandler)handler;

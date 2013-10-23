@@ -23,6 +23,7 @@
 }
 
 - (NSString *)repeatTimes:(NSInteger)times {
+    if (times <= 0) { return @""; }
     return [self stringByPaddingToLength:times*self.length withString:self startingAtIndex:0];
 }
 

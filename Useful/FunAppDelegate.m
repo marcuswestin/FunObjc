@@ -20,6 +20,7 @@
     [_funApp interfaceWillLoad];
     return YES;
 }
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (!self.window) {
         UIViewController* rootVC = [_funApp rootViewControllerForFreshLoad];
@@ -32,8 +33,31 @@
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad)]) {
         [_funApp interfaceDidLoad];
     }
+    [self _setupDevMenu];
     return YES;
 }
+
+- (void)_setupDevMenu {
+    UIView* devButton = [UIButton.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetSides(8).fromRight(8).fromBottom(88) render];
+    DragAndDrop* drag = [DragAndDrop forView:devButton];
+    [drag onTap:^(UITapGestureRecognizer *tap) {
+        [self _showDevMenu];
+    }];
+}
+
+- (void)_showDevMenu {
+    UIView* overlay = [Overlay show];
+    UIView* view = [UIView.appendTo(overlay).fill render];
+    [UIButton.appendTo(view).text(@"Reset State").size.center onTap:^(UIEvent *event) {
+        [Files resetFileRoot];
+        [view empty];
+        [UILabel.appendTo(view).text(@"State has been reset.\nPlease restart Dogo").wrapText.center render];
+        [view onTap:^(UITapGestureRecognizer *tap) {
+            // Do nothing
+        }];
+    }];
+}
+
 // View state saving
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
     return YES;

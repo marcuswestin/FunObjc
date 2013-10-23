@@ -38,19 +38,23 @@ static Keyboard* instance;
     [Events off:@"KeyboardWillHide" subscriber:subscriber];
 }
 
++ (CGFloat)height {
+    return 216;
+}
+
 - (void)_keyboardWillShow:(NSNotification*)notification {
-    [Events fire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
+    [Events syncFire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
 }
 
 - (void)_keyboardWillHide:(NSNotification*)notification {
-    [Events fire:@"KeyboardWillHide" info:[self _keyboardInfo:notification isShowing:NO]];
+    [Events syncFire:@"KeyboardWillHide" info:[self _keyboardInfo:notification isShowing:NO]];
 }
 
 - (KeyboardEventInfo*)_keyboardInfo:(NSNotification*)notif isShowing:(BOOL)isShowing {
     KeyboardEventInfo* info = [KeyboardEventInfo new];
     info.duration = [notif.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    info.curve = [notif.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
-    info.height = 216;
+    info.curve = [notif.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue] << 16; // see http://stackoverflow.com/questions/18957476/ios-7-keyboard-animation
+    info.keyboardHeight = [Keyboard height];
     info.frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     info.frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     return info;
