@@ -22,6 +22,7 @@ typedef ViewStyler* (^StylerColor1)(UIColor* color);
 typedef ViewStyler* (^StylerPoint)(CGPoint point);
 typedef ViewStyler* (^StylerRect)(CGRect rect);
 typedef ViewStyler* (^StylerString1)(NSString* string);
+typedef ViewStyler* (^StylerAttributedString)(NSAttributedString* string);
 typedef ViewStyler* (^StylerMString1)(NSMutableString* string);
 typedef ViewStyler* (^StylerInteger1)(NSInteger integer);
 typedef ViewStyler* (^StylerTextAlignment)(NSTextAlignment textAlignment);
@@ -112,6 +113,7 @@ typedef ViewStyler* (^StylerImage)(UIImage* image);
  ********/
 - (Styler)textCenter;
 - (StylerString1)text;
+- (StylerAttributedString)attributedText;
 - (StylerColor1)textColor;
 - (StylerTextAlignment)textAlignment;
 - (StylerColorFloat2)textShadow;

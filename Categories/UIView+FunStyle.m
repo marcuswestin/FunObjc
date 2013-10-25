@@ -42,6 +42,12 @@
         STYLER_CODE; return self;\
     };\
 }
+#define DeclareAttributedStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
+-(StylerAttributedString) STYLER_NAME {\
+    return ^(NSAttributedString* STRING_ARG_NAME) {\
+        STYLER_CODE; return self;\
+    };\
+}
 #define DeclareMStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
 -(StylerMString1) STYLER_NAME {\
     return ^(NSMutableString* STRING_ARG_NAME) {\
@@ -359,6 +365,8 @@ DeclareStringStyler(text, text,
                     } else {
                         [NSException raise:@"Error" format:@"Unknown class in text"];
                     })
+DeclareAttributedStringStyler(attributedText, str,
+                              [_labelView setAttributedText:str])
 DeclareMStringStyler(bindText, string, [_textField bindTextTo:string]);
 
 DeclareColorStyler(textColor, textColor,
