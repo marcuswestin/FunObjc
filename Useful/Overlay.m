@@ -80,12 +80,16 @@ static CGFloat fuzzyBlurBlur = 2.0;
     overlayWindow = nil;
     previousWindow = nil;
 
-    [UIView animateWithDuration:0.2 animations:^{
-        _overlayWindow.alpha = 0;
-    } completion:^(BOOL finished) {
-        [_overlayWindow setHidden:YES];
-        [_previousWindow makeKeyAndVisible];
-    }];
+    _overlayWindow.alpha = 0;
+    [_overlayWindow setHidden:YES];
+    [_previousWindow makeKeyAndVisible];
+
+//    [UIView animateWithDuration:0.2 animations:^{
+//        _overlayWindow.alpha = 0;
+//    } completion:^(BOOL finished) {
+//        [_overlayWindow setHidden:YES];
+//        [_previousWindow makeKeyAndVisible];
+//    }];
 }
 
 @end
