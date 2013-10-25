@@ -17,6 +17,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (void) each:(Iterate)iterateFn;
 - (void) asyncEach:(Iterate)iterateFn;
 - (NSMutableArray*) map:(MapIdToId)mapper;
+- (NSMutableArray*) mapFilter:(MapIdToId)mapper;
 - (NSInteger) sum:(MapIdToInt)mapper;
 - (NSMutableArray*) filter:(Filter)filterFn;
 - (id) pickOne:(Filter)pickFn;

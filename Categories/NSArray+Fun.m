@@ -13,7 +13,18 @@
 - (NSMutableArray*) map:(MapIdToId)mapFn {
     NSMutableArray* results = [NSMutableArray arrayWithCapacity:self.count];
     [self each:^(id val, NSUInteger i) {
-        [results addObject:mapFn(val, i)];
+        results[i] = mapFn(val, i);
+    }];
+    return results;
+}
+
+- (NSMutableArray*) mapFilter:(MapIdToId)mapFn {
+    NSMutableArray* results = [NSMutableArray arrayWithCapacity:self.count];
+    [self each:^(id val, NSUInteger i) {
+        id res = mapFn(val, i);
+        if (res) {
+            [results addObject:res];
+        }
     }];
     return results;
 }
