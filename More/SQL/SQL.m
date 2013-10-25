@@ -211,7 +211,14 @@ static NSMutableDictionary* columns;
 }
 
 - (NSError *)schema:(NSString *)sql {
-    return [self update:sql args:nil];
+    NSArray* statements = [sql split:@";"];
+    NSError* err;
+    for (NSString* statement in statements) {
+        if (statement.trim.isEmpty) { continue; }
+        err = [self update:statement args:nil];
+        if (err) { return err; }
+    }
+    return nil;
 }
 
 - (NSError *)update:(NSString *)sql args:(NSArray *)args {
