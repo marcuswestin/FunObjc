@@ -39,7 +39,8 @@
     NSDictionary* props = [self classProperties];
     
     for (NSString* key in dict) {
-        if (!props[key]) {
+        NSString* className = props[key];
+        if (!className) {
             NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
             continue;
         }
@@ -47,12 +48,14 @@
         id val = dict[key];
 
         if (![val isNull]) {
-            Class class = NSClassFromString(props[key]);
-            if (!class) {
-                NSLog(@"WARNING Saw unknown class %@ for key %@. Did you forget '@implementation %@'?", props[key], key, props[key]);
-            }
-            if ([class isSubclassOfClass:[State class]]) {
-                val = [class fromDict:val];
+            if (className.length != 1) {
+                Class class = NSClassFromString(props[key]);
+                if (!class) {
+                    NSLog(@"WARNING Saw unknown class %@ for key %@. Did you forget '@implementation %@'?", props[key], key, props[key]);
+                }
+                if ([class isSubclassOfClass:[State class]]) {
+                    val = [class fromDict:val];
+                }
             }
             
             [self setValue:val forKey:key];
