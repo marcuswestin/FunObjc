@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
 
-typedef NSInteger ListItemIndex;
+typedef NSInteger ListIndex;
 
 enum ListViewLocation { TOP=1, BOTTOM=2 };
 typedef enum ListViewLocation ListViewLocation;
@@ -19,16 +19,16 @@ typedef enum ListViewDirection ListViewDirection;
 
 @protocol ListViewDelegate <NSObject>
 @required
-- (id) listItemForIndex:(NSInteger)index;
-- (UIView*) listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width;
-- (void) listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView*)itemView;
+//- (id) listItemForIndex:(NSInteger)index;
+- (UIView*) listViewForIndex:(ListIndex)index withWidth:(CGFloat)width;
+- (void) listSelectIndex:(ListIndex)index view:(UIView*)itemView;
 @optional
-- (ListItemIndex)listStartIndex;
-- (UIView*) listViewForGroupId:(id)groupId withItem:(id)item withWidth:(CGFloat)width;
-- (id) listGroupIdForItem:(id)item;
+- (ListIndex)listStartIndex;
+- (UIView*) listViewForGroupId:(id)groupId withIndex:(ListIndex)index withWidth:(CGFloat)width;
+- (id) listGroupIdForIndex:(ListIndex)index;
 - (void) listTopGroupViewDidMove:(CGRect)frame;
-- (void) listTopGroupDidChange:(id)topGroupItem withDirection:(ListViewDirection)direction;
-- (void) listSelectGroupWithId:(id)groupId withItem:(id)item;
+- (void) listTopGroupIdDidChange:(id)topGroupItem withIndex:(ListIndex)index withDirection:(ListViewDirection)direction;
+- (void) listSelectGroupWithId:(id)groupId withIndex:(ListIndex)index;
 - (BOOL) listShouldMoveWithKeyboard;
 @end
 
@@ -42,18 +42,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) reloadData;
 - (void) stopScrolling;
 
-- (void) listAppendItemsStartingAtIndex:(ListItemIndex)firstIndex count:(NSUInteger)count;
+- (void) listAppendCount:(NSUInteger)count startingAtIndex:(ListIndex)firstIndex;
 @end
-
-// Sample implementation
-//- (id)listItemForIndex:(NSInteger)index {
-//    return nil;
-//}
-//
-//- (UIView *)listViewForItem:(id)item atIndex:(NSInteger)itemIndex withWidth:(CGFloat)width {
-//    return nil;
-//}
-//
-//- (void)listSelectItem:(id)item index:(NSInteger)itemIndex view:(UIView *)itemView {
-//    
-//}
