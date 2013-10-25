@@ -67,6 +67,7 @@ static NSMutableDictionary* columnsCache;
             if (err) {
                 [Log error:err];
                 rollback();
+                fatal(err);
             }
         }];
         NSLog(@"Completed migration %@", migration[@"name"]);
