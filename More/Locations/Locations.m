@@ -26,7 +26,13 @@ Locations* instance;
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     [instance.manager stopUpdatingLocation];
-    instance.locationCallback(locations.lastObject);
+    LocationCallback callback;
+    @synchronized(instance) {
+        callback = instance.locationCallback;
+        if (!callback) { return; }
+        instance.locationCallback = nil;
+    }
+    callback(locations.lastObject);
 }
 
 @end
