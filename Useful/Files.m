@@ -28,8 +28,13 @@ static BOOL isReset;
     if (funRootName) {
         [self setFileRootTo:funRootName];
     } else {
+        NSFileManager* fileMgr = [NSFileManager defaultManager];
         isReset = YES;
-        [self resetFileRoot];
+        NSString* funRootName = [NSString stringWithFormat:@"FunFileRoot-%@", [NSString UUID]];
+        [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [self setFileRootTo:funRootName];
+        [fileMgr createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+        [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
     }
 }
 + (BOOL)isReset {
@@ -38,8 +43,6 @@ static BOOL isReset;
 
 + (void)resetFileRoot {
     NSFileManager* fileMgr = [NSFileManager defaultManager];
-
-    // Remove current state
     [fileMgr removeItemAtPath:_funDocumentsDirectory error:nil];
     [fileMgr removeItemAtPath:_funCachesDirectory error:nil];
     [[NSFileManager defaultManager] removeItemAtPath:_funPersistPath error:nil];
