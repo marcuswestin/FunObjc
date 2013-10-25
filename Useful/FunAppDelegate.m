@@ -38,7 +38,7 @@
 }
 
 - (void)_setupDevMenu {
-    UIView* devButton = [UIButton.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetSides(8).fromRight(8).fromBottom(88) render];
+    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetSides(8).fromRight(8).fromBottom(88) render];
     DragAndDrop* drag = [DragAndDrop forView:devButton];
     [drag onTap:^(UITapGestureRecognizer *tap) {
         [self _showDevMenu];
@@ -67,7 +67,7 @@
 }
 // View state restoration
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-    return YES;
+    return ![Files isReset];
 }
 - (void)application:(UIApplication*)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
     id root = [coder decodeObjectForKey:@"FunRootViewController"]; // TODO Versioning

@@ -27,5 +27,6 @@
 + (NSData*)readResource:(NSString*)resourceName ofType:(NSString*)type;
 
 + (void)resetFileRoot;
++ (BOOL)isReset;
 
 @end
