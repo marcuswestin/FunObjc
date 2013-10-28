@@ -36,7 +36,7 @@
 - (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated {
     CGPoint offset = self.contentOffset;
     offset.y += addY;
-    [self setContentOffset:offset animated:YES];
+    [self setContentOffset:offset animated:animated];
 }
 
 @end
