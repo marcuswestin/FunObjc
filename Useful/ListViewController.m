@@ -54,7 +54,6 @@ static CGFloat START_Y = 99999.0f;
         _listStartLocation = TOP;
     }
     
-    self.view.backgroundColor = WHITE;
     _scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;

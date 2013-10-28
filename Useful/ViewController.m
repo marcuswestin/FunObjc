@@ -54,7 +54,6 @@
     [super viewWillAppear:animated];
     if (_didRender) { return; }
     _didRender = YES;
-    self.view.backgroundColor = WHITE;
     [self beforeRender:animated];
     [self render:animated];
     [self afterRender:animated];

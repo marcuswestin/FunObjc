@@ -13,7 +13,7 @@
 @protocol FunApp <NSObject>
 
 @required
-- (void)styleLabels:(UILabelStyles*)labels buttons:(UIButtonStyles*)buttons textFields:(UITextFieldStyles*)textFields textViews:(UITextViewStyles*)textViews;
+- (void)styleWindow:(UIWindow*)window labels:(UILabelStyles*)labels buttons:(UIButtonStyles*)buttons textFields:(UITextFieldStyles*)textFields textViews:(UITextViewStyles*)textViews;
 - (void)interfaceWillLoad;
 - (UIViewController*)rootViewControllerForFreshLoad;
 
