@@ -30,6 +30,11 @@
 - (void)setHeight:(CGFloat)height {
     [self setSize:CGSizeMake(self.width, height)];
 }
+- (void)setHeightUp:(CGFloat)height {
+    CGFloat dh = self.height - height;
+    self.height = height;
+    self.y += dh;
+}
 - (void)setSize:(CGSize)size {
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height);
 }

@@ -22,6 +22,7 @@
 - (void)resizeByAddingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)containSubviews;
+- (void)setHeightUp:(CGFloat)height;
 
 /* Position
  **********/
