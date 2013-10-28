@@ -88,7 +88,7 @@ static NSArray* allContacts;
             NSLog(@"WARNING [AddressBook loadContacts]: non-authorized status %@", AddressBook.authorizationStatus);
             return callback(nil);
         }
-        @synchronized(allContacts) {
+        @synchronized(self) {
             if (allContacts) {
                 return callback(allContacts);
             }
