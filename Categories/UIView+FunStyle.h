@@ -33,7 +33,7 @@ typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
 typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
 typedef ViewStyler* (^StylerImage)(UIImage* image);
-
+typedef ViewStyler* (^StylerLayer)(CALayer* layer);
 
 @interface ViewStyler : NSObject
 
@@ -108,6 +108,7 @@ typedef ViewStyler* (^StylerImage)(UIImage* image);
 - (ViewStyler*)hide;
 - (ViewStyler*)clip;
 - (ViewStyler*)blur;
+- (StylerLayer)bgLayer;
 
 /* Labels
  ********/

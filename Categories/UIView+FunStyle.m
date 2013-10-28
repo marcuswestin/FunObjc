@@ -90,6 +90,12 @@
         STYLER_CODE; return self;\
     };\
 }
+#define DeclareLayerStyler(STYLER_NAME, LAYER_ARG_NAME, STYLER_CODE)\
+-(StylerLayer) STYLER_NAME {\
+    return ^(CALayer* LAYER_ARG_NAME) {\
+        STYLER_CODE; return self;\
+    };\
+}
 
 // Arity 2
 //////////
@@ -155,6 +161,7 @@ static NSMutableDictionary* tagNameToTagNumber;
     CGRect _frame;
     UIEdgeInsets _edgeWidths;
     UIColor* _edgeColor;
+    CALayer* _bgLayer;
 }
 
 + (void)load {
@@ -174,6 +181,8 @@ static NSMutableDictionary* tagNameToTagNumber;
 - (void)apply {
     _view.frame = _frame;
     [self _makeEdges];
+    _bgLayer.frame = _view.bounds;
+    [_view.layer insertSublayer:_bgLayer atIndex:0];
 }
 
 - (id)render {
@@ -417,6 +426,8 @@ DeclareFloatStyler(inputPad, pad,
 
 
 DeclareStyler(blur, [_view blur]);
+
+DeclareLayerStyler(bgLayer, layer, _bgLayer = layer);
 
 /* Image views
  *************/
