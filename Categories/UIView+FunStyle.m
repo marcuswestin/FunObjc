@@ -420,7 +420,14 @@ DeclareStyler(blur, [_view blur]);
 
 /* Image views
  *************/
-DeclareImageStyler(image, image, _imageView.image = image)
+DeclareImageStyler(image, image,
+                   if ([_view respondsToSelector:@selector(setImage:)]) {
+                       _imageView.image = image;
+                       [_imageView sizeToFit];
+                       _frame = _imageView.frame;
+                   } else {
+                       [NSException raise:@"Error" format:@"Can't set image in image() styler"];
+                   })
 
 @end
 
@@ -466,5 +473,8 @@ DeclareImageStyler(image, image, _imageView.image = image)
 @implementation UIButton (FunStyler)
 + (ViewStyler *)styler {
     return [[UIButton buttonWithType:UIButtonTypeCustom] styler];
+}
+- (void)setImage:(UIImage *)image {
+    [self setImage:image forState:UIControlStateNormal];
 }
 @end

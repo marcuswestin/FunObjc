@@ -149,4 +149,5 @@ typedef ViewStyler* (^StylerImage)(UIImage* image);
 @end
 @interface UIButton (FunStyler)
 + (ViewStyler*) styler;
+- (void)setImage:(UIImage *)image;
 @end
