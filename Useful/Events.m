@@ -54,6 +54,10 @@ static const NSString* CbKey = @"Cb";
     [Events syncFire:signal callbacks:callbacks info:info];
 }
 
+
++ (void)syncFire:(NSString *)signal {
+    [self syncFire:signal info:nil];
+}
 + (void)syncFire:(NSString *)signal callbacks:(NSArray*)callbacks info:(id)info {
     if (info) {
         NSLog(@"@ Event %@, Info: %@", signal, info);
