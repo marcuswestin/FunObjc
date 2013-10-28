@@ -264,8 +264,8 @@ DeclareFloatStyler(moveDown, amount, _frame.origin.y += amount)
 
 DeclareViewFloatStyler(below, view, offset, if (view) { _frame.origin.y = view.y2 + offset; } )
 DeclareViewFloatStyler(above, view, offset, _frame.origin.y = view.y - _frame.size.height - offset)
-DeclareViewFloatStyler(rightOf, view, offset, _frame.origin.x = view.x2 + offset)
-DeclareViewFloatStyler(leftOf, view, offset, _frame.origin.x = view.x - offset)
+DeclareViewFloatStyler(rightOf, view, offset, _frame.origin.x = (view ? view.x2 : 0) + offset)
+DeclareViewFloatStyler(leftOf, view, offset, _frame.origin.x = (view ? view.x : 0) - offset)
 DeclareViewFloatStyler(fillRightOf, view, offset,
                   _frame.origin.x = view.x2 + offset;
                   _frame.size.width = _view.superview.width - view.x2 - offset;
