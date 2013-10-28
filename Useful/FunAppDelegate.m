@@ -39,7 +39,7 @@
 }
 
 - (void)_setupDevMenu {
-    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetSides(8).fromRight(8).fromBottom(88) render];
+    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetAll(8).fromRight(8).fromBottom([Keyboard height] + 68).textCenter render];
     DragAndDrop* drag = [DragAndDrop forView:devButton];
     [drag onTap:^(UITapGestureRecognizer *tap) {
         [self _showDevMenu];
