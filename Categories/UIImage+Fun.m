@@ -33,4 +33,46 @@
     return result;
 }
 
+- (UIImage *)maskWithColor:(UIColor *)tintColor {
+    CGRect aRect = CGRectMake(0.f, 0.f, self.size.width, self.size.height);
+    CGImageRef alphaMask;
+    UIImage *img;
+    
+    // Compute mask
+    {
+        UIGraphicsBeginImageContextWithOptions(aRect.size, NO, 2.0);
+        CGContextRef c = UIGraphicsGetCurrentContext();
+        // draw image
+        CGContextTranslateCTM(c, 0, aRect.size.height);
+        CGContextScaleCTM(c, 1.0, -1.0);
+        [self drawInRect: aRect];
+        img = UIGraphicsGetImageFromCurrentImageContext();
+        alphaMask = CGBitmapContextCreateImage(c);
+        
+        UIGraphicsEndImageContext();
+    }
+    
+    // Tint mask
+    {
+        UIGraphicsBeginImageContextWithOptions(self.size, NO, 2.0);
+        CGContextRef c = UIGraphicsGetCurrentContext();
+        // Mask it
+        CGContextClipToMask(c, aRect, alphaMask);
+        // Set the fill color
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGContextSetFillColorSpace(c, colorSpace);
+        CGContextSetFillColorWithColor(c, tintColor.CGColor);
+        // Fill it
+        UIRectFillUsingBlendMode(aRect, kCGBlendModeNormal);
+        // Done
+        img = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        // Release memory
+        CGColorSpaceRelease(colorSpace);
+        CGImageRelease(alphaMask);
+    }
+    
+    return img;
+}
+
 @end
