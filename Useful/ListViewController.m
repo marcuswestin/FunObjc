@@ -68,8 +68,7 @@ static CGFloat START_Y = 99999.0f;
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self shouldMoveWithKeyboard]) {
-                [_scrollView addContentInsetTop:info.keyboardHeight];
-                [self.view moveByY:-info.keyboardHeight];
+                [self listMoveWithKeyboard:info.keyboardHeight];
             } else {
                 [_scrollView addContentInsetBottom:info.keyboardHeight];
             }
@@ -78,8 +77,7 @@ static CGFloat START_Y = 99999.0f;
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self shouldMoveWithKeyboard]) {
-                [_scrollView addContentInsetTop:-info.keyboardHeight];
-                [self.view moveByY:info.keyboardHeight];
+                [self listMoveWithKeyboard:-info.keyboardHeight];
             } else {
                 [_scrollView addContentInsetBottom:-info.keyboardHeight];
             }
@@ -87,8 +85,17 @@ static CGFloat START_Y = 99999.0f;
     }];
 }
 
+- (void)listMoveWithKeyboard:(CGFloat)keyboardHeight {
+    [_scrollView addContentInsetTop:keyboardHeight];
+    [self.view moveByY:-keyboardHeight];
+}
+
 - (BOOL)shouldMoveWithKeyboard {
-    return ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)] && [_delegate listShouldMoveWithKeyboard]);
+    if ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)]) {
+        return [_delegate listShouldMoveWithKeyboard];
+    } else {
+        return YES;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

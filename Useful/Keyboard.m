@@ -42,6 +42,14 @@ static Keyboard* instance;
     return 216;
 }
 
++ (UIViewAnimationOptions)animationOptions {
+    return (UIViewAnimationOptions)458752;
+}
+
++ (NSTimeInterval)animationDuration {
+    return (NSTimeInterval)0.25;
+}
+
 - (void)_keyboardWillShow:(NSNotification*)notification {
     [Events syncFire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
 }

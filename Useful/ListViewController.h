@@ -43,4 +43,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) stopScrolling;
 
 - (void) listAppendCount:(NSUInteger)count startingAtIndex:(ListIndex)firstIndex;
+- (void) listMoveWithKeyboard:(CGFloat)keyboardHeight;
 @end

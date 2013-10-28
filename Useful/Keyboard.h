@@ -25,4 +25,6 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (void)offWillShow:(EventSubscriber)subscriber;
 + (void)offWillHide:(EventSubscriber)subscriber;
 + (CGFloat)height;
++ (UIViewAnimationOptions)animationOptions;
++ (NSTimeInterval)animationDuration;
 @end
