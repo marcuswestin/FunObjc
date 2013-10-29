@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "FunObjc.h"
 
+static UIColor* defaultBackgroundColor;
+
 @implementation ViewController {
     BOOL _didRender;
 }
@@ -19,6 +21,10 @@
 
 + (instancetype)withState:(State *)state {
     return [[[self class] alloc] initWithState:state];
+}
+
++ (void)setDefaultBackgroundColor:(UIColor *)color {
+    defaultBackgroundColor = color;
 }
 
 - (instancetype)initWithState:(id<NSCoding>)state {
@@ -54,6 +60,8 @@
     [super viewWillAppear:animated];
     if (_didRender) { return; }
     _didRender = YES;
+    self.view.backgroundColor = defaultBackgroundColor;
+    self.view.opaque = defaultBackgroundColor.alpha == 1.0;
     [self beforeRender:animated];
     [self render:animated];
     [self afterRender:animated];
