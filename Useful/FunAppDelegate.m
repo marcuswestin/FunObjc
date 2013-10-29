@@ -16,6 +16,7 @@
 /////////////////////////////////////////
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     _funApp = (id<FunApp>) self;
+    [_funApp styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
     [_funApp interfaceWillLoad];
     return YES;
 }
@@ -28,7 +29,6 @@
         }
         [self _loadInterfaceWithRootViewController:rootVC];
     }
-    [_funApp styleWindow:self.window labels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
     [self handleLaunchNotification:launchOptions];
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad)]) {
         [_funApp interfaceDidLoad];
