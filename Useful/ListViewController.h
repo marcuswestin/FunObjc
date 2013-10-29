@@ -10,6 +10,7 @@
 #import "ViewController.h"
 
 typedef NSInteger ListIndex;
+typedef id ListGroupId;
 
 enum ListViewLocation { TOP=1, BOTTOM=2 };
 typedef enum ListViewLocation ListViewLocation;
@@ -28,13 +29,14 @@ typedef enum ListViewDirection ListViewDirection;
 - (ListIndex)listStartIndex;
 - (id) listGroupIdForIndex:(ListIndex)index;
 
-- (UIView*) listHeadViewForGroupId:(id)groupId withIndex:(ListIndex)index width:(CGFloat)width;
-- (UIView*) listFootViewForGroupId:(id)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listHeadViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listFootViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
 
-- (void) listTopGroupViewDidMove:(CGRect)frame;
-- (void) listTopGroupIdDidChange:(id)topGroupItem withIndex:(ListIndex)index withDirection:(ListViewDirection)direction;
+- (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
+- (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
 
-- (void) listSelectGroupWithId:(id)groupId withIndex:(ListIndex)index;
+- (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListIndex)index;
+- (BOOL) listShouldMoveWithKeyboard;
 @end
 
 
@@ -45,8 +47,9 @@ typedef enum ListViewDirection ListViewDirection;
 @property ListViewLocation listStartLocation;
 @property (weak) id<ListViewDelegate> delegate;
 
-// API methods
-//////////////
+/////////////////
+// API methods //
+/////////////////
 - (void) reloadDataForList;
 - (void) stopScrollingList;
 - (void) appendToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;

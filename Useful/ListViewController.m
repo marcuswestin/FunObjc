@@ -33,15 +33,14 @@
 @end
 
 @implementation ListViewController {
-    UIView* _topGroupHeadView;
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
     NSInteger _topItemIndex;
     NSInteger _bottomItemIndex;
     CGFloat _previousContentOffsetY;
-    id _bottomGroupId;
-    id _topGroupId;
+    ListGroupId _bottomGroupId;
+    ListGroupId _topGroupId;
     CGFloat _topY;
     CGFloat _bottomY;
 
@@ -60,12 +59,9 @@ static CGFloat START_Y = 99999.0f;
         [self _renderInitialContent];
     }];
     
-    // Top and bottom should start scrolled equal to the respective content insets
-    if (_listStartLocation == TOP && _scrollView.contentInset.top) {
-        [_scrollView addContentOffset:-_scrollView.contentInset.top animated:NO];
-        
-    } else if (_listStartLocation == BOTTOM && _scrollView.contentInset.bottom) {
-        [_scrollView addContentOffset:_scrollView.contentInset.bottom animated:NO];
+    // Top should start scrolled down below the navigation bar
+    if (_listStartLocation == TOP && !_hasReachedTheVeryBottom && self.navigationController.navigationBar) {
+        [_scrollView addContentOffset:-self.navigationController.navigationBar.height animated:NO];
     }
 }
 
@@ -109,13 +105,21 @@ static CGFloat START_Y = 99999.0f;
     [self.view moveByY:-keyboardHeight];
 }
 
+- (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
+    [_scrollView addContentInsetBottom:keyboardHeight];
+}
+
 //////////////////////
 // Setup & Teardown //
 //////////////////////
 
 - (void)beforeRender:(BOOL)animated {
     if (!_delegate) {
-        _delegate = (id<ListViewDelegate>)self;
+        if ([self conformsToProtocol:@protocol(ListViewDelegate)]) {
+            _delegate = (id<ListViewDelegate>)self;
+        } else {
+            [NSException raise:@"Error" format:@"Make sure your ListViewController subclass implements the ListViewDelegate protocol"];
+        }
     }
     if (!_listStartLocation) {
         _listStartLocation = TOP;
@@ -127,20 +131,37 @@ static CGFloat START_Y = 99999.0f;
     
     [self _setupScrollview];
     [self.view insertSubview:_scrollView atIndex:0];
-}
-
-- (void)afterRender:(BOOL)animated {
-    [self reloadDataForList];
+    
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self moveListWithKeyboard:info.keyboardHeight];
+            if ([self _shouldMoveWithKeyboard]) {
+                [self moveListWithKeyboard:info.keyboardHeight];
+            } else {
+                [self makeRoomForKeyboard:info.keyboardHeight];
+            }
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self moveListWithKeyboard:-info.keyboardHeight];
+            if ([self _shouldMoveWithKeyboard]) {
+                [self moveListWithKeyboard:-info.keyboardHeight];
+            } else {
+                [self makeRoomForKeyboard:-info.keyboardHeight];
+            }
         }];
     }];
+}
+
+- (BOOL)_shouldMoveWithKeyboard {
+    if ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)]) {
+        return [_delegate listShouldMoveWithKeyboard];
+    } else {
+        return YES;
+    }
+}
+
+- (void)afterRender:(BOOL)animated {
+    [self reloadDataForList];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -159,7 +180,7 @@ static CGFloat START_Y = 99999.0f;
             if (CGRectContainsPoint(view.frame, tapPoint)) {
                 if (isGroupView) {
                     if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
-                        id groupId = [self _groupIdForIndex:index];
+                        ListGroupId groupId = [self _groupIdForIndex:index];
                         [_delegate listSelectGroupWithId:groupId withIndex:index];
                     }
                     
@@ -183,18 +204,18 @@ static CGFloat START_Y = 99999.0f;
     _previousContentOffsetY = _scrollView.contentOffset.y;
 
     ListIndex startIndex = ([_delegate respondsToSelector:@selector(listStartIndex)] ? [_delegate listStartIndex] : 0);
-    _bottomGroupId = _topGroupId = [self _groupIdForIndex:startIndex];
+    ListGroupId startGroupId = [self _groupIdForIndex:startIndex];
     
     if (![self _getViewForIndex:startIndex]) {
         return; // Empty list
     }
-    id groupId = [self _groupIdForIndex:startIndex];
-    
+
     if (_listStartLocation == TOP) {
         // Starting at the top, render items downwards
         _topItemIndex = startIndex;
         _bottomItemIndex = startIndex - 1;
-        [self _addGroupHeadViewForIndex:startIndex withGroupId:groupId atLocation:TOP];
+        _bottomGroupId = startGroupId;
+        [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
         [self _extendBottom];
         [self _extendTop];
         
@@ -202,7 +223,8 @@ static CGFloat START_Y = 99999.0f;
         // Starting at the bottom, render items upwards
         _bottomItemIndex = startIndex;
         _topItemIndex = startIndex + 1;
-        [self _addGroupFootViewForIndex:startIndex withGroupId:groupId atLocation:BOTTOM];
+        _topGroupId = startGroupId;
+        [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
         [self _extendTop];
         [self _extendBottom];
         
@@ -210,21 +232,6 @@ static CGFloat START_Y = 99999.0f;
         [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
     }
 }
-
-//- (void)_setTopGroupIndex:(ListIndex)index withDirection:(ListViewDirection)direction {
-//    _topGroupId = [self _groupIdForIndex:index];
-////    if ([_delegate respondsToSelector:@selector(listTopGroupIdDidChange:withIndex:withDirection:)]) {
-////        [_delegate listTopGroupIdDidChange:_topGroupId withIndex:index withDirection:direction];
-////    }
-//}
-
-//- (void)_setBottomGroupIndex:(ListIndex)index withDirection:(ListViewDirection)direction {
-//    _bottomGroupId = [self _groupIdForIndex:index];
-////    if ([_delegate respondsToSelector:@selector(listTopGroupIdDidChange:withIndex:withDirection:)]) {
-////        [_delegate listTopGroupIdDidChange:_topGroupId withIndex:index withDirection:direction];
-////    }
-//}
-
 
 ///////////////////////////////////////////
 // Extend list up/down & as view scrolls //
@@ -246,12 +253,6 @@ static CGFloat START_Y = 99999.0f;
     }
     
     _previousContentOffsetY = scrollView.contentOffset.y;
-    
-//    if (_topGroupHeadView && [_delegate respondsToSelector:@selector(listTopGroupViewDidMove:)]) {
-//        CGRect frame = _topGroupHeadView.frame;
-//        frame.origin.y -= _scrollView.contentOffset.y;
-//        [_delegate listTopGroupViewDidMove:frame];
-//    }
 }
 
 - (void)_extendBottom {
@@ -285,7 +286,7 @@ static CGFloat START_Y = 99999.0f;
     if (!view) {
         // There are no more items to display at the bottom.
         // Last thing: add a group fiit view at the bottom.
-        if ([self _isGroupFootView:[self bottomView]]) {
+        if ([self _isGroupFootView:[self _bottomView]]) {
             return NO; // All done!
             
         } else {
@@ -295,14 +296,14 @@ static CGFloat START_Y = 99999.0f;
     }
     
     // Check if the new item falls outside of the group of the current bottom-most item.
-    id groupId = [self _groupIdForIndex:index];
+    ListGroupId groupId = [self _groupIdForIndex:index];
     if (![groupId isEqual:_bottomGroupId]) {
         // This item is the first of a new group. In order, add:
         // 1) A foot view for the current bottom group
         // 2) A gead view for the next bottom group
         // 3) The item view
         
-        UIView* bottomView = [self bottomView];
+        UIView* bottomView = [self _bottomView];
         if ([self _isItemView:bottomView]) {
             [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:BOTTOM];
             return YES;
@@ -329,7 +330,7 @@ static CGFloat START_Y = 99999.0f;
     if (!view) {
         // There are no more items to display at the top.
         // Last thing: add a group head view at the top.
-        if ([self _isGroupHeadView:[self topView]]) {
+        if ([self _isGroupHeadView:[self _topView]]) {
             return NO; // All done!
             
         } else {
@@ -338,14 +339,14 @@ static CGFloat START_Y = 99999.0f;
         }
     }
     
-    id groupId = [self _groupIdForIndex:index];
+    ListGroupId groupId = [self _groupIdForIndex:index];
     if (![groupId isEqual:_topGroupId]) {
         // This item is the first of a new group. In order, add:
         // 1) A head view for the current top group
         // 2) A foot view for the next top group
         // 3) The item view
         
-        UIView* topView = [self topView];
+        UIView* topView = [self _topView];
         if ([self _isItemView:topView]) {
             [self _addGroupHeadViewForIndex:_topItemIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
@@ -368,13 +369,13 @@ static CGFloat START_Y = 99999.0f;
     // Clean up views at the top that are now out of sight
     CGFloat targetY = _scrollView.contentOffset.y;
     UIView* view;
-    while ((view = [self topView]) && CGRectGetMaxY(view.frame) < targetY) {
+    while ((view = [self _topView]) && CGRectGetMaxY(view.frame) < targetY) {
         [view removeFromSuperview];
         _topY += view.height;
         if ([self _isItemView:view]) {
             _topItemIndex += 1;
         } else if ([self _isGroupFootView:view]) {
-            _topGroupId = [self _groupIdForIndex:_topItemIndex];
+            [self _setTopGroupId:[self _groupIdForIndex:_topItemIndex] index:_topItemIndex];
         }
     }
 }
@@ -383,13 +384,13 @@ static CGFloat START_Y = 99999.0f;
     // Clean up views at the bottom that are now out of sight
     CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
     UIView* view;
-    while ((view = [self bottomView]) && CGRectGetMinY(view.frame) > targetY) {
+    while ((view = [self _bottomView]) && CGRectGetMinY(view.frame) > targetY) {
         [view removeFromSuperview];
         _bottomY -= view.height;
         if ([self _isItemView:view]) {
             _bottomItemIndex -= 1;
         } else if ([self _isGroupHeadView:view]) {
-            _bottomGroupId = [self _groupIdForIndex:_bottomItemIndex];
+            [self _setBottomGroupId:[self _groupIdForIndex:_bottomItemIndex] index:_bottomItemIndex];
         }
     }
 }
@@ -445,14 +446,13 @@ static CGFloat START_Y = 99999.0f;
     
     [self _addView:groupView at:location];
     if (location == TOP) {
-        _topGroupId = groupId;
+        [self _setTopGroupId:groupId index:index];
     } else {
-        _bottomGroupId = groupId;
+        [self _setBottomGroupId:groupId index:index];
     }
-//    [self _checkTopGroupView];
 }
 
-- (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
+- (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
     CGFloat width = [self _listWidthForView];
     UIView* view = ([_delegate respondsToSelector:@selector(listHeadViewForGroupId:withIndex:width:)]
                     ? [_delegate listHeadViewForGroupId:groupId withIndex:index width:width]
@@ -469,18 +469,11 @@ static CGFloat START_Y = 99999.0f;
     
     [self _addView:groupView at:location];
     if (location == TOP) {
-        _topGroupId = groupId;
+        [self _setTopGroupId:groupId index:index];
     } else {
-        _bottomGroupId = groupId;
+        [self _setBottomGroupId:groupId index:index];
     }
-//    [self _checkTopGroupView];
 }
-
-//- (void) _checkTopGroupView {
-//    _topGroupHeadView = [_scrollView.subviews pickOne:^BOOL(id view, NSUInteger i) {
-//        return [self _isGroupHeadView:view];
-//    }];
-//}
 
 - (void)_addView:(UIView*)view at:(ListViewLocation)location {
     if (location == TOP) {
@@ -498,7 +491,7 @@ static CGFloat START_Y = 99999.0f;
 // Misc stuff //
 ////////////////
 
-- (id)_groupIdForIndex:(ListIndex)index {
+- (ListGroupId)_groupIdForIndex:(ListIndex)index {
     if ([_delegate respondsToSelector:@selector(listGroupIdForIndex:)]) {
         return [_delegate listGroupIdForIndex:index];
     } else {
@@ -506,14 +499,30 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
+- (void)_setTopGroupId:(ListGroupId)topGroupId index:(ListIndex)index {
+    ListGroupId previousTopGroupId = _topGroupId;
+    _topGroupId = topGroupId;
+    if ([_delegate respondsToSelector:@selector(listTopGroupDidChangeTo:withIndex:from:)]) {
+        [_delegate listTopGroupDidChangeTo:topGroupId withIndex:index from:previousTopGroupId];
+    }
+}
+
+- (void)_setBottomGroupId:(ListGroupId)bottomGroupId index:(ListIndex)index {
+    ListGroupId previousBottomGroupId = _bottomGroupId;
+    _bottomGroupId = bottomGroupId;
+    if ([_delegate respondsToSelector:@selector(listBottomGroupDidChangeTo:withIndex:from:)]) {
+        [_delegate listBottomGroupDidChangeTo:bottomGroupId withIndex:index from:previousBottomGroupId];
+    }
+}
+
 - (void)_didReachTheVeryBottom {
     _hasReachedTheVeryBottom = YES;
-    _scrollView.contentSize = CGSizeMake(_scrollView.width, CGRectGetMaxY([self bottomView].frame));
+    _scrollView.contentSize = CGSizeMake(_scrollView.width, CGRectGetMaxY([self _bottomView].frame));
 }
 
 - (void)_didReachTheVeryTop {
     _hasReachedTheVeryTop = YES;
-    CGFloat changeInHeight = CGRectGetMinY([self topView].frame);
+    CGFloat changeInHeight = CGRectGetMinY([self _topView].frame);
     if (changeInHeight == 0) { return; }
     _topY -= changeInHeight;
     _bottomY -= changeInHeight;
@@ -545,10 +554,10 @@ static CGFloat START_Y = 99999.0f;
         return ![view isKindOfClass:UIImageView.class];
     }];
 }
-- (UIView*)topView {
+- (UIView*)_topView {
     return self._views.firstObject;
 }
-- (UIView*)bottomView {
+- (UIView*)_bottomView {
     return self._views.lastObject;
 }
 
