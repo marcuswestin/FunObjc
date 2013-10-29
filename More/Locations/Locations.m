@@ -13,7 +13,7 @@ Locations* instance;
 
 @implementation Locations
 
-+ (void)initialize {
++ (void)load {
     instance = [Locations new];
     instance.manager = [CLLocationManager new];
     instance.manager.delegate = instance;
