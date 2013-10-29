@@ -43,7 +43,6 @@
     ListGroupId _topGroupId;
     CGFloat _topY;
     CGFloat _bottomY;
-
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -60,8 +59,12 @@ static CGFloat START_Y = 99999.0f;
     }];
     
     // Top should start scrolled down below the navigation bar
-    if (_listStartLocation == TOP && !_hasReachedTheVeryBottom && self.navigationController.navigationBar) {
-        [_scrollView addContentOffset:-self.navigationController.navigationBar.height animated:NO];
+    if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
+        CGFloat amount = 20; // status bar
+        if (self.navigationController.navigationBar) {
+            amount += self.navigationController.navigationBar.height;
+        }
+        [_scrollView addContentOffset:-amount animated:NO];
     }
 }
 
