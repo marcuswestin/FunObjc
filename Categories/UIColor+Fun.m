@@ -24,6 +24,12 @@ UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b) {
     return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
 }
 
+- (UIColor *)addHue:(CGFloat)addHue saturation:(CGFloat)addSaturation brightness:(CGFloat)addBrightness {
+    CGFloat hue, saturation, brightness, alpha;
+    [self getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    return [UIColor colorWithHue:MIN(hue+addHue, 1.0) saturation:MIN(saturation+addSaturation, 1.0) brightness:MIN(brightness+addSaturation, 1.0) alpha:alpha];
+}
+
 - (CGFloat)alpha {
     CGFloat alpha;
     [self getWhite:nil alpha:&alpha];

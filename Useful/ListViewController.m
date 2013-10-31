@@ -415,9 +415,12 @@ static CGFloat START_Y = 99999.0f;
     return ![self _isGroupView:view];
 }
 
+- (CGFloat)_widthForItemView {
+    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
+}
 
 - (UIView*)_getViewForIndex:(ListIndex)index {
-    UIView* content = [_delegate listViewForIndex:index width:[self _listWidthForView]];
+    UIView* content = [_delegate listViewForIndex:index width:[self _widthForItemView]];
     if (!content) { return nil; }
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
@@ -428,22 +431,21 @@ static CGFloat START_Y = 99999.0f;
     return view;
 }
 
-- (CGFloat)_listWidthForView {
-    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
+- (CGFloat)_widthForGroupView {
+    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right);
 }
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
-    CGFloat width = [self _listWidthForView];
+    CGFloat width = [self _widthForGroupView];
     UIView* view = ([_delegate respondsToSelector:@selector(listFootViewForGroupId:withIndex:width:)]
                     ? [_delegate listFootViewForGroupId:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
-    CGRect frame = view.bounds;
-    frame.origin.x = _listGroupMargins.left;
-    frame.origin.y = _listGroupMargins.top + _listGroupMargins.bottom;
-    view.frame = frame;
+    view.x = _listGroupMargins.left;
+    view.y = 0;
     
-    frame.size.height += _listGroupMargins.top + _listGroupMargins.bottom;
+    CGRect frame = view.bounds;
+    frame.size.height += _listGroupMargins.bottom;
     ListGroupFootView* groupView = [[ListGroupFootView alloc] initWithFrame:frame];
     [groupView addSubview:view];
     
@@ -456,17 +458,16 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
-    CGFloat width = [self _listWidthForView];
+    CGFloat width = [self _widthForGroupView];
     UIView* view = ([_delegate respondsToSelector:@selector(listHeadViewForGroupId:withIndex:width:)]
                     ? [_delegate listHeadViewForGroupId:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
-    CGRect frame = view.bounds;
-    frame.origin.x = _listGroupMargins.left;
-    frame.origin.y = _listGroupMargins.top + _listGroupMargins.bottom;
-    view.frame = frame;
+    view.x = _listGroupMargins.left;
+    view.y = _listGroupMargins.top;
     
-    frame.size.height += _listGroupMargins.top + _listGroupMargins.bottom;
+    CGRect frame = view.bounds;
+    frame.size.height += _listGroupMargins.top;
     ListGroupHeadView* groupView = [[ListGroupHeadView alloc] initWithFrame:frame];
     [groupView addSubview:view];
     

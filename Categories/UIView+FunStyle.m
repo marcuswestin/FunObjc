@@ -172,7 +172,6 @@ static NSMutableDictionary* tagNameToTagNumber;
 /* Create & apply
  ****************/
 - (ViewStyler*)initWithView:(UIView*)view {
-    [[[view class] styles] applyTo:view];
     _view = view;
     _frame = view.frame;
     return self;
@@ -466,11 +465,8 @@ DeclareImageStyler(image, image,
 }
 + (ViewStyler*)styler {
     UIView* instance = [[[self class] alloc] initWithFrame:CGRectZero];
-#if defined DEBUG && FALSE
-    return instance.styler.bg(RANDOM_COLOR);
-#else
+    [[[instance class] styles] applyTo:instance];
     return instance.styler;
-#endif
 }
 - (UIView *)viewByName:(NSString *)name {
     NSNumber* tagNumber = tagNameToTagNumber[name];

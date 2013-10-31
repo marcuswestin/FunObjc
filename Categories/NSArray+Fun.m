@@ -78,6 +78,15 @@
     return [self componentsJoinedByString:joiner];
 }
 
+- (NSString *)joinBy:(NSString *)joiner last:(NSString *)lastJoiner {
+    if (self.count <= 2) { return [self joinBy:lastJoiner]; }
+
+    NSMutableArray* arr = [NSMutableArray arrayWithArray:self];
+    id lastObj = arr.lastObject;
+    [arr removeLastObject];
+    return [NSString stringWithFormat:@"%@%@%@", [arr joinBy:joiner], lastJoiner, lastObj];
+}
+
 - (NSString *)joinedByComma {
     return [self joinBy:@","];
 }

@@ -29,5 +29,6 @@ UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b);
 - (CGFloat)alpha;
 - (UIColor*)withAlpha:(CGFloat)alpha;
 - (BOOL)hasTransparency;
+- (UIColor*) addHue:(CGFloat)hue saturation:(CGFloat)saturation brightness:(CGFloat)brightness;
 
 @end

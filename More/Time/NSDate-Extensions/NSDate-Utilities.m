@@ -383,7 +383,7 @@
     dispatch_once(&onceToken, ^{
         names = @[@"January", @"February", @"March", @"April", @"May", @"June", @"July", @"August", @"September", @"October", @"November", @"December"];
     });
-    NSInteger month = self.month;
+    NSInteger month = self.month - 1;
     if (month < 0 || month >= names.count) { return nil; }
     return names[month];
 }

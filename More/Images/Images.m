@@ -26,7 +26,7 @@ static NSString* cacheKeyBase;
     noResize = CGSizeMake(0,0);
     noRadius = 0;
     
-    cacheKeyBase = @"FunImagesCache";
+    cacheKeyBase = @"FunImagesCache2";
 //    cacheKeyBase = [cacheKeyBase stringByAppendingFormat:@"%f", [NSDate new].timeIntervalSince1970];
 }
 

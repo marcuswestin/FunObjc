@@ -24,6 +24,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (id) item:(NSInteger)index;
 
 - (NSString*)joinBy:(NSString*)joiner;
+- (NSString*)joinBy:(NSString*)joiner last:(NSString*)lastJoiner;
 - (NSString*)joinedBySpace;
 - (NSString*)joinedByComma;
 - (NSString*)joinedByCommaSpace;
