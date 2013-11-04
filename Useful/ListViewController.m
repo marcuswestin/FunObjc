@@ -424,6 +424,7 @@ static CGFloat START_Y = 99999.0f;
     if (!content) { return nil; }
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
+    frame.size.width = self.view.width;
     content.y = _listItemMargins.top;
     content.x = _listItemMargins.left + _listGroupMargins.left;
     ListItemView* view = [[ListItemView alloc] initWithFrame:frame];
