@@ -23,7 +23,7 @@ typedef enum ListViewDirection ListViewDirection;
 @required
 
 - (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width;
-- (void) listSelectIndex:(ListIndex)index view:(UIView*)itemView;
+- (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 
 @optional
 - (ListIndex)listStartIndex;

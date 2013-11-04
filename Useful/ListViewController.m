@@ -188,7 +188,7 @@ static CGFloat START_Y = 99999.0f;
                     }
                     
                 } else {
-                    [_delegate listSelectIndex:index view:view];
+                    [_delegate listSelectIndex:index view:view.subviews[0]];
                 }
                 break;
             }
