@@ -138,6 +138,17 @@ static Camera* camera;
     camera = nil;
 }
 
++ (void)toggleCameraDirection {
+    if (!camera) { return; }
+    UIImagePickerControllerCameraDevice currentDevice = camera.picker.cameraDevice;
+    UIImagePickerControllerCameraDevice newDevice = (currentDevice == UIImagePickerControllerCameraDeviceFront
+                                                      ? UIImagePickerControllerCameraDeviceRear
+                                                      : UIImagePickerControllerCameraDeviceFront);
+    if ([UIImagePickerController isCameraDeviceAvailable:newDevice]) {
+        camera.picker.cameraDevice = newDevice;
+    }
+}
+
 /* Internal
  **********/
 + (void) _reset:(CameraCaptureCallback)callback modalViewController:(UIViewController*)modalViewController {
