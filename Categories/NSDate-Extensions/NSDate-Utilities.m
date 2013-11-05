@@ -394,8 +394,11 @@
     dispatch_once(&onceToken, ^{
         names = @[@"Jan", @"Feb", @"Mar", @"Apr", @"May", @"Jun", @"Jul", @"Aug", @"Sep", @"Oct", @"Nov", @"Dec"];
     });
-    NSInteger month = self.month;
+    NSInteger month = self.month - 1;
     if (month < 0 || month >= names.count) { return nil; }
     return names[month];
+}
+- (NSString *)nameOfDayNumeric {
+    return [NSString stringWithFormat:@"%d", self.day + 1];
 }
 @end

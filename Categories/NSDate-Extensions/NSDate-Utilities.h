@@ -78,7 +78,9 @@
 @property (readonly) NSInteger nthWeekday; // e.g. 2nd Tuesday of the month == 2
 @property (readonly) NSInteger daysSinceEpoch;
 @property (readonly) NSInteger year;
+
 // Names
 @property (readonly) NSString* nameOfMonthAbreviated;
 @property (readonly) NSString* nameOfMonth;
+@property (readonly) NSString* nameOfDayNumeric;
 @end
