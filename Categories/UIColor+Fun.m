@@ -14,6 +14,12 @@ UIColor* rgba(NSUInteger r, NSUInteger g, NSUInteger b, CGFloat a) {
 UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b) {
     return rgba(r, g, b, 1.0);
 }
+UIColor* hsva(NSUInteger h, NSUInteger s, NSUInteger v, CGFloat a) {
+    return [UIColor colorWithHue:h/360.0 saturation:s/100.0 brightness:v/100.0 alpha:a/100.0];
+}
+UIColor* hsv(NSUInteger h, NSUInteger s, NSUInteger v) {
+    return hsva(h, s, v, 100.0);
+}
 
 @implementation UIColor (Fun)
 

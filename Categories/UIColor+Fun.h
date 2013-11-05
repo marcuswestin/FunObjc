@@ -18,6 +18,8 @@
 #define RANDOM_COLOR [UIColor randomColor]
 UIColor* rgba(NSUInteger r, NSUInteger g, NSUInteger b, CGFloat a);
 UIColor* rgb(NSUInteger r, NSUInteger g, NSUInteger b);
+UIColor* hsva(NSUInteger h, NSUInteger s, NSUInteger v, CGFloat a);
+UIColor* hsv(NSUInteger h, NSUInteger s, NSUInteger v);
 
 #define LIGHT_GRAY rgb(230,230,230)
 #define STEELBLUE rgb(70,130,180)
