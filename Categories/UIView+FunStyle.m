@@ -225,22 +225,17 @@ DeclareFloat2Styler(xy, x, y,
                     _frame.origin.y = y;
                     )
 DeclarePointStyler(position, pos, _frame.origin = pos)
-DeclareStyler(center,
-              [self centerHorizontally];
-              [self centerVertically];
-              )
-DeclareStyler(centerVertically,
-              _frame.origin.y = CGRectGetMidY(_view.superview.bounds) - _frame.size.height/2;
-              )
-DeclareStyler(centerHorizontally,
-              _frame.origin.x = CGRectGetMidX(_view.superview.bounds) - _frame.size.width/2;
-              )
-DeclareFloatStyler(fromBottom, offset,
-                   _frame.origin.y = _view.superview.frame.size.height - _frame.size.height - offset;
-                   )
-DeclareFloatStyler(fromRight, offset,
-                   _frame.origin.x = _view.superview.frame.size.width - _frame.size.width - offset;
-                   )
+
+DeclareStyler(center, [self centerHorizontally]; [self centerVertically])
+DeclareStyler(centerVertically, _frame.origin.y = CGRectGetMidY(_view.superview.bounds) - _frame.size.height/2)
+DeclareStyler(centerHorizontally, _frame.origin.x = CGRectGetMidX(_view.superview.bounds) - _frame.size.width/2)
+
+
+DeclareFloatStyler(fromBottom, offset, self.y2(offset))
+DeclareFloatStyler(y2, offset, _frame.origin.y = _view.superview.frame.size.height - _frame.size.height - offset)
+DeclareFloatStyler(fromRight, offset, self.x2(offset))
+DeclareFloatStyler(x2, offset, _frame.origin.x = _view.superview.frame.size.width - _frame.size.width - offset)
+
 DeclareRectStyler(frame, frame, _frame = frame)
 
 DeclareFloat4Styler(inset, top, right, bottom, left,
@@ -435,6 +430,8 @@ DeclareImageStyler(image, image,
                        _imageView.image = image;
                        [_imageView sizeToFit];
                        _frame = _imageView.frame;
+                       _frame.size.width /= 2;
+                       _frame.size.height /= 2;
                    } else {
                        [NSException raise:@"Error" format:@"Can't set image in image() styler"];
                    })
