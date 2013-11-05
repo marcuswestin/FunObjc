@@ -103,9 +103,9 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
-- (void)moveListWithKeyboard:(CGFloat)keyboardHeight {
-    [_scrollView addContentInsetTop:keyboardHeight];
-    [self.view moveByY:-keyboardHeight];
+- (void)moveListWithKeyboard:(CGFloat)heightChange {
+    [_scrollView addContentInsetTop:-heightChange];
+    [self.view moveByY:heightChange];
 }
 
 - (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
@@ -138,18 +138,18 @@ static CGFloat START_Y = 99999.0f;
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:info.keyboardHeight];
+                [self moveListWithKeyboard:info.heightChange];
             } else {
-                [self makeRoomForKeyboard:info.keyboardHeight];
+                [self makeRoomForKeyboard:info.heightChange];
             }
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:-info.keyboardHeight];
+                [self moveListWithKeyboard:info.heightChange];
             } else {
-                [self makeRoomForKeyboard:-info.keyboardHeight];
+                [self makeRoomForKeyboard:info.heightChange];
             }
         }];
     }];

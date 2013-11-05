@@ -38,8 +38,8 @@ static Keyboard* instance;
     [Events off:@"KeyboardWillHide" subscriber:subscriber];
 }
 
-+ (CGFloat)height {
-    return 216;
++ (void)dismiss {
+    [[UIApplication sharedApplication].keyWindow endEditing:YES];
 }
 
 + (UIViewAnimationOptions)animationOptions {
@@ -62,9 +62,12 @@ static Keyboard* instance;
     KeyboardEventInfo* info = [KeyboardEventInfo new];
     info.duration = [notif.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     info.curve = [notif.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue] << 16; // see http://stackoverflow.com/questions/18957476/ios-7-keyboard-animation
-    info.keyboardHeight = [Keyboard height];
+    if (!info.duration) {
+        info.curve = 0; // UIView animation does not respect duration if curve is keyboard curve
+    }
     info.frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     info.frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    info.heightChange = (info.frameEnd.origin.y - info.frameBegin.origin.y);
     return info;
 }
 
