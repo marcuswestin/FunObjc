@@ -103,9 +103,9 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
-- (void)moveListWithKeyboard:(CGFloat)keyboardHeight {
-    [_scrollView addContentInsetTop:keyboardHeight];
-    [self.view moveByY:-keyboardHeight];
+- (void)moveListWithKeyboard:(CGFloat)heightChange {
+    [_scrollView addContentInsetTop:-heightChange];
+    [self.view moveByY:heightChange];
 }
 
 - (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
@@ -138,18 +138,18 @@ static CGFloat START_Y = 99999.0f;
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:info.keyboardHeight];
+                [self moveListWithKeyboard:info.heightChange];
             } else {
-                [self makeRoomForKeyboard:info.keyboardHeight];
+                [self makeRoomForKeyboard:info.heightChange];
             }
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:-info.keyboardHeight];
+                [self moveListWithKeyboard:info.heightChange];
             } else {
-                [self makeRoomForKeyboard:-info.keyboardHeight];
+                [self makeRoomForKeyboard:info.heightChange];
             }
         }];
     }];
@@ -188,7 +188,7 @@ static CGFloat START_Y = 99999.0f;
                     }
                     
                 } else {
-                    [_delegate listSelectIndex:index view:view];
+                    [_delegate listSelectIndex:index view:view.subviews[0]];
                 }
                 break;
             }
@@ -424,6 +424,7 @@ static CGFloat START_Y = 99999.0f;
     if (!content) { return nil; }
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
+    frame.size.width = self.view.width;
     content.y = _listItemMargins.top;
     content.x = _listItemMargins.left + _listGroupMargins.left;
     ListItemView* view = [[ListItemView alloc] initWithFrame:frame];

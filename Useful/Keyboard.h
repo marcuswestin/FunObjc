@@ -14,7 +14,7 @@
 @property UIViewAnimationOptions curve;
 @property CGRect frameBegin;
 @property CGRect frameEnd;
-@property CGFloat keyboardHeight;
+@property CGFloat heightChange;
 @end
 
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
@@ -24,7 +24,7 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (void)onWillHide:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)offWillShow:(EventSubscriber)subscriber;
 + (void)offWillHide:(EventSubscriber)subscriber;
-+ (CGFloat)height;
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
++ (void)dismiss;
 @end
