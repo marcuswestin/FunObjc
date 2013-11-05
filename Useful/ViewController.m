@@ -52,7 +52,10 @@ static UIColor* defaultBackgroundColor;
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
-    self.title = [coder decodeObjectForKey:@"FunVCTitle"];
+    NSString* title = [coder decodeObjectForKey:@"FunVCTitle"];
+    if (title) {
+        self.title = title;
+    }
     self.state = [coder decodeObjectForKey:@"FunVCState"];
 }
 

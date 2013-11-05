@@ -9,13 +9,6 @@
 #import "DefaultStyles.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define DeclareClassDefaultStyles(VIEW_CLASS_NAME, STYLES_CLASS_NAME, INSTANCE_NAME)\
-@implementation VIEW_CLASS_NAME (DefaultStyles) \
-static STYLES_CLASS_NAME * INSTANCE_NAME; \
-+ (void) load { INSTANCE_NAME = [STYLES_CLASS_NAME new]; } \
-+ (STYLES_CLASS_NAME *)styles { return INSTANCE_NAME; }\
-@end
-
 // Base Default style class
 ///////////////////////////
 @implementation DefaultStyles
@@ -25,24 +18,14 @@ static STYLES_CLASS_NAME * INSTANCE_NAME; \
 // UIView
 /////////
 DeclareClassDefaultStyles(UIView, UIViewStyles, uiViewStyles)
-@implementation UIViewStyles {
-    CGRect _frame;
-}
-- (void)setWidth:(CGFloat)width {
-    _frame.size.width = width;
-}
-- (void)setHeight:(CGFloat)height {
-    _frame.size.height = height;
-}
-- (CGFloat)width {
-    return _frame.size.width;
-}
-- (CGFloat)height {
-    return _frame.size.height;
-}
+@implementation UIViewStyles
 - (void)applyTo:(UIView *)view {
     [super applyTo:view];
-    view.frame = _frame;
+    CGRect frame = view.frame;
+    frame.size.width = _width;
+    frame.size.height = _height;
+    view.frame = frame;
+    
     if (_backgroundColor) {
         view.backgroundColor = _backgroundColor;
     }

@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+#define DeclareClassDefaultStyles(VIEW_CLASS_NAME, STYLES_CLASS_NAME, INSTANCE_NAME)\
+@implementation VIEW_CLASS_NAME (DefaultStyles) \
+static STYLES_CLASS_NAME * INSTANCE_NAME; \
++ (void) load { INSTANCE_NAME = [STYLES_CLASS_NAME new]; } \
++ (STYLES_CLASS_NAME *)styles { return INSTANCE_NAME; }\
+@end
+
 @interface DefaultStyles : NSObject
 - (void)applyTo:(UIView*)view;
 @end
