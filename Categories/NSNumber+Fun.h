@@ -11,5 +11,7 @@
 @interface NSNumber (Fun)
 
 - (NSNumber*)numberByAdding:(float)amount;
+- (NSString*)suffix;
++ (NSString*)suffix:(NSInteger)num;
 
 @end

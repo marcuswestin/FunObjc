@@ -14,4 +14,21 @@
     return [NSNumber numberWithFloat:self.floatValue + amount];
 }
 
+- (NSString *)suffix {
+    return [NSNumber suffix:[self integerValue]];
+}
+
++ (NSString *)suffix:(NSInteger)d {
+    d = d % 10;
+    if (d == 1) {
+        return @"st";
+    } else if (d == 2) {
+        return @"nd";
+    } else if (d == 3) {
+        return @"rd";
+    } else {
+        return @"th";
+    }
+}
+
 @end
