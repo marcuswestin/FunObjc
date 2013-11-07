@@ -50,6 +50,18 @@ static Keyboard* instance;
     return (NSTimeInterval)0.25;
 }
 
++ (CGFloat)heightForNumberPad {
+    return 216;
+}
+
++ (CGFloat)heightForDefaultKeyboard {
+    return 216; // TODO Detect locale
+}
+
++ (CGFloat)heightForLargestKeyboard {
+    return 252;
+}
+
 - (void)_keyboardWillShow:(NSNotification*)notification {
     [Events syncFire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
 }
@@ -70,5 +82,6 @@ static Keyboard* instance;
     info.heightChange = (info.frameEnd.origin.y - info.frameBegin.origin.y);
     return info;
 }
+
 
 @end

@@ -27,4 +27,9 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
 + (void)dismiss;
+
++ (CGFloat)heightForNumberPad;
++ (CGFloat)heightForDefaultKeyboard;
++ (CGFloat)heightForLargestKeyboard;
+
 @end
