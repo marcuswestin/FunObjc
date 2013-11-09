@@ -68,9 +68,10 @@ void asyncMain(Block block);
 void asyncBackground(Block block);
 void vibrateDevice();
 NSString* concat(id arg1, ...);
-NSNumber* num(long i);
-NSNumber* numf(float f);
 void repeat(NSUInteger times, NSUIntegerBlock block);
 
 NSRange NSRangeMake(NSUInteger location, NSUInteger length);
 NSString* NSStringFromRange(NSRange range);
+
+#define num(i) [NSNumber numberWithLongLong:i]
+#define numf(f) [NSNumber numberWithDouble:f]

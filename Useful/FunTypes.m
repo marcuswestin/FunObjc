@@ -83,9 +83,6 @@ NSString* concat(NSString* firstArg, ...) {
     return result;
 }
 
-NSNumber* num(long i) { return [NSNumber numberWithLong:i]; }
-NSNumber* numf(float f) { return [NSNumber numberWithFloat:f]; }
-
 void repeat(NSUInteger times, NSUIntegerBlock block) {
     for (NSUInteger i=0; i<times; i++) {
         block(i);

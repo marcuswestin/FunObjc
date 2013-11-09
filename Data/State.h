@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FunTypes.h"
 
 @interface State : NSObject <NSCoding>
 + (instancetype) withDict:(NSDictionary*)dict;
