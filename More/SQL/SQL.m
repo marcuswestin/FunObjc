@@ -212,10 +212,12 @@ static NSMutableDictionary* columns;
 
 - (NSError *)schema:(NSString *)sql {
     NSArray* statements = [sql split:@";"];
-    NSError* err;
+    if (!statements.count) {
+        return makeError(@"Empty schema");
+    }
     for (NSString* statement in statements) {
         if (statement.trim.isEmpty) { continue; }
-        err = [self update:statement args:nil];
+        NSError* err = [self update:statement args:nil];
         if (err) { return err; }
     }
     return nil;
