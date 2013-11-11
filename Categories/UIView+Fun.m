@@ -8,7 +8,6 @@
 
 #import "UIView+Fun.h"
 #import "FunObjc.h"
-#import <objc/runtime.h>
 
 @class FunBlurView;
 
@@ -382,14 +381,14 @@ static CGFloat STATIC = 0.5f;
     }];
 }
 - (UITextFieldFunDelegate*) funDelegate {
-    UITextFieldFunDelegate* delegate = objc_getAssociatedObject(self, @"funDelegate");
+    UITextFieldFunDelegate* delegate = GetProperty(self, @"FunDelegate");
     if (delegate) {
         if (![delegate isKindOfClass:[UITextFieldFunDelegate class]]) {
             [NSException raise:@"" format:@"UITextField (Fun) has already been assigned a delegate"];
         }
     } else {
         delegate = [UITextFieldFunDelegate new];
-        objc_setAssociatedObject(self, @"funDelegate", delegate, OBJC_ASSOCIATION_RETAIN);
+        SetProperty(self, @"FunDelegate", delegate);
         self.delegate = delegate;
     }
     return delegate;

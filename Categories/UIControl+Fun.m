@@ -8,24 +8,28 @@
 
 #import "UIControl+Fun.h"
 #import "NSArray+Fun.h"
-#import <objc/runtime.h>
+#import "FunData.h"
 
-static char const * const KeyOnEditingChanged = "Fun_OnEditingChanged";
-static char const * const KeyOnTap = "Fun_OnTap";
-static char const * const KeyHandlers = "Fun_Handlers";
-static char const * const KeyBlock = "Fun_Block";
+static NSString* KeyOnEditingChanged = @"Fun_OnEditingChanged";
+static NSString* KeyOnTap = @"Fun_OnTap";
+static NSString* KeyHandlers = @"Fun_Handlers";
+static NSString* KeyBlock = @"Fun_Block";
+static NSString* KeyTapHandler = @"Fun_TapHandler";
+static NSString* KeyPanHandler = @"Fun_PanHandler";
+static NSString* KeyTextDidChange = @"FunKeyTextDidChange";
+static NSString* KeyTextShouldChance = @"FunKeyTextShouldChange";
+static NSString* KeySelectionChange = @"FunKeySelectionChange";
 
 /* UI View
  *********/
 @implementation UIView (UIControlFun)
-- (id)_addFunGesture:(Class)cls Key:(char const * const)Key selector:(SEL)selector handler:(id)handler {
-    objc_setAssociatedObject(self, Key, handler, OBJC_ASSOCIATION_COPY_NONATOMIC);
+- (id)_addFunGesture:(Class)cls Key:(NSString*)Key selector:(SEL)selector handler:(id)handler {
+    SetPropertyCopy(self, Key, handler);
     id instance = [[cls alloc] initWithTarget:self action:selector];
     [self addGestureRecognizer:instance];
     return instance;
 }
 // Tap Gesture
-static char const * const KeyTapHandler = "Fun_TapHandler";
 - (UITapGestureRecognizer*)onTap:(TapHandler)handler {
     return [self onTapNumber:1 withTouches:1 handler:handler];
 }
@@ -38,16 +42,15 @@ static char const * const KeyTapHandler = "Fun_TapHandler";
 }
 - (void) _handleFunTap:(UITapGestureRecognizer*)sender {
 //    if (sender.state != UIGestureRecognizerStateEnded) { return; }
-    ((TapHandler) objc_getAssociatedObject(self, KeyTapHandler))(sender);
+    ((TapHandler)GetProperty(self, KeyTapHandler))(sender);
 }
 // Pan Gesture
-static char const * const KeyPanHandler = "Fun_PanHandler";
 - (UIPanGestureRecognizer*)onPan:(PanHandler)handler {
     UIPanGestureRecognizer* pan = [self _addFunGesture:UIPanGestureRecognizer.class Key:KeyPanHandler selector:@selector(_handleFunPan:) handler:handler];
     return pan;
 }
 - (void) _handleFunPan:(UIPanGestureRecognizer*)sender {
-    ((PanHandler) objc_getAssociatedObject(self, KeyPanHandler))(sender);
+    ((PanHandler)GetProperty(self, KeyPanHandler))(sender);
 }
 @end
 
@@ -92,10 +95,10 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
     [self on:UIControlEventEditingDidEnd handler:handler];
 }
 - (void)on:(UIControlEvents)controlEvents handler:(EventHandler)handler {
-    NSMutableArray* handlers = objc_getAssociatedObject(self, KeyHandlers);
+    NSMutableArray* handlers = GetProperty(self, KeyHandlers);
     if (!handlers) {
         handlers = [NSMutableArray array];
-        objc_setAssociatedObject(self, KeyHandlers, handlers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        SetProperty(self, KeyHandlers, handlers);
     }
     
     UIControlHandler* controlHandler = [UIControlHandler new];
@@ -110,7 +113,6 @@ static char const * const KeyPanHandler = "Fun_PanHandler";
  *************/
 @implementation UITextView (UIControlFun)
 
-static char const * const KeyTextDidChange = "FunKeyTextDidChange";
 - (void)onTextDidChange:(TextViewBlock)handler {
     [self _addHandlerForKey:KeyTextDidChange handler:handler];
 }
@@ -120,7 +122,6 @@ static char const * const KeyTextDidChange = "FunKeyTextDidChange";
     }];
 }
 
-static char const * const KeyTextShouldChance = "FunKeyTextShouldChange";
 - (void)onTextShouldChange:(TextViewShouldChangeBlock)handler {
     [self _addHandlerForKey:KeyTextShouldChance handler:handler];
 }
@@ -132,7 +133,6 @@ static char const * const KeyTextShouldChance = "FunKeyTextShouldChange";
     return shouldChange;
 }
 
-static char const * const KeySelectionChange = "FunKeySelectionChange";
 - (void)onSelectionDidChange:(TextViewBlock)handler {
     [self _addHandlerForKey:KeySelectionChange handler:handler];
 }
@@ -142,18 +142,18 @@ static char const * const KeySelectionChange = "FunKeySelectionChange";
     }];
 }
 
-- (void) _addHandlerForKey:(char const * const)Key handler:(id)handler {
+- (void) _addHandlerForKey:(NSString*)Key handler:(id)handler {
     if (self.delegate && self.delegate != self) {
         [NSException raise:@"BadDelegate" format:@"Delegate already set"];
     }
     self.delegate = self;
-    NSMutableArray* handlers = objc_getAssociatedObject(self, Key);
+    NSMutableArray* handlers = GetProperty(self, Key);
     if (!handlers) { handlers = [NSMutableArray array]; }
     [handlers addObject:handler];
-    objc_setAssociatedObject(self, Key, handlers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    SetProperty(self, Key, handlers);
 }
-- (NSArray*)_handlersForKey:(char const * const)Key {
-    return objc_getAssociatedObject(self, Key);
+- (NSArray*)_handlersForKey:(NSString*)Key {
+    return GetProperty(self, Key);
 }
 
 @end

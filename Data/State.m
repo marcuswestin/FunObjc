@@ -7,7 +7,6 @@
 //
 
 #import "State.h"
-#import <objc/runtime.h>
 #import "Files.h"
 #import "FunObjc.h"
 
@@ -71,16 +70,7 @@
 }
 
 - (NSDictionary*)toDictionary {
-    unsigned count;
-    objc_property_t *properties = class_copyPropertyList([self class], &count);
-    NSMutableArray *rv = [NSMutableArray arrayWithCapacity:count];
-    for (unsigned i = 0; i < count; i++) {
-        objc_property_t property = properties[i];
-        NSString *name = [NSString stringWithUTF8String:property_getName(property)];
-        [rv addObject:name];
-    }
-    free(properties);
-    return [self dictionaryWithValuesForKeys:rv];
+    return [self dictionaryWithValuesForKeys:GetPropertyNames([self class])];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
