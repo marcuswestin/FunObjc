@@ -61,6 +61,7 @@ void asyncHigh(Block block) {
 void asyncLow(Block block) {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), block);
 }
+void async(Block block) { asyncMain(block); }
 void asyncMain(Block block) {
     dispatch_async(dispatch_get_main_queue(), block);
 }

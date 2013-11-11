@@ -61,6 +61,7 @@ void fatal(NSError* err);
 NSError* makeError(NSString* localMessage);
 void after(NSTimeInterval delayInSeconds, Block block);
 void every(NSTimeInterval delayInSeconds, Block block);
+void async(Block block);
 void asyncDefault(Block block);
 void asyncHigh(Block block);
 void asyncLow(Block block);
