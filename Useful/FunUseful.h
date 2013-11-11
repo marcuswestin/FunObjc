@@ -28,6 +28,8 @@
 #import "TableViewController.h"
 #import "Videos.h"
 #import "ViewController.h"
+#import "NavigationController.h"
 #import "Viewport.h"
 #import "DragAndDrop.h"
 #import "Layers.h"
+#import "Images.h"

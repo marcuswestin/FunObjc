@@ -27,13 +27,14 @@ static UIColor* defaultBackgroundColor;
     defaultBackgroundColor = color;
 }
 
+- (instancetype)init {
+    return [self initWithState:nil];
+}
 - (instancetype)initWithState:(id<NSCoding>)state {
-    if (self = [super initWithNibName:nil bundle:nil]) {
-        self.state = state;
-    }
+    self = [super initWithNibName:nil bundle:nil];
+    self.state = state;
     return self;
 }
-
 - (id)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     [self decodeRestorableStateWithCoder:coder];
@@ -77,11 +78,8 @@ static UIColor* defaultBackgroundColor;
 - (void)afterRender:(BOOL)animated{} // Private hook - see e.g. ListViewController
 
 - (void)pushViewController:(ViewController *)viewController {
-    if ([self.parentViewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController*)self.parentViewController pushViewController:viewController animated:YES];
-    } else {
-        [NSException raise:@"" format:@"pushViewController:animated: called on ViewController without a UINavigationController parent"];
-    }
+    [self.navigationController pushViewController:viewController animated:YES];
 }
+
 
 @end
