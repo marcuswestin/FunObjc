@@ -10,6 +10,14 @@
 
 @implementation NSArray (Fun)
 
++ (NSArray *)arrayWithLength:(NSUInteger)length values:(id)value {
+    NSMutableArray* arr = [NSMutableArray arrayWithCapacity:length];
+    for (int i=0; i<length; i++) {
+        arr[i] = value;
+    }
+    return [arr copy];
+}
+
 - (NSMutableArray*) map:(MapIdToId)mapFn {
     NSMutableArray* results = [NSMutableArray arrayWithCapacity:self.count];
     [self each:^(id val, NSUInteger i) {

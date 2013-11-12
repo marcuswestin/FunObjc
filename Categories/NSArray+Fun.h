@@ -14,6 +14,8 @@ typedef void (^Iterate)(id val, NSUInteger i);
 typedef BOOL (^Filter)(id val, NSUInteger i);
 
 @interface NSArray (Fun)
++ (NSArray*)arrayWithLength:(NSUInteger)length values:(id)value;
+
 - (void) each:(Iterate)iterateFn;
 - (void) asyncEach:(Iterate)iterateFn;
 - (NSMutableArray*) map:(MapIdToId)mapper;
