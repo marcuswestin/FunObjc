@@ -152,7 +152,7 @@ static NSString* uuidHeader;
     if ([contentType isEqualToString:@"application/json"]) {
         NSLog(@"API %@ %@ SEND:\n%@", method, url, data.toString);
     } else {
-        NSLog(@"API %@ %@ SEND", method, url);
+        NSLog(@"API %@ %@ %d SEND", method, url, data.length);
     }
     NSDictionary* devInterceptRes = [API _devIntercept:path];
     if (devInterceptRes) {
