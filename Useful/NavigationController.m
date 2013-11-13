@@ -99,26 +99,26 @@ static NSTimeInterval duration = 0.25;
     return self;
 }
 
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
-    return nil;
-    ViewControllerTransition* transition = [ViewControllerTransition new];
-//    transition.from = fromVC;
-//    transition.to = toVC;
-    transition.operation = operation;
-    return transition;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    return nil;
-}
-
-- (UIInterfaceOrientation)navigationControllerPreferredInterfaceOrientationForPresentation:(UINavigationController *)navigationController {
-    return UIInterfaceOrientationPortrait;
-}
-
-- (NSUInteger)navigationControllerSupportedInterfaceOrientations:(UINavigationController *)navigationController {
-    return UIInterfaceOrientationMaskPortrait;
-}
+//- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
+//    return nil;
+//    ViewControllerTransition* transition = [ViewControllerTransition new];
+////    transition.from = fromVC;
+////    transition.to = toVC;
+//    transition.operation = operation;
+//    return transition;
+//}
+//
+//- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
+//    return nil;
+//}
+//
+//- (UIInterfaceOrientation)navigationControllerPreferredInterfaceOrientationForPresentation:(UINavigationController *)navigationController {
+//    return UIInterfaceOrientationPortrait;
+//}
+//
+//- (NSUInteger)navigationControllerSupportedInterfaceOrientations:(UINavigationController *)navigationController {
+//    return UIInterfaceOrientationMaskPortrait;
+//}
 //- (void) navigationController:(UINavigationController*)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
 //
 //}
