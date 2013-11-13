@@ -157,7 +157,6 @@ static NSMutableDictionary* tagNameToTagNumber;
 #define _imageView ((UIImageView*)_view)
 
 @implementation ViewStyler {
-    UIView* _view;
     CGRect _frame;
     UIEdgeInsets _edgeWidths;
     UIColor* _edgeColor;
@@ -194,10 +193,6 @@ static NSMutableDictionary* tagNameToTagNumber;
     id view = [self render];
     [_buttonView onTap:handler];
     return view;
-}
-
-- (id)view {
-    return _view;
 }
 
 /* View Hierarchy

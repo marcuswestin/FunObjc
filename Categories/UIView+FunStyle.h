@@ -37,6 +37,8 @@ typedef ViewStyler* (^StylerLayer)(CALayer* layer);
 
 @interface ViewStyler : NSObject
 
+@property UIView* view;
+
 /* Create & apply
  ****************/
 - (void)apply;
