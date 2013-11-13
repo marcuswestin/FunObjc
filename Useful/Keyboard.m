@@ -46,6 +46,14 @@ static Keyboard* instance;
     return (UIViewAnimationOptions)458752;
 }
 
++ (BOOL)isVisible {
+    return instance.isVisible;
+}
+
++ (CGFloat)visibleHeight {
+    return instance.visibleHeight;
+}
+
 + (NSTimeInterval)animationDuration {
     return (NSTimeInterval)0.25;
 }
@@ -63,10 +71,14 @@ static Keyboard* instance;
 }
 
 - (void)_keyboardWillShow:(NSNotification*)notification {
+    instance.isVisible = YES;
+    instance.visibleHeight = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     [Events syncFire:@"KeyboardWillShow" info:[self _keyboardInfo:notification isShowing:YES]];
 }
 
 - (void)_keyboardWillHide:(NSNotification*)notification {
+    instance.isVisible = NO;
+    instance.visibleHeight = 0;
     [Events syncFire:@"KeyboardWillHide" info:[self _keyboardInfo:notification isShowing:NO]];
 }
 
@@ -79,7 +91,7 @@ static Keyboard* instance;
     }
     info.frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     info.frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    info.heightChange = (info.frameEnd.origin.y - info.frameBegin.origin.y);
+    info.heightChange = (info.frameBegin.origin.y - info.frameEnd.origin.y);
     return info;
 }
 

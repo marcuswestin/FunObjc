@@ -104,8 +104,8 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)moveListWithKeyboard:(CGFloat)heightChange {
-    [_scrollView addContentInsetTop:-heightChange];
-    [self.view moveByY:heightChange];
+    [_scrollView addContentInsetTop:heightChange];
+    [self.view moveByY:-heightChange];
 }
 
 - (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
@@ -132,27 +132,24 @@ static CGFloat START_Y = 99999.0f;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
     
-    [self _setupScrollview];
-    [self.view insertSubview:_scrollView atIndex:0];
-    
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:info.heightChange];
-            } else {
-                [self makeRoomForKeyboard:info.heightChange];
-            }
+            [self _handleKeyboardWithHeightChange:info.heightChange];
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            if ([self _shouldMoveWithKeyboard]) {
-                [self moveListWithKeyboard:info.heightChange];
-            } else {
-                [self makeRoomForKeyboard:info.heightChange];
-            }
+            [self _handleKeyboardWithHeightChange:info.heightChange];
         }];
     }];
+}
+
+- (void)_handleKeyboardWithHeightChange:(CGFloat)heightChange {
+    if ([self _shouldMoveWithKeyboard]) {
+        [self moveListWithKeyboard:heightChange];
+    } else {
+        [self makeRoomForKeyboard:heightChange];
+    }
 }
 
 - (BOOL)_shouldMoveWithKeyboard {
@@ -165,6 +162,9 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)afterRender:(BOOL)animated {
     [self reloadDataForList];
+    
+    [self _setupScrollview];
+    [self.view insertSubview:_scrollView atIndex:0];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

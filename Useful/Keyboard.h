@@ -20,6 +20,8 @@
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 
 @interface Keyboard : NSObject
+@property BOOL isVisible;
+@property CGFloat visibleHeight;
 + (void)onWillShow:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)onWillHide:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)offWillShow:(EventSubscriber)subscriber;
@@ -31,5 +33,8 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (CGFloat)heightForNumberPad;
 + (CGFloat)heightForDefaultKeyboard;
 + (CGFloat)heightForLargestKeyboard;
+
++ (BOOL)isVisible;
++ (CGFloat)visibleHeight;
 
 @end
