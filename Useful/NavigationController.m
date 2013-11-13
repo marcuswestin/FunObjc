@@ -100,6 +100,7 @@ static NSTimeInterval duration = 0.25;
 }
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
+    return nil;
     ViewControllerTransition* transition = [ViewControllerTransition new];
 //    transition.from = fromVC;
 //    transition.to = toVC;
