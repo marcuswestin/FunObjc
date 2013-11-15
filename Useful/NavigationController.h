@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface NavigationController : UINavigationController <UINavigationControllerDelegate>
-
+@property UIView* topBar;
+@property UIView* parallax;
 @end

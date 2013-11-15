@@ -19,12 +19,11 @@
 @implementation ViewControllerTransition
 static NSTimeInterval duration = 0.25;
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
-    
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView *container = [transitionContext containerView];
     
-    BOOL reverse = _operation == UINavigationControllerOperationPop; // self.reverse
+    BOOL reverse = (_operation == UINavigationControllerOperationPop); // self.reverse
     if (reverse) {
         [container insertSubview:toViewController.view belowSubview:fromViewController.view];
     }
@@ -85,20 +84,24 @@ static NSTimeInterval duration = 0.25;
 
 - (id)init {
     self = [super init];
-    self.delegate = self;
-    return self;
+    return [self _setup];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
-    self.delegate = self;
-    return self;
+    return [self _setup];
 }
 - (id)initWithRootViewController:(UIViewController *)rootViewController {
     self = [super initWithRootViewController:rootViewController];
-    self.delegate = self;
-    return self;
+    return [self _setup];
 }
 
+- (id)_setup {
+    self.delegate = self;
+    self.navigationBarHidden = YES;
+    self.topBar = [UIView.appendTo(self.view).h(60).blur(rgba(255,222,161,.6)) render];
+    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/1"]) render];
+    return self;
+}
 //- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
 //    return nil;
 //    ViewControllerTransition* transition = [ViewControllerTransition new];
