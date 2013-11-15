@@ -18,7 +18,7 @@
 - (UIViewController*)rootViewControllerForFreshLoad;
 
 @optional
-- (void)interfaceDidLoad;
+- (void)interfaceDidLoad:(UIWindow*)window;
 @end
 
 @interface FunAppDelegate : UIResponder<UIApplicationDelegate>

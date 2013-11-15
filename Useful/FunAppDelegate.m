@@ -31,7 +31,7 @@
     }
     [self handleLaunchNotification:launchOptions];
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad)]) {
-        [_funApp interfaceDidLoad];
+        [_funApp interfaceDidLoad:self.window];
     }
     [self _setupDevMenu];
     return YES;
