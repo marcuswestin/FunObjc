@@ -15,6 +15,10 @@ static UIColor* defaultBackgroundColor;
     BOOL _didRender;
 }
 
++ (void)load {
+    defaultBackgroundColor = [UIColor clearColor];
+}
+
 + (instancetype)withoutState {
     return [[[self class] alloc] initWithState:nil];
 }
@@ -65,7 +69,7 @@ static UIColor* defaultBackgroundColor;
     if (_didRender) { return; }
     _didRender = YES;
     self.view.backgroundColor = defaultBackgroundColor;
-    self.view.opaque = defaultBackgroundColor.alpha == 1.0;
+    self.view.opaque = (defaultBackgroundColor.alpha == 1.0);
     [self beforeRender:animated];
     [self render:animated];
     [self afterRender:animated];
