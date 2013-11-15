@@ -324,13 +324,13 @@ static CGFloat STATIC = 0.5f;
 @property UIToolbar *toolbar;
 @end
 @implementation FunBlurView
-- (id)initWithSuperview:(UIView*)view color:(UIColor*)color {
-    self = [super initWithFrame:view.bounds];
+- (id)initWithSuperview:(UIView*)view color:(UIColor*)color size:(CGSize)size {
+    self = [super initWithFrame:CGRectMake(0, 0, size.width, size.height)];
     self.clipsToBounds = YES; // toolbar draws a thin shadow on top without clip
+    self.toolbar = [[UIToolbar alloc] initWithFrame:[self bounds]];
     if (color) {
         [self.toolbar setBarTintColor:color];
     }
-    [self setToolbar:[[UIToolbar alloc] initWithFrame:[self bounds]]];
     [self.layer insertSublayer:[self.toolbar layer] atIndex:0];
     return self;
 }
@@ -344,7 +344,10 @@ static CGFloat STATIC = 0.5f;
     [self blur:WHITE];
 }
 - (void)blur:(UIColor *)color {
-    [self addSubview:[[FunBlurView alloc] initWithSuperview:self color:color]];
+    [self blur:color size:self.frame.size];
+}
+- (void)blur:(UIColor *)color size:(CGSize)size {
+    [self addSubview:[[FunBlurView alloc] initWithSuperview:self color:color size:size]];
 }
 @end
 

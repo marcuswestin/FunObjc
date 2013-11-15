@@ -81,6 +81,7 @@
 @interface UIView (Blur)
 - (void)blur;
 - (void)blur:(UIColor*)color;
+- (void)blur:(UIColor*)color size:(CGSize)size;
 @end
 
 typedef BOOL (^ShouldChangeStringCallback)(NSString* fromString, NSString* toString, NSRange replacementRange, NSString* replacementString);

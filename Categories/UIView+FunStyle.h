@@ -111,7 +111,7 @@ typedef ViewStyler* (^StylerLayer)(CALayer* layer);
 - (StylerFloat4Color)edges;
 - (ViewStyler*)hide;
 - (ViewStyler*)clip;
-- (ViewStyler*)blur;
+- (StylerColor1)blur;
 - (StylerLayer)bgLayer;
 
 /* Labels

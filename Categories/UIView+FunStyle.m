@@ -414,7 +414,7 @@ DeclareFloatStyler(inputPad, pad,
 
 
 
-DeclareStyler(blur, [_view blur]);
+DeclareColorStyler(blur, color, [_view blur:color size:_frame.size]);
 
 DeclareLayerStyler(bgLayer, layer, _bgLayer = layer);
 
