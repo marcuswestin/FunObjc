@@ -125,6 +125,20 @@
     point.x += self.width;
     return point;
 }
+- (CGPoint)topLeftCorner {
+    return self.frame.origin;
+}
+- (CGPoint)bottomLeftCorner {
+    CGPoint point = self.frame.origin;
+    point.y += self.height;
+    return point;
+}
+- (CGPoint)bottomRightCorner {
+    CGPoint point = self.frame.origin;
+    point.x += self.width;
+    point.y += self.height;
+    return point;
+}
 - (CGFloat)x {
     return CGRectGetMinX(self.frame);
 }

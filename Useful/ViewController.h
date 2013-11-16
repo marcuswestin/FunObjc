@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "State.h"
+#import "FunApp.h"
+
+@class NavigationController;
 
 @interface ViewController : UIViewController
 + (instancetype)withoutState;
@@ -18,4 +21,5 @@
 - (void)render:(BOOL)animated;
 
 - (void)pushViewController:(ViewController *)viewController;
+- (NavigationController*)nav;
 @end

@@ -85,5 +85,10 @@ static UIColor* defaultBackgroundColor;
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
+- (NavigationController *)nav {
+    return ([self.navigationController isMemberOfClass:[NavigationController class]]
+            ? (NavigationController*)self.navigationController
+            : nil);
+}
 
 @end

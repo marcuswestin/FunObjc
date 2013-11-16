@@ -226,8 +226,8 @@ DeclareStyler(centerVertically, _frame.origin.y = CGRectGetMidY(_view.superview.
 DeclareStyler(centerHorizontally, _frame.origin.x = CGRectGetMidX(_view.superview.bounds) - _frame.size.width/2)
 
 
-DeclareFloatStyler(fromBottom, offset, self.y2(offset))
-DeclareFloatStyler(y2, offset, _frame.origin.y = _view.superview.frame.size.height - _frame.size.height - offset)
+DeclareFloatStyler(fromBottom, offset, _frame.origin.y = _view.superview.frame.size.height - _frame.size.height - offset)
+DeclareFloatStyler(y2, y2, _frame.origin.y = y2 - _frame.size.height)
 DeclareFloatStyler(fromRight, offset, self.x2(offset))
 DeclareFloatStyler(x2, offset, _frame.origin.x = _view.superview.frame.size.width - _frame.size.width - offset)
 

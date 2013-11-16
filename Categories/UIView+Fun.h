@@ -37,6 +37,9 @@
 - (void)moveToPosition:(CGPoint)origin;
 - (void)moveByVector:(CGPoint)vector;
 - (CGPoint)topRightCorner;
+- (CGPoint)topLeftCorner;
+- (CGPoint)bottomLeftCorner;
+- (CGPoint)bottomRightCorner;
 - (CGFloat)x;
 - (CGFloat)y;
 - (CGFloat)x2;

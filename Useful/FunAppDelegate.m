@@ -30,7 +30,7 @@
         [self _loadInterfaceWithRootViewController:rootVC];
     }
     [self handleLaunchNotification:launchOptions];
-    if ([_funApp respondsToSelector:@selector(interfaceDidLoad)]) {
+    if ([_funApp respondsToSelector:@selector(interfaceDidLoad:)]) {
         [_funApp interfaceDidLoad:self.window];
     }
     [self _setupDevMenu];
@@ -45,16 +45,30 @@
     }];
 }
 
+void _forceCrash() {
+    int *x = NULL;
+    *x = 42;
+}
+
 - (void)_showDevMenu {
     UIView* overlay = [Overlay show];
     UIView* view = [UIView.appendTo(overlay).fill render];
-    [UIButton.appendTo(view).text(@"Reset State").size.center onTap:^(UIEvent *event) {
+    UIView* reset = [UIButton.appendTo(view).text(@"Reset State").size.center onTap:^(UIEvent *event) {
         [Files resetFileRoot];
         [view empty];
-        [UILabel.appendTo(view).text(@"State has been reset.\nPlease restart Dogo").wrapText.center render];
+        [UILabel.appendTo(view).text(@"State has been reset.\nApp will close in 1 second.").wrapText.center render];
         [view onTap:^(UITapGestureRecognizer *tap) {
             // Do nothing
         }];
+        after(1, ^{
+            _forceCrash();
+        });
+    }];
+    
+    [UIButton.appendTo(view).text(@"Crash").size.center.below(reset, 10) onTap:^(UIEvent *event) {
+        async(^{
+            _forceCrash();
+        });
     }];
 }
 

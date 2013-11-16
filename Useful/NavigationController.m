@@ -9,6 +9,10 @@
 #import "NavigationController.h"
 #import "FunObjc.h"
 
+@interface NavigationController ()
+@property UIView* parallax;
+@end
+
 @interface ViewControllerTransition : NSObject <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 //@property UIViewController* from;
 //@property UIViewController* to;
@@ -96,12 +100,19 @@ static NSTimeInterval duration = 0.25;
 }
 
 - (id)_setup {
+    if (Nav) {
+        [NSException raise:@"Error" format:@"Expects only one NavigationController to be created"];
+    }
+    Nav = self;
     self.delegate = self;
     self.navigationBarHidden = YES;
-    self.topBar = [UIView.appendTo(self.view).h(60).blur(rgba(255,222,161,.6)) render];
+    CGFloat headHeight = 50;
+    self.head = [UIView.appendTo(self.view).h([Viewport height]).blur(rgba(255,222,161,.5)).y2(headHeight) render];
+    [UIView.appendTo(self.head).name(@"headContent").h(headHeight).fromBottom(0) render];
     self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/1"]) render];
     return self;
 }
+
 //- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
 //    return nil;
 //    ViewControllerTransition* transition = [ViewControllerTransition new];
@@ -132,6 +143,16 @@ static NSTimeInterval duration = 0.25;
 
 
 //////////////////
+- (void)renderTopBar:(void (^)(UIView *))block {
+    UIView* content = [self.head viewByName:@"headContent"];
+    UIView* view = [UIView.styler.bounds(content.size) render];
+    block(view);
+    [content empty];
+    [view appendTo:content];
+}
 
-
+- (void)push:(ViewController *)viewController withAnimator:(NavigationAnimator *(^)())block {
+    
+//    [self pushViewController:viewController animated:YES];
+}
 @end

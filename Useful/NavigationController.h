@@ -7,8 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FunApp.h"
+
+@class ViewController;
+@class NavigationController;
+@class NavigationAnimator;
+
+static NavigationController* Nav;
 
 @interface NavigationController : UINavigationController <UINavigationControllerDelegate>
-@property UIView* topBar;
-@property UIView* parallax;
+- (void)renderTopBar:(void(^)(UIView* topBar))block;
+@property UIView* head;
+@property UIView* foot;
+
+- (void)push:(ViewController*)viewController withAnimator:(NavigationAnimator*(^)())block;
 @end
