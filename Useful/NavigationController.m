@@ -107,9 +107,13 @@ static NSTimeInterval duration = 0.25;
     self.delegate = self;
     self.navigationBarHidden = YES;
     CGFloat headHeight = 50;
-    self.head = [UIView.appendTo(self.view).h([Viewport height]).blur(rgba(255,222,161,.5)).y2(headHeight) render];
-    [UIView.appendTo(self.head).name(@"headContent").h(headHeight).fromBottom(0) render];
-    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/1"]) render];
+    self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight)
+//                 .blur(rgba(255,222,161,.5))
+                 render];
+    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/2"]) render];
+    
+    self.left = [UIView.appendTo(self.view).h([Viewport height]).w(0).insetTop(20).y(20) render];
+    
     return self;
 }
 
@@ -143,12 +147,20 @@ static NSTimeInterval duration = 0.25;
 
 
 //////////////////
-- (void)renderTopBar:(void (^)(UIView *))block {
-    UIView* content = [self.head viewByName:@"headContent"];
-    UIView* view = [UIView.styler.bounds(content.size) render];
+- (void)renderHeadHeight:(CGFloat)height block:(void (^)(UIView *))block {
+    self.head.height = height;
+    UIView* view = [UIView.styler.wh(self.head.width, height) render];
     block(view);
-    [content empty];
-    [view appendTo:content];
+    [self.head empty];
+    [self.head addSubview:view];
+}
+
+- (void)renderLeftWidth:(CGFloat)width block:(void (^)(UIView *))block {
+    self.left.width = width;
+    UIView* view = [UIView.appendTo(self.left).wh(width, self.view.height) render];
+    block(view);
+    [self.left empty];
+    [self.left addSubview:view];
 }
 
 - (void)push:(ViewController *)viewController withAnimator:(NavigationAnimator *(^)())block {

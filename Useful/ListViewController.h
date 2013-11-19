@@ -41,6 +41,7 @@ typedef enum ListViewDirection ListViewDirection;
 
 
 @interface ListViewController : ViewController <UIScrollViewDelegate>
+@property UIView* listView;
 @property UIScrollView* scrollView;
 @property UIEdgeInsets listGroupMargins;
 @property UIEdgeInsets listItemMargins;

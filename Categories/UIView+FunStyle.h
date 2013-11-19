@@ -100,6 +100,7 @@ typedef ViewStyler* (^StylerLayer)(CALayer* layer);
 - (ViewStyler*)fill;
 - (ViewStyler*)fillW;
 - (ViewStyler*)fillH;
+- (ViewStyler*)square;
 
 /* Styling
  *********/

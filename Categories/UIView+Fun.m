@@ -74,6 +74,36 @@
     frame.size.height = maxY;
     self.frame = frame;
 }
+- (void)frameSubviews {
+    CGPoint move = CGPointZero;
+    for (UIView* view in self.subviews) {
+        CGRect subFrame = view.frame;
+        if (subFrame.origin.x < move.x) {
+            move.x = subFrame.origin.x;
+        }
+        if (subFrame.origin.y < move.y) {
+            move.y = subFrame.origin.y;
+        }
+    }
+    [self moveByX:move.x y:move.y];
+    CGRect frame = self.frame;
+    CGFloat maxX = 0;
+    CGFloat maxY = 0;
+    if (move.x || move.y) {
+        for (UIView* view in self.subviews) {
+            [view moveByX:-move.x y:-move.y];
+            if (view.x2 > maxX) {
+                maxX = view.x2;
+            }
+            if (view.y2 > maxY) {
+                maxY = view.y2;
+            }
+        }
+    }
+    frame.size.width = maxX;
+    frame.size.height = maxY;
+    self.frame = frame;
+}
 
 /* Position
  **********/

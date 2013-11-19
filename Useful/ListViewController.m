@@ -105,7 +105,7 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)moveListWithKeyboard:(CGFloat)heightChange {
     [_scrollView addContentInsetTop:heightChange];
-    [self.view moveByY:-heightChange];
+    [self.listView moveByY:-heightChange];
 }
 
 - (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
@@ -128,7 +128,8 @@ static CGFloat START_Y = 99999.0f;
         _listStartLocation = TOP;
     }
     
-    _scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+    _listView = [[UIView alloc] initWithFrame:self.view.bounds];
+    _scrollView = [[UIScrollView alloc] initWithFrame:_listView.bounds];
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
     
@@ -161,10 +162,17 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)afterRender:(BOOL)animated {
+    if (self.nav.left) {
+        UIEdgeInsets groupMargins = self.listGroupMargins;
+        groupMargins.left += self.nav.left.width;
+        self.listGroupMargins = groupMargins;
+    }
+    
     [self reloadDataForList];
     
     [self _setupScrollview];
-    [self.view insertSubview:_scrollView atIndex:0];
+    [self.view insertSubview:_listView atIndex:0];
+    [_scrollView appendTo:_listView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -202,7 +210,7 @@ static CGFloat START_Y = 99999.0f;
 - (void)_renderInitialContent {
     _topY = START_Y;
     _bottomY = START_Y;
-    _scrollView.contentSize = CGSizeMake(self.view.width, MAX_Y);
+    _scrollView.contentSize = CGSizeMake(_listView.width, MAX_Y);
     _scrollView.contentOffset = CGPointMake(0, START_Y);
     _previousContentOffsetY = _scrollView.contentOffset.y;
 
@@ -416,7 +424,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (CGFloat)_widthForItemView {
-    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
+    return _listView.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
 }
 
 - (UIView*)_getViewForIndex:(ListIndex)index {
@@ -424,7 +432,7 @@ static CGFloat START_Y = 99999.0f;
     if (!content) { return nil; }
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
-    frame.size.width = self.view.width;
+    frame.size.width = _listView.width;
     content.y = _listItemMargins.top;
     content.x = _listItemMargins.left + _listGroupMargins.left;
     ListItemView* view = [[ListItemView alloc] initWithFrame:frame];
@@ -433,7 +441,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (CGFloat)_widthForGroupView {
-    return self.view.width - (_listGroupMargins.left + _listGroupMargins.right);
+    return _listView.width - (_listGroupMargins.left + _listGroupMargins.right);
 }
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
@@ -533,7 +541,7 @@ static CGFloat START_Y = 99999.0f;
     _bottomY -= changeInHeight;
     [self _withoutScrollEvents:^{
         _scrollView.contentOffset = CGPointMake(0, _scrollView.contentOffset.y - changeInHeight);
-        _scrollView.contentSize = CGSizeMake(self.view.width,  _scrollView.contentSize.height - changeInHeight);
+        _scrollView.contentSize = CGSizeMake(_listView.width,  _scrollView.contentSize.height - changeInHeight);
         for (UIView* subView in self._views) {
             [subView moveByY:-changeInHeight];
         }
