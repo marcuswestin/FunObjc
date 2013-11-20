@@ -66,13 +66,14 @@ static UIColor* defaultBackgroundColor;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (_didRender) { return; }
-    _didRender = YES;
-    self.view.backgroundColor = defaultBackgroundColor;
-    self.view.opaque = (defaultBackgroundColor.alpha == 1.0);
-    [self beforeRender:animated];
-    [self render:animated];
-    [self afterRender:animated];
+    if (!_didRender) {
+        _didRender = YES;
+        self.view.backgroundColor = defaultBackgroundColor;
+        self.view.opaque = (defaultBackgroundColor.alpha == 1.0);
+        [self beforeRender:animated];
+        [self render:animated];
+        [self afterRender:animated];
+    }
 }
 
 - (void)beforeRender:(BOOL)animated{} // Private hook - see e.g. ListViewController

@@ -107,12 +107,12 @@ static NSTimeInterval duration = 0.25;
     self.delegate = self;
     self.navigationBarHidden = YES;
     CGFloat headHeight = 50;
-    self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight)
-//                 .blur(rgba(255,222,161,.5))
-                 render];
-    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/2"]) render];
     
+    UIView* view = self.view;
+    self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight) render];
+    self.parallax = [UIImageView.prependTo(view).fill.image([UIImage imageNamed:@"img/bg/2"]) render];
     self.left = [UIView.appendTo(self.view).h([Viewport height]).w(0).insetTop(20).y(20) render];
+    self.foot = [UIView.appendTo(self.view).h([Viewport height]).y([Viewport height]) render];
     
     return self;
 }
@@ -146,21 +146,34 @@ static NSTimeInterval duration = 0.25;
 //}
 
 
+// Events
+/////////
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)uiViewController animated:(BOOL)animated {
+    if ([uiViewController isMemberOfClass:ViewController.class]) {
+//        [(ViewController*)uiViewController willShowAnimated:animated];
+    }
+}
+
 //////////////////
 - (void)renderHeadHeight:(CGFloat)height block:(void (^)(UIView *))block {
-    self.head.height = height;
-    UIView* view = [UIView.styler.wh(self.head.width, height) render];
-    block(view);
+    self.head.height = 20 + height;
     [self.head empty];
-    [self.head addSubview:view];
+    UIView* view = [UIView.appendTo(self.head).h(height).y(20) render];
+    block(view);
 }
 
 - (void)renderLeftWidth:(CGFloat)width block:(void (^)(UIView *))block {
+    [self.left empty];
     self.left.width = width;
     UIView* view = [UIView.appendTo(self.left).wh(width, self.view.height) render];
     block(view);
-    [self.left empty];
-    [self.left addSubview:view];
+}
+
+- (void) renderFootHeight:(CGFloat)height block:(void (^)(UIView *))block {
+    self.foot.height = 20 + height;
+    [self.foot empty];
+    UIView* view = [UIView.appendTo(self.foot).h(height).y2([Viewport height]) render];
+    block(view);
 }
 
 - (void)push:(ViewController *)viewController withAnimator:(NavigationAnimator *(^)())block {

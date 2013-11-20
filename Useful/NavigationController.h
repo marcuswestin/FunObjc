@@ -16,9 +16,12 @@
 static NavigationController* Nav;
 
 @interface NavigationController : UINavigationController <UINavigationControllerDelegate>
+
 - (void)renderHeadHeight:(CGFloat)height block:(void(^)(UIView* view))block;
 - (void)renderLeftWidth:(CGFloat)width block:(void(^)(UIView* view))block;
+- (void)renderFootHeight:(CGFloat)height block:(void(^)(UIView* view))block;
 
+@property UIView* controls;
 @property UIView* head;
 @property UIView* foot;
 @property UIView* left;
