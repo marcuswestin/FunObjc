@@ -132,7 +132,8 @@ static CGFloat START_Y = 99999.0f;
     _scrollView = [[UIScrollView alloc] initWithFrame:_listView.bounds];
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
-    
+    [_scrollView appendTo:_listView];
+
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             [self _handleKeyboardWithHeightChange:info.heightChange];
@@ -172,7 +173,6 @@ static CGFloat START_Y = 99999.0f;
     
     [self _setupScrollview];
     [self.view insertSubview:_listView atIndex:0];
-    [_scrollView appendTo:_listView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
