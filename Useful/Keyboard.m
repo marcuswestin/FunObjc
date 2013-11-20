@@ -7,6 +7,7 @@
 //
 
 #import "Keyboard.h"
+#import "Viewport.h"
 
 @implementation KeyboardEventInfo
 @end
@@ -92,6 +93,7 @@ static Keyboard* instance;
     info.frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     info.frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     info.heightChange = (info.frameBegin.origin.y - info.frameEnd.origin.y);
+    info.height = ([Viewport height] - info.frameEnd.origin.y);
     return info;
 }
 

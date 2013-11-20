@@ -105,7 +105,7 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)moveListWithKeyboard:(CGFloat)heightChange {
     [_scrollView addContentInsetTop:heightChange];
-    [self.listView moveByY:-heightChange];
+    [_listView moveByY:-heightChange];
 }
 
 - (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {

@@ -15,6 +15,7 @@
 @property CGRect frameBegin;
 @property CGRect frameEnd;
 @property CGFloat heightChange;
+@property CGFloat height;
 @end
 
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
