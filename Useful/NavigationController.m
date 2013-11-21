@@ -165,7 +165,7 @@ static NSTimeInterval duration = 0.25;
 - (void)renderLeftWidth:(CGFloat)width block:(void (^)(UIView *))block {
     [self.left empty];
     self.left.width = width;
-    UIView* view = [UIView.appendTo(self.left).wh(width, self.view.height) render];
+    UIView* view = [UIView.appendTo(self.left).fill render];
     block(view);
 }
 
