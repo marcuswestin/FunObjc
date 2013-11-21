@@ -110,7 +110,7 @@ static NSTimeInterval duration = 0.25;
     
     UIView* view = self.view;
     self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight) render];
-    self.parallax = [UIImageView.prependTo(view).fill.image([UIImage imageNamed:@"img/bg/2"]) render];
+    self.parallax = [UIImageView.prependTo(view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
     self.left = [UIView.appendTo(self.view).h([Viewport height]).w(0).insetTop(20).y(20) render];
     self.foot = [UIView.appendTo(self.view).h([Viewport height]).y([Viewport height]) render];
     
