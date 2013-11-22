@@ -123,6 +123,30 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView addContentInsetBottom:keyboardHeight];
 }
 
+- (void)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
+    CGFloat __block dHeight = 0;
+    [self enumerateViews:^(ListView *view) {
+        if (view.isGroupView) {
+            view.y += dHeight;
+        } else {
+            if (view.index == index) {
+                dHeight += (height - view.height);
+                view.height += dHeight;
+            } else {
+                view.y += dHeight;
+            }
+        }
+    }];
+    _bottomY += dHeight;
+    [_scrollView addContentHeight:dHeight];
+}
+
+- (void)enumerateViews:(void(^)(ListView* view))block {
+    [_scrollView.subviews enumerateObjectsUsingBlock:^(id view, NSUInteger i, BOOL *stop) {
+        block(view);
+    }];
+}
+
 //////////////////////
 // Setup & Teardown //
 //////////////////////
