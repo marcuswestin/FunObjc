@@ -256,7 +256,14 @@ static CGFloat START_Y = 99999.0f;
         _topItemIndex = startIndex;
         _bottomItemIndex = startIndex - 1;
         _bottomGroupId = startGroupId;
-        [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
+        {
+            ListIndex previousIndex = _topItemIndex - 1;
+            ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
+            UIView* previousView = [self _getViewForIndex:previousIndex];
+            if (!previousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
+                [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
+            }
+        }
         [self _extendBottom];
         [self _extendTop];
         
@@ -265,7 +272,14 @@ static CGFloat START_Y = 99999.0f;
         _bottomItemIndex = startIndex;
         _topItemIndex = startIndex + 1;
         _topGroupId = startGroupId;
-        [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
+        {
+            ListIndex nextIndex = _bottomItemIndex + 1;
+            ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
+            UIView* nextView = [self _getViewForIndex:nextIndex];
+            if (!nextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
+                [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
+            }
+        }
         [self _extendTop];
         [self _extendBottom];
         
@@ -326,7 +340,7 @@ static CGFloat START_Y = 99999.0f;
     
     if (!view) {
         // There are no more items to display at the bottom.
-        // Last thing: add a group fiit view at the bottom.
+        // Last thing: add a group view at the bottom.
         if ([self _bottomView].isGroupView) {
             return NO; // All done!
             
