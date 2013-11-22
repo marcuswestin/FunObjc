@@ -18,6 +18,17 @@ typedef enum ListViewLocation ListViewLocation;
 enum ListViewDirection { UP=-1, DOWN=1 };
 typedef enum ListViewDirection ListViewDirection;
 
+@interface ListView : UIView
+@property ListGroupId groupId;
+@property ListIndex index;
+@property BOOL isGroupHead;
+@property BOOL isGroupFoot;
+- (BOOL)isGroupView;
+- (BOOL)isItemView;
++ (ListView*)withFrame:(CGRect)frame index:(ListIndex)index;
++ (ListView*)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId;
++ (ListView*)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId;
+@end
 
 @protocol ListViewDelegate <NSObject>
 @required

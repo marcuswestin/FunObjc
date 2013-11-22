@@ -17,19 +17,30 @@
 #import "NSArray+Fun.h"
 
 // Used to differentiate group head views from item views
-@interface ListGroupHeadView : UIView;
-@end
-@implementation ListGroupHeadView
-@end
-
-@interface ListGroupFootView : UIView;
-@end
-@implementation ListGroupFootView
-@end
-
-@interface ListItemView : UIView;
-@end
-@implementation ListItemView
+@implementation ListView
++ (ListView *)withFrame:(CGRect)frame index:(ListIndex)index {
+    ListView* view = [[ListView alloc] initWithFrame:frame];
+    view.index = index;
+    return view;
+}
++ (ListView *)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId {
+    ListView* view = [[ListView alloc] initWithFrame:frame];
+    view.groupId = groupId;
+    view.isGroupHead = YES;
+    return view;
+}
++ (ListView *)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId {
+    ListView* view = [[ListView alloc] initWithFrame:frame];
+    view.groupId = groupId;
+    view.isGroupFoot = YES;
+    return view;
+}
+- (BOOL)isGroupView {
+    return _isGroupFoot || _isGroupHead;
+}
+- (BOOL)isItemView {
+    return !_isGroupFoot && !_isGroupHead;
+}
 @end
 
 @implementation ListViewController {
@@ -186,10 +197,9 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView onTap:^(UITapGestureRecognizer *sender) {
         CGPoint tapPoint = [sender locationInView:_scrollView];
         NSInteger index = _topItemIndex;
-        for (UIView* view in self._views) {
-            BOOL isGroupView = [self _isGroupView:view];
+        for (ListView* view in self._views) {
             if (CGRectContainsPoint(view.frame, tapPoint)) {
-                if (isGroupView) {
+                if (view.isGroupView) {
                     if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
                         ListGroupId groupId = [self _groupIdForIndex:index];
                         [_delegate listSelectGroupWithId:groupId withIndex:index];
@@ -200,7 +210,7 @@ static CGFloat START_Y = 99999.0f;
                 }
                 break;
             }
-            if (!isGroupView) {
+            if (!view.isGroupView) {
                 index += 1; // Don't count group heads against item indices.
             }
         }
@@ -297,7 +307,7 @@ static CGFloat START_Y = 99999.0f;
     if (!view) {
         // There are no more items to display at the bottom.
         // Last thing: add a group fiit view at the bottom.
-        if ([self _isGroupFootView:[self _bottomView]]) {
+        if ([self _bottomView].isGroupView) {
             return NO; // All done!
             
         } else {
@@ -314,12 +324,12 @@ static CGFloat START_Y = 99999.0f;
         // 2) A gead view for the next bottom group
         // 3) The item view
         
-        UIView* bottomView = [self _bottomView];
-        if ([self _isItemView:bottomView]) {
+        ListView* bottomView = [self _bottomView];
+        if (bottomView.isItemView) {
             [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:BOTTOM];
             return YES;
             
-        } else if ([self _isGroupFootView:bottomView]) {
+        } else if (bottomView.isGroupFoot) {
             [self _addGroupHeadViewForIndex:index withGroupId:groupId atLocation:BOTTOM];
             return YES;
             
@@ -337,11 +347,12 @@ static CGFloat START_Y = 99999.0f;
     NSInteger index = _topItemIndex - 1;
     
     UIView* view = [self _getViewForIndex:index];
+    ListView* topView = [self _topView];
     
     if (!view) {
         // There are no more items to display at the top.
         // Last thing: add a group head view at the top.
-        if ([self _isGroupHeadView:[self _topView]]) {
+        if (topView.isGroupHead) {
             return NO; // All done!
             
         } else {
@@ -357,12 +368,11 @@ static CGFloat START_Y = 99999.0f;
         // 2) A foot view for the next top group
         // 3) The item view
         
-        UIView* topView = [self _topView];
-        if ([self _isItemView:topView]) {
+        if (topView.isItemView) {
             [self _addGroupHeadViewForIndex:_topItemIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
             
-        } else if ([self _isGroupHeadView:topView]) {
+        } else if (topView.isGroupHead) {
             [self _addGroupFootViewForIndex:index withGroupId:groupId atLocation:TOP];
             return YES;
             
@@ -379,13 +389,13 @@ static CGFloat START_Y = 99999.0f;
 - (void) _cleanupTop {
     // Clean up views at the top that are now out of sight
     CGFloat targetY = _scrollView.contentOffset.y;
-    UIView* view;
+    ListView* view;
     while ((view = [self _topView]) && CGRectGetMaxY(view.frame) < targetY) {
         [view removeFromSuperview];
         _topY += view.height;
-        if ([self _isItemView:view]) {
+        if (view.isItemView) {
             _topItemIndex += 1;
-        } else if ([self _isGroupFootView:view]) {
+        } else if (view.isGroupFoot) {
             [self _setTopGroupId:[self _groupIdForIndex:_topItemIndex] index:_topItemIndex];
         }
     }
@@ -394,13 +404,13 @@ static CGFloat START_Y = 99999.0f;
 - (void) _cleanupBottom {
     // Clean up views at the bottom that are now out of sight
     CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
-    UIView* view;
+    ListView* view;
     while ((view = [self _bottomView]) && CGRectGetMinY(view.frame) > targetY) {
         [view removeFromSuperview];
         _bottomY -= view.height;
-        if ([self _isItemView:view]) {
+        if (view.isItemView) {
             _bottomItemIndex -= 1;
-        } else if ([self _isGroupHeadView:view]) {
+        } else if (view.isGroupHead) {
             [self _setBottomGroupId:[self _groupIdForIndex:_bottomItemIndex] index:_bottomItemIndex];
         }
     }
@@ -409,20 +419,6 @@ static CGFloat START_Y = 99999.0f;
 //////////////////////////////////
 // Item & Group Head/Foot Views //
 //////////////////////////////////
-
-- (BOOL)_isGroupHeadView:(UIView*)view {
-    return [view isMemberOfClass:[ListGroupHeadView class]];
-}
-- (BOOL)_isGroupFootView:(UIView*)view {
-    return [view isMemberOfClass:[ListGroupFootView class]];
-}
-- (BOOL)_isGroupView:(UIView*)view {
-    return [self _isGroupHeadView:view] || [self _isGroupFootView:view];
-}
-- (BOOL)_isItemView:(UIView*)view {
-    return ![self _isGroupView:view];
-}
-
 - (CGFloat)_widthForItemView {
     return _listView.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
 }
@@ -435,7 +431,7 @@ static CGFloat START_Y = 99999.0f;
     frame.size.width = _listView.width;
     content.y = _listItemMargins.top;
     content.x = _listItemMargins.left + _listGroupMargins.left;
-    ListItemView* view = [[ListItemView alloc] initWithFrame:frame];
+    ListView* view = [ListView withFrame:frame index:index];
     [view addSubview:content];
     return view;
 }
@@ -455,7 +451,7 @@ static CGFloat START_Y = 99999.0f;
     
     CGRect frame = view.bounds;
     frame.size.height += _listGroupMargins.bottom;
-    ListGroupFootView* groupView = [[ListGroupFootView alloc] initWithFrame:frame];
+    ListView* groupView = [ListView withFrame:frame footGroupId:groupId];
     [groupView addSubview:view];
     
     [self _addView:groupView at:location];
@@ -477,7 +473,7 @@ static CGFloat START_Y = 99999.0f;
     
     CGRect frame = view.bounds;
     frame.size.height += _listGroupMargins.top;
-    ListGroupHeadView* groupView = [[ListGroupHeadView alloc] initWithFrame:frame];
+    ListView* groupView = [ListView withFrame:frame headGroupId:groupId];
     [groupView addSubview:view];
     
     [self _addView:groupView at:location];
@@ -567,10 +563,10 @@ static CGFloat START_Y = 99999.0f;
         return ![view isKindOfClass:UIImageView.class];
     }];
 }
-- (UIView*)_topView {
+- (ListView*)_topView {
     return self._views.firstObject;
 }
-- (UIView*)_bottomView {
+- (ListView*)_bottomView {
     return self._views.lastObject;
 }
 
