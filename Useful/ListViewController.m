@@ -71,11 +71,7 @@ static CGFloat START_Y = 99999.0f;
     
     // Top should start scrolled down below the navigation bar
     if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
-        CGFloat amount = 20; // status bar
-        if (self.navigationController.navigationBar) {
-            amount += self.navigationController.navigationBar.height;
-        }
-        [_scrollView addContentOffset:-amount animated:NO];
+        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
     }
 }
 
