@@ -106,11 +106,10 @@ static NSTimeInterval duration = 0.25;
     Nav = self;
     self.delegate = self;
     self.navigationBarHidden = YES;
+
     CGFloat headHeight = 50;
-    
-    UIView* view = self.view;
     self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight) render];
-    self.parallax = [UIImageView.prependTo(view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
+    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
     self.left = [UIView.appendTo(self.view).h([Viewport height]).w(0).insetTop(20).y(20) render];
     self.foot = [UIView.appendTo(self.view).h([Viewport height]).y([Viewport height]) render];
     
@@ -156,9 +155,9 @@ static NSTimeInterval duration = 0.25;
 
 //////////////////
 - (void)renderHeadHeight:(CGFloat)height block:(void (^)(UIView *))block {
-    self.head.height = 20 + height;
+    self.head.y2 = 20 + height;
     [self.head empty];
-    UIView* view = [UIView.appendTo(self.head).h(height).y(20) render];
+    UIView* view = [UIView.appendTo(self.head).h(height).fromBottom(0) render];
     block(view);
 }
 
