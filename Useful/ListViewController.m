@@ -79,7 +79,7 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView setContentOffset:_scrollView.contentOffset animated:NO];
 }
 
-- (void)appendToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
+- (void)appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
     if (numItems == 0) {
         return;
     }

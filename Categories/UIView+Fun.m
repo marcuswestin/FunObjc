@@ -315,17 +315,23 @@ static CGFloat STATIC = 0.5f;
     ghostView.image = ghostImage;
     return ghostView;
 }
-- (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback {
-    [self ghostWithDuration:duration animation:animationCallback completion:^(NSError *err, UIView *ghostView) {
+- (void)ghostWithDuration:(NSTimeInterval)duration animation:(GhostCallback)animationCallback {
+    [self ghostWithDuration:duration options:0 animations:animationCallback];
+}
+- (void)ghostWithDuration:(NSTimeInterval)duration animation:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback {
+    [self ghostWithDuration:duration options:0 animations:animationCallback completion:completionCallback];
+}
+- (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback {
+    [self ghostWithDuration:duration options:options animations:animationCallback completion:^(UIView *ghostView) {
         [ghostView removeFromSuperview];
     }];
 }
-- (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback completion:(ViewCallback)completionCallback {
+- (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback {
     UIView* ghostView = self.ghost;
-    [UIView animateWithDuration:duration animations:^{
-        animationCallback(nil, ghostView);
+    [UIView animateWithDuration:duration delay:0 options:options animations:^{
+        animationCallback(ghostView);
     } completion:^(BOOL finished) {
-        completionCallback(nil, ghostView);
+        completionCallback(ghostView);
     }];
 }
 

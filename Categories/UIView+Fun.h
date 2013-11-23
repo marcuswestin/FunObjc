@@ -69,13 +69,16 @@
 
 /* Screenshot
  ************/
+typedef void(^GhostCallback)(UIView* ghostView);
 - (UIImage*)captureToImage;
 - (UIImage*)captureToImageWithScale:(CGFloat)scale;
 - (NSData*)captureToPngData;
 - (NSData*)captureToJpgData:(CGFloat)compressionQuality;
 - (UIView*)ghost;
-- (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback;
-- (void)ghostWithDuration:(NSTimeInterval)duration animation:(ViewCallback)animationCallback completion:(ViewCallback)completionCallback;
+- (void)ghostWithDuration:(NSTimeInterval)duration animation:(GhostCallback)animationCallback;
+- (void)ghostWithDuration:(NSTimeInterval)duration animation:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback;
+- (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback;
+- (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback;
 
 /* Animations
  ************/
