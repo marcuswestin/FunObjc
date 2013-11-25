@@ -22,6 +22,7 @@
 - (void)resizeByAddingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)containSubviews;
+- (void)containSubviewsHorizontally:(BOOL)containHorizontally vertically:(BOOL)vertically;
 - (void)setHeightUp:(CGFloat)height;
 - (void)addHeightUp:(CGFloat)addHeight;
 
@@ -36,7 +37,7 @@
 - (void)moveToX:(CGFloat)x;
 - (void)moveToY:(CGFloat)y;
 - (void)moveToPosition:(CGPoint)origin;
-- (void)moveByVector:(CGPoint)vector;
+- (void)moveByVector:(CGVector)vector;
 - (CGPoint)topRightCorner;
 - (CGPoint)topLeftCorner;
 - (CGPoint)bottomLeftCorner;

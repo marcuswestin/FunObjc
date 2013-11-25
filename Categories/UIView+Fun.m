@@ -50,32 +50,35 @@
     [self resizeByAddingWidth:-width height:-height];
 }
 - (void)containSubviews {
-    self.width = self.height = 0;
-    CGPoint move = CGPointZero;
+    [self containSubviewsHorizontally:YES vertically:YES];
+}
+- (void)containSubviewsHorizontally:(BOOL)horizontally vertically:(BOOL)vertically {
+    CGRect frame = self.frame;
+    if (horizontally) { frame.size.width = 0; }
+    if (vertically) { frame.size.height = 0; }
+    
+    CGVector move = CGVectorMake(0, 0);
     for (UIView* view in self.subviews) {
         CGRect subFrame = view.frame;
-        if (subFrame.origin.x < move.x) {
-            move.x = subFrame.origin.x;
+        if (horizontally && subFrame.origin.x < move.dx) {
+            move.dx = subFrame.origin.x;
         }
-        if (subFrame.origin.y < move.y) {
-            move.y = subFrame.origin.y;
+        if (vertically && subFrame.origin.y < move.dy) {
+            move.dy = subFrame.origin.y;
         }
     }
-    [self moveByX:move.x y:move.y];
-    CGRect frame = self.frame;
-    CGFloat maxX = frame.size.width;
-    CGFloat maxY = frame.size.height;
+    [self moveByVector:move];
+    
     for (UIView* view in self.subviews) {
-        [view moveByX:-move.x y:-move.y];
-        if (view.x2 > maxX) {
-            maxX = view.x2;
+        [view moveByX:-move.dx y:-move.dy];
+        if (horizontally && view.x2 > frame.size.width) {
+            frame.size.width = view.x2;
         }
-        if (view.y2 > maxY) {
-            maxY = view.y2;
+        if (vertically && view.y2 > frame.size.height) {
+            frame.size.height = view.y2;
         }
     }
-    frame.size.width = maxX;
-    frame.size.height = maxY;
+    
     self.frame = frame;
 }
 
@@ -108,10 +111,10 @@
 - (void)moveToPosition:(CGPoint)origin {
     [self moveToX:origin.x y:origin.y];
 }
-- (void)moveByVector:(CGPoint)vector {
+- (void)moveByVector:(CGVector)vector {
     CGPoint newOrigin = self.frame.origin;
-    newOrigin.x += vector.x;
-    newOrigin.y += vector.y;
+    newOrigin.x += vector.dx;
+    newOrigin.y += vector.dy;
     [self moveToPosition:newOrigin];
 }
 - (void)centerVertically {

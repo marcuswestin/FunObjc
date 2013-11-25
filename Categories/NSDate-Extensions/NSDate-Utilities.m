@@ -11,6 +11,7 @@
 */
 
 #import "NSDate-Utilities.h"
+#import "NSNumber+Fun.h"
 
 #define DATE_COMPONENTS (NSYearCalendarUnit| NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekCalendarUnit |  NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSWeekdayOrdinalCalendarUnit)
 #define CURRENT_CALENDAR [NSCalendar currentCalendar]
@@ -400,5 +401,8 @@
 }
 - (NSString *)nameOfDayNumeric {
     return [NSString stringWithFormat:@"%d", self.day + 1];
+}
+- (NSString*)nameOfDayNumericSuffix {
+    return [NSNumber suffix:self.day+1];
 }
 @end

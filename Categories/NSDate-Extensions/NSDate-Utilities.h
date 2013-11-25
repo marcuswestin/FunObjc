@@ -83,4 +83,5 @@
 @property (readonly) NSString* nameOfMonthAbreviated;
 @property (readonly) NSString* nameOfMonth;
 @property (readonly) NSString* nameOfDayNumeric;
+@property (readonly) NSString* nameOfDayNumericSuffix;
 @end

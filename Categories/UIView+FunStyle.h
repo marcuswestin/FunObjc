@@ -34,6 +34,7 @@ typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
 typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
 typedef ViewStyler* (^StylerImage)(UIImage* image);
 typedef ViewStyler* (^StylerLayer)(CALayer* layer);
+typedef ViewStyler* (^StylerDate)(NSDate* date);
 
 @interface ViewStyler : NSObject
 
@@ -158,3 +159,139 @@ typedef ViewStyler* (^StylerLayer)(CALayer* layer);
 + (ViewStyler*) styler;
 - (void)setImage:(UIImage *)image;
 @end
+
+// Arity 0
+#define DeclareStyler(STYLER_NAME, STYLER_CODE)\
+-(Styler) STYLER_NAME {\
+STYLER_CODE; return self;\
+}
+// Arity 1
+#define DeclareFloatStyler(STYLER_NAME, FLOAT_ARG_NAME, STYLER_CODE)\
+-(StylerFloat1) STYLER_NAME {\
+return ^(CGFloat FLOAT_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareViewStyler(STYLER_NAME, VIEW_ARG_NAME, STYLER_CODE)\
+-(StylerView) STYLER_NAME {\
+return ^(UIView* VIEW_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareIntegerStyler(STYLER_NAME, INT_ARG_NAME, STYLER_CODE)\
+-(StylerInteger1) STYLER_NAME {\
+return ^(NSInteger INT_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
+-(StylerString1) STYLER_NAME {\
+return ^(NSString* STRING_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareAttributedStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
+-(StylerAttributedString) STYLER_NAME {\
+return ^(NSAttributedString* STRING_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareMStringStyler(STYLER_NAME, STRING_ARG_NAME, STYLER_CODE)\
+-(StylerMString1) STYLER_NAME {\
+return ^(NSMutableString* STRING_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclarePointStyler(STYLER_NAME, POINT_ARG_NAME, STYLER_CODE)\
+-(StylerPoint) STYLER_NAME {\
+return ^(CGPoint POINT_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareRectStyler(STYLER_NAME, RECT_ARG_NAME, STYLER_CODE)\
+-(StylerRect) STYLER_NAME {\
+return ^(CGRect RECT_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareSizeStyler(STYLER_NAME, SIZE_ARG_NAME, STYLER_CODE)\
+-(StylerSize) STYLER_NAME {\
+return ^(CGSize SIZE_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareColorStyler(STYLER_NAME, COLOR_ARG_NAME, STYLER_CODE)\
+-(StylerColor1) STYLER_NAME {\
+return ^(UIColor* COLOR_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareStyler1(STYLER_NAME, ARG1_TYPE, ARG1_NAME, STYLER_CODE)\
+-(ViewStyler*(^)(ARG1_TYPE)) STYLER_NAME {\
+return ^(ARG1_TYPE ARG1_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareImageStyler(STYLER_NAME, IMAGE_ARG_NAME, STYLER_CODE)\
+-(StylerImage) STYLER_NAME {\
+return ^(UIImage* IMAGE_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareLayerStyler(STYLER_NAME, LAYER_ARG_NAME, STYLER_CODE)\
+-(StylerLayer) STYLER_NAME {\
+return ^(CALayer* LAYER_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareDateStyler(STYLER_NAME, ARG_NAME, STYLER_CODE)\
+-(StylerDate) STYLER_NAME {\
+return ^(NSDate* ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+
+// Arity 2
+//////////
+#define DeclareFloat2Styler(STYLER_NAME, F1ARG_NAME, F2ARG_NAME, STYLER_CODE)\
+-(StylerFloat2) STYLER_NAME {\
+return ^(CGFloat F1ARG_NAME, CGFloat F2ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareViewFloatStyler(STYLER_NAME, VIEW_ARG_NAME, FLOAT_ARG_NAME, STYLER_CODE)\
+-(StylerViewFloat) STYLER_NAME {\
+return ^(UIView* VIEW_ARG_NAME, CGFloat FLOAT_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareFloatColorStyler(STYLER_NAME, FLOAT_ARG_NAME, COLOR_ARG_NAME, STYLER_CODE)\
+-(StylerFloatColor) STYLER_NAME {\
+return ^(CGFloat FLOAT_ARG_NAME, UIColor* COLOR_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+// Arity 3
+//////////
+#define DeclareFloat3Styler(STYLER_NAME, f1NAME, f2NAME, f3NAME, STYLER_CODE)\
+-(StylerFloat3)STYLER_NAME { \
+return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+// Arity 4
+//////////
+#define DeclareFloat4Styler(STYLER_NAME, f1NAME, f2NAME, f3NAME, f4NAME, STYLER_CODE)\
+-(StylerFloat4)STYLER_NAME { \
+return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME, CGFloat f4NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+// Arity 5
+//////////
+#define DeclareFloat4ColorStyler(STYLER_NAME, f1NAME, f2NAME, f3NAME, f4NAME, COLOR_ARG_NAME, STYLER_CODE)\
+-(StylerFloat4Color)STYLER_NAME { \
+return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME, CGFloat f4NAME, UIColor* COLOR_ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}

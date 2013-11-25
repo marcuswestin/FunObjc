@@ -22,7 +22,7 @@
 #if defined DEBUG
 #define PUSH_MODE @"_sandbox"
 #else
-
+#define PUSH_MODE @""
 #endif
 
 @implementation NotificationInfo
