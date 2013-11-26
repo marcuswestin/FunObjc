@@ -68,4 +68,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeight;
 - (void) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
+- (void)listSelectVisibleIndex:(ListIndex)index;
 @end

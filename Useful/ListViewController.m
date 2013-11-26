@@ -240,6 +240,15 @@ static CGFloat START_Y = 99999.0f;
     }];
 }
 
+- (void)listSelectVisibleIndex:(ListIndex)index {
+    for (ListView* view in [self _views]) {
+        if ([view isItemView] && view.index == index) {
+            [_delegate listSelectIndex:index view:view.content];
+            return;
+        }
+    }
+}
+
 - (void)_renderInitialContent {
     _topY = START_Y;
     _bottomY = START_Y;
