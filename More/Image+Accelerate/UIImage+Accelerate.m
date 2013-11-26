@@ -12,6 +12,7 @@
 @implementation UIImage (Accelerate)
 
 - (UIImage *)imageWithBlurRadius:(CGFloat)blurRadius {
+    // See discussion: http://blog.bubbly.net/2013/09/11/slick-tricks-for-ios-blur-effect/
     if ((blurRadius < 0.0f) || (blurRadius > 1.0f)) {
         blurRadius = 0.5f;
     }
