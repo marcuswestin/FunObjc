@@ -17,4 +17,8 @@ typedef void(^LocationCallback)(CLLocation* location);
 
 + (void)getCurrentLocation:(LocationCallback)callback;
 
+#ifdef DEBUG
++ (void)debugSetMockLocation:(CLLocation*)location;
+#endif
+
 @end
