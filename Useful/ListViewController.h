@@ -25,6 +25,7 @@ typedef enum ListViewDirection ListViewDirection;
 @property BOOL isGroupFoot;
 - (BOOL)isGroupView;
 - (BOOL)isItemView;
+- (UIView*)content;
 + (ListView*)withFrame:(CGRect)frame index:(ListIndex)index;
 + (ListView*)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId;
 + (ListView*)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId;

@@ -41,6 +41,9 @@
 - (BOOL)isItemView {
     return !_isGroupFoot && !_isGroupHead;
 }
+- (UIView *)content {
+    return self.subviews.firstObject;
+}
 @end
 
 @implementation ListViewController {
@@ -126,7 +129,7 @@ static CGFloat START_Y = 99999.0f;
             view.y += dHeight;
         } else {
             if (view.index == index) {
-                dHeight += (height - view.height);
+                dHeight = (height - view.height) + _listItemMargins.bottom + _listItemMargins.top;
                 view.height += dHeight;
             } else {
                 view.y += dHeight;
@@ -226,7 +229,7 @@ static CGFloat START_Y = 99999.0f;
                     }
                     
                 } else {
-                    [_delegate listSelectIndex:index view:view.subviews[0]];
+                    [_delegate listSelectIndex:index view:view.content];
                 }
                 break;
             }
