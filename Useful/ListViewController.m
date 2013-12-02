@@ -109,7 +109,7 @@ static CGFloat START_Y = 99999.0f;
     if (scrollAmount > 0) {
         [_scrollView addContentOffset:scrollAmount animated:YES];
     } else {
-        [self _extendBottom];
+        [self extendBottom];
     }
 }
 
@@ -276,7 +276,7 @@ static CGFloat START_Y = 99999.0f;
                 [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
             }
         }
-        [self _extendBottom];
+        [self extendBottom];
         [self _extendTop];
         
     } else if (_listStartLocation == BOTTOM) {
@@ -293,7 +293,7 @@ static CGFloat START_Y = 99999.0f;
             }
         }
         [self _extendTop];
-        [self _extendBottom];
+        [self extendBottom];
         
     } else {
         [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
@@ -308,7 +308,7 @@ static CGFloat START_Y = 99999.0f;
     CGFloat contentOffsetY = scrollView.contentOffset.y;
     if (contentOffsetY > _previousContentOffsetY) {
         // scrolled down
-        [self _extendBottom];
+        [self extendBottom];
         
     } else if (contentOffsetY < _previousContentOffsetY) {
         // scrolled up
@@ -322,7 +322,7 @@ static CGFloat START_Y = 99999.0f;
     _previousContentOffsetY = scrollView.contentOffset.y;
 }
 
-- (void)_extendBottom {
+- (void)extendBottom {
     CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
     while (_bottomY < targetY) {
         BOOL didAddView = [self _listAddNextViewDown];
