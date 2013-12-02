@@ -7,7 +7,6 @@
 //
 
 #import <AudioToolbox/AudioToolbox.h>
-#import "Overlay.h"
 #import "Viewport.h"
 #import "UIView+FunStyle.h"
 #import "UIControl+Fun.h"
@@ -29,14 +28,45 @@ void fatal(NSError* err) {
     });
 }
 
+static UIView* errorView;
+
 void error(NSError* err) {
     if (!err) { return; }
-    [Camera hide];
     asyncMain(^{
+        [Camera hide];
+        UIView* navView = [FunAppDelegate instance].window.rootViewController.view;
+        UIView* __block view;
+        if (errorView) {
+            view = errorView;
+        } else {
+            view = errorView = [UIView.appendTo(navView).bg(RED) render];
+        }
+        [view empty];
+        
         NSString* message = err.localizedDescription;
+        UILabel* label = [UILabel.appendTo(view).text(message).textColor(WHITE).insetSides(8).wrapText render];
+        
+        Block hide = ^{
+            if (!view) { return; }
+            [UIView animateWithDuration:.5 animations:^{
+                view.y2 = 0;
+            }];
+            view = nil;
+        };
+        
+        [view containSubviewsHorizontally:NO vertically:YES];
+        view.height += 32;
+        [label.styler.fromBottom(8) apply];
+        view.y2 = 0;
+        [UIView animateWithDuration:.5 animations:^{
+            view.y = 0;
+            after(30, ^{
+                hide();
+            });
+        }];
+        [view onTap:hide];
+        
         NSLog(@"ERROR %@ %@", message, err);
-        UIWindow* overlay = [Overlay show];
-        [UILabel.appendTo(overlay).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
     });
 }
 

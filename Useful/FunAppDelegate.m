@@ -10,7 +10,13 @@
 #import "Events.h"
 #import "Keyboard.h"
 
+static FunAppDelegate* instance;
+
 @implementation FunAppDelegate
+
++ (FunAppDelegate *)instance {
+    return instance;
+}
 
 // Application launch & state restoration
 /////////////////////////////////////////
@@ -29,6 +35,7 @@
         }
         [self _loadInterfaceWithRootViewController:rootVC];
     }
+    instance = self;
     [self handleLaunchNotification:launchOptions];
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad:)]) {
         [_funApp interfaceDidLoad:self.window];
