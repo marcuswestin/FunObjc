@@ -8,8 +8,13 @@
 
 #import "Locations.h"
 #import <CoreLocation/CoreLocation.h>
+#import "FunTypes.h"
 
 Locations* instance;
+
+@interface Locations ()
+@property CLLocation* mockLocation;
+@end
 
 @implementation Locations
 
@@ -20,11 +25,24 @@ Locations* instance;
 }
 
 + (void)getCurrentLocation:(LocationCallback)callback {
-    instance.locationCallback = callback;
-    [instance.manager startUpdatingLocation];
+    if (instance.mockLocation) {
+        async(^{
+            callback(instance.mockLocation);
+        });
+    } else {
+        instance.locationCallback = callback;
+        [instance.manager startUpdatingLocation];
+    }
 }
 
+#ifdef DEBUG
++ (void)debugSetMockLocation:(CLLocation *)location {
+    instance.mockLocation = location;
+}
+#endif
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    CLLocation* location = locations.lastObject;
     [instance.manager stopUpdatingLocation];
     LocationCallback callback;
     @synchronized(instance) {
@@ -32,7 +50,9 @@ Locations* instance;
         if (!callback) { return; }
         instance.locationCallback = nil;
     }
-    callback(locations.lastObject);
+    asyncMain(^{
+        callback(location);
+    });
 }
 
 @end

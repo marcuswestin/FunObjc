@@ -140,6 +140,7 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 /* Images
  ********/
 - (StylerImage)image;
+- (StylerImage)imageFill;
 @end
 
 

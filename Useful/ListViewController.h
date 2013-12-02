@@ -25,6 +25,7 @@ typedef enum ListViewDirection ListViewDirection;
 @property BOOL isGroupFoot;
 - (BOOL)isGroupView;
 - (BOOL)isItemView;
+- (UIView*)content;
 + (ListView*)withFrame:(CGRect)frame index:(ListIndex)index;
 + (ListView*)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId;
 + (ListView*)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId;
@@ -67,4 +68,6 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeight;
 - (void) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
+- (void) listSelectVisibleIndex:(ListIndex)index;
+- (void) extendBottom;
 @end

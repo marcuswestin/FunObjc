@@ -293,15 +293,21 @@ DeclareFloatStyler(alpha, alpha, _view.alpha = alpha)
 /* Image views
  *************/
 DeclareImageStyler(image, image,
-                   if ([_view respondsToSelector:@selector(setImage:)]) {
-                       _imageView.image = image;
-                       [_imageView sizeToFit];
-                       _frame = _imageView.frame;
-                       _frame.size.width /= 2;
-                       _frame.size.height /= 2;
-                   } else {
+                   if (![_view respondsToSelector:@selector(setImage:)]) {
                        [NSException raise:@"Error" format:@"Can't set image in image() styler"];
-                   })
+                   }
+                   _imageView.image = image;
+                   [_imageView sizeToFit];
+                   _frame = _imageView.frame;
+                   CGFloat resolution = [Viewport resolution];
+                   _frame.size.width /= resolution;
+                   _frame.size.height /= resolution)
+
+DeclareImageStyler(imageFill, image,
+                   if (![_view respondsToSelector:@selector(setImage:)]) {
+                       [NSException raise:@"Error" format:@"Can't set image in image() styler"];
+                   }
+                   _imageView.image = [image thumbnailSize:_frame.size transparentBorder:0 cornerRadius:0 interpolationQuality:0])
 
 @end
 
