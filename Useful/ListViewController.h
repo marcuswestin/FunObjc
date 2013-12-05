@@ -70,4 +70,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
 - (void) listSelectVisibleIndex:(ListIndex)index;
 - (void) extendBottom;
+- (UIView*) listViewForIndex:(ListIndex)index;
 @end
