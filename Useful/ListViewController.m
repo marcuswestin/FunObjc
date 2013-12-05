@@ -70,6 +70,15 @@ static CGFloat START_Y = 99999.0f;
 // API methods //
 /////////////////
 
+- (UIView *)listViewForIndex:(ListIndex)index {
+    for (ListView* view in [self _views]) {
+        if (view.index == index) {
+            return view.content;
+        }
+    }
+    return nil;
+}
+
 - (void)reloadDataForList {
     [self _withoutScrollEvents:^{
         [self.scrollView empty];

@@ -36,3 +36,6 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 @interface NSOrderedSet (Fun)
 - (id) item:(NSInteger)index;
 @end
+@interface NSMutableOrderedSet (Fun)
+- (BOOL) toggleContainsObject:(id)object;
+@end

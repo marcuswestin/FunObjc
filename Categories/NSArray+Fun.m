@@ -121,3 +121,14 @@
     return self[index];
 }
 @end
+@implementation NSMutableOrderedSet (Fun)
+- (BOOL)toggleContainsObject:(id)object {
+    if ([self containsObject:object]) {
+        [self removeObject:object];
+        return NO;
+    } else {
+        [self addObject:object];
+        return YES;
+    }
+}
+@end
