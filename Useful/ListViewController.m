@@ -16,6 +16,10 @@
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
 
+@interface ListViewController ()
+@property ListViewLocation listStartLocation;
+@end
+
 // Used to differentiate group head views from item views
 @implementation ListView
 + (ListView *)withFrame:(CGRect)frame index:(ListIndex)index {
@@ -75,6 +79,10 @@ static CGFloat START_Y = 99999.0f;
     // Top should start scrolled down below the navigation bar
     if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
         [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
+    } else if (_listStartLocation == BOTTOM) {
+        // TODO Check if there is a visible status bar
+        // TODO Check if there is a visible navigation bar
+        [_scrollView addContentOffset:20 animated:NO];
     }
 }
 
@@ -82,7 +90,7 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView setContentOffset:_scrollView.contentOffset animated:NO];
 }
 
-- (void)appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
+- (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
     if (numItems == 0) {
         return;
     }
@@ -158,8 +166,9 @@ static CGFloat START_Y = 99999.0f;
             [NSException raise:@"Error" format:@"Make sure your ListViewController subclass implements the ListViewDelegate protocol"];
         }
     }
-    if (!_listStartLocation) {
-        _listStartLocation = TOP;
+    _listStartLocation = TOP;
+    if ([_delegate respondsToSelector:@selector(listStartLocation)]) {
+        _listStartLocation = [_delegate listStartLocation];
     }
     
     _listView = [[UIView alloc] initWithFrame:self.view.bounds];

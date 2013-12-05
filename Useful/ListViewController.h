@@ -38,7 +38,8 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 
 @optional
-- (ListIndex)listStartIndex;
+- (ListIndex) listStartIndex;
+- (ListViewLocation) listStartLocation;
 - (id) listGroupIdForIndex:(ListIndex)index;
 
 - (UIView*) listHeadViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
@@ -57,7 +58,6 @@ typedef enum ListViewDirection ListViewDirection;
 @property UIScrollView* scrollView;
 @property UIEdgeInsets listGroupMargins;
 @property UIEdgeInsets listItemMargins;
-@property ListViewLocation listStartLocation;
 @property (weak) id<ListViewDelegate> delegate;
 
 /////////////////
@@ -65,7 +65,7 @@ typedef enum ListViewDirection ListViewDirection;
 /////////////////
 - (void) reloadDataForList;
 - (void) stopScrollingList;
-- (void) appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
+- (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeight;
 - (void) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
 - (void) listSelectVisibleIndex:(ListIndex)index;
