@@ -32,3 +32,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (NSString*)joinedByCommaSpace;
 - (NSString*)joinedByCommaNewline;
 @end
+
+@interface NSOrderedSet (Fun)
+- (id) item:(NSInteger)index;
+@end
