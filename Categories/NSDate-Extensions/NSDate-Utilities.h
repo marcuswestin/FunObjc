@@ -67,6 +67,7 @@
 - (NSInteger)distanceInDaysToDate:(NSDate *)anotherDate;
 
 // Decomposing dates
++ (NSDate*)epoch;
 @property (readonly) NSInteger nearestHour;
 @property (readonly) NSInteger hour;
 @property (readonly) NSInteger minute;
@@ -77,6 +78,8 @@
 @property (readonly) NSInteger weekday;
 @property (readonly) NSInteger nthWeekday; // e.g. 2nd Tuesday of the month == 2
 @property (readonly) NSInteger daysSinceEpoch;
+@property (readonly) NSInteger weeksSinceEpoch;
+@property (readonly) NSInteger monthsSinceEpoch;
 @property (readonly) NSInteger year;
 
 // Names

@@ -300,8 +300,25 @@
 	return (NSInteger) (ti / D_DAY);
 }
 
++ (NSDate *)epoch {
+    static NSDate* epoch;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        epoch = [NSDate dateWithTimeIntervalSince1970:0];
+    });
+    return epoch;
+}
+
 - (NSInteger)daysSinceEpoch {
-    return [self daysAfterDate:[NSDate dateWithTimeIntervalSince1970:0]];
+    return [self daysAfterDate:[NSDate epoch]];
+}
+
+- (NSInteger)weeksSinceEpoch {
+    return [self daysSinceEpoch] / 7;
+}
+
+- (NSInteger)monthsSinceEpoch {
+    return [self year] * 12 + self.month;
 }
 
 // Thanks, dmitrydims
