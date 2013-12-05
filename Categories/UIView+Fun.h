@@ -30,6 +30,7 @@
  **********/
 - (void)centerView;
 - (void)centerVertically;
+- (void)centerHorizontally;
 - (void)moveByX:(CGFloat)x y:(CGFloat)y;
 - (void)moveByY:(CGFloat)y;
 - (void)moveByX:(CGFloat)x;
