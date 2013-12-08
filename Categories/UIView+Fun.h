@@ -65,7 +65,7 @@
 
 /* View hierarchy
  ****************/
-- (void)empty;
+- (instancetype)empty;
 - (void)appendTo:(UIView*)superview;
 - (void)prependTo:(UIView*)superview;
 

@@ -11,7 +11,7 @@
 
 static UIColor* defaultBackgroundColor;
 
-@implementation ViewController {
+@implementation FunViewController {
     BOOL _didRender;
 }
 
@@ -76,20 +76,22 @@ static UIColor* defaultBackgroundColor;
     }
 }
 
-- (void)beforeRender:(BOOL)animated{} // Private hook - see e.g. ListViewController
+- (void)beforeRender:(BOOL)animated{} // Private hook - see e.g. FunListViewController
 - (void)render:(BOOL)animated {
     [UILabel.appendTo(self.view).text(@"You should implement -render in your ViewController").wrapText.center render];
 }
-- (void)afterRender:(BOOL)animated{} // Private hook - see e.g. ListViewController
+- (void)afterRender:(BOOL)animated{} // Private hook - see e.g. FunListViewController
 
-- (void)pushViewController:(ViewController *)viewController {
+- (void)pushViewController:(UIViewController *)viewController {
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
-- (NavigationController *)nav {
-    return ([self.navigationController isMemberOfClass:[NavigationController class]]
-            ? (NavigationController*)self.navigationController
-            : nil);
+- (FunNavigationController *)nav {
+    if ([self.navigationController isKindOfClass:[FunNavigationController class]]) {
+        return (FunNavigationController*)self.navigationController;
+    } else {
+        return nil;
+    }
 }
 
 @end

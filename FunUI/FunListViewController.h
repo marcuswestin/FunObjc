@@ -1,5 +1,5 @@
 //
-//  ListViewController.h
+//  FunListViewController.h
 //  Dogo-iOS
 //
 //  Created by Marcus Westin on 8/8/13.
@@ -12,11 +12,11 @@
 typedef NSInteger ListIndex;
 typedef id ListGroupId;
 
-enum ListViewLocation { TOP=1, BOTTOM=2 };
 typedef enum ListViewLocation ListViewLocation;
+enum ListViewLocation { TOP=1, BOTTOM=2 };
 
-enum ListViewDirection { UP=-1, DOWN=1 };
 typedef enum ListViewDirection ListViewDirection;
+enum ListViewDirection { UP=-1, DOWN=1 };
 
 @interface ListView : UIView
 @property ListGroupId groupId;
@@ -53,7 +53,7 @@ typedef enum ListViewDirection ListViewDirection;
 @end
 
 
-@interface ListViewController : ViewController <UIScrollViewDelegate>
+@interface FunListViewController : FunViewController <UIScrollViewDelegate>
 @property UIView* listView;
 @property UIScrollView* scrollView;
 @property UIEdgeInsets listGroupMargins;
@@ -63,6 +63,7 @@ typedef enum ListViewDirection ListViewDirection;
 /////////////////
 // API methods //
 /////////////////
++ (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
 - (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;

@@ -6,12 +6,8 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "NavigationController.h"
+#import "FunNavigationController.h"
 #import "FunObjc.h"
-
-@interface NavigationController ()
-@property UIView* parallax;
-@end
 
 @interface ViewControllerTransition : NSObject <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 //@property UIViewController* from;
@@ -81,8 +77,10 @@ static NSTimeInterval duration = 0.25;
 //}
 @end
 
-
-@implementation NavigationController
+@interface FunNavigationController ()
+@property UIView* parallax;
+@end
+@implementation FunNavigationController
 // Custom navigation animations
 ///////////////////////////////
 
@@ -99,22 +97,26 @@ static NSTimeInterval duration = 0.25;
     return [self _setup];
 }
 
+static BOOL hasSetup;
+
 - (id)_setup {
-    if (Nav) {
+    if (hasSetup) {
         [NSException raise:@"Error" format:@"Expects only one NavigationController to be created"];
     }
-    Nav = self;
+    hasSetup = true;
     self.delegate = self;
     self.navigationBarHidden = YES;
 
     CGFloat headHeight = 50;
     self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight) render];
     self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
-    self.left = [UIView.appendTo(self.view).h([Viewport height]).w(0).insetTop(20).y(20) render];
     self.foot = [UIView.appendTo(self.view).h([Viewport height]).y([Viewport height]) render];
     
+    [self setup];
     return self;
 }
+
+- (void)setup {}
 
 //- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
 //    return nil;
@@ -153,30 +155,23 @@ static NSTimeInterval duration = 0.25;
     }
 }
 
-//////////////////
-- (void)renderHeadHeight:(CGFloat)height block:(void (^)(UIView *))block {
-    self.head.y2 = 20 + height;
-    [self.head empty];
-    UIView* view = [UIView.appendTo(self.head).h(height).fromBottom(0) render];
-    block(view);
+// Navigation Animation
+///////////////////////
+- (void)push:(UIViewController *)viewController withAnimator:(id<UIViewControllerAnimatedTransitioning>)animator {
+    _currentAnimator = animator;
+    [self pushViewController:viewController animated:YES];
 }
 
-- (void)renderLeftWidth:(CGFloat)width block:(void (^)(UIView *))block {
-    [self.left empty];
-    self.left.width = width;
-    UIView* view = [UIView.appendTo(self.left).fill render];
-    block(view);
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
+    return _currentAnimator;
 }
 
-- (void) renderFootHeight:(CGFloat)height block:(void (^)(UIView *))block {
-    self.foot.height = 20 + height;
-    [self.foot empty];
-    UIView* view = [UIView.appendTo(self.foot).h(height).y2([Viewport height]) render];
-    block(view);
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
+    if ([_currentAnimator conformsToProtocol:@protocol(UIViewControllerInteractiveTransitioning)]) {
+        return (id<UIViewControllerInteractiveTransitioning>)_currentAnimator;
+    } else {
+        return nil;
+    }
 }
 
-- (void)push:(ViewController *)viewController withAnimator:(NavigationAnimator *(^)())block {
-    
-//    [self pushViewController:viewController animated:YES];
-}
 @end

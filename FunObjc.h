@@ -12,5 +12,4 @@
 #import "FunCategories.h"
 #import "FunUseful.h"
 #import "FunData.h"
-#import "FunApp.h"
 #import "FunUI.h"

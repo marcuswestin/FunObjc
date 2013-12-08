@@ -1,12 +1,12 @@
 //
-//  ListViewController.m
+//  FunListViewController.m
 //  Dogo-iOS
 //
 //  Created by Marcus Westin on 8/8/13.
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "ListViewController.h"
+#import "FunListViewController.h"
 #import "UIView+FunStyle.h"
 #import "FunTypes.h"
 #import "UIColor+Fun.h"
@@ -16,7 +16,7 @@
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
 
-@interface ListViewController ()
+@interface FunListViewController ()
 @property ListViewLocation listStartLocation;
 @end
 
@@ -50,7 +50,7 @@
 }
 @end
 
-@implementation ListViewController {
+@implementation FunListViewController {
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
@@ -172,7 +172,7 @@ static CGFloat START_Y = 99999.0f;
         if ([self conformsToProtocol:@protocol(ListViewDelegate)]) {
             _delegate = (id<ListViewDelegate>)self;
         } else {
-            [NSException raise:@"Error" format:@"Make sure your ListViewController subclass implements the ListViewDelegate protocol"];
+            [NSException raise:@"Error" format:@"Make sure your FunListViewController subclass implements the ListViewDelegate protocol"];
         }
     }
     _listStartLocation = TOP;
@@ -214,10 +214,23 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
+static UIEdgeInsets insetsForAll;
+static BOOL insetsForAllSet;
++ (void)insetAll:(UIEdgeInsets)insets {
+    if (insetsForAllSet) {
+        [NSException raise:@"Error" format:@"FunListViewController insetAll: called twice"];
+    }
+    insetsForAll = insets;
+    insetsForAllSet = YES;
+}
+
 - (void)afterRender:(BOOL)animated {
-    if (self.nav.left) {
+    if (insetsForAllSet) {
         UIEdgeInsets groupMargins = self.listGroupMargins;
-        groupMargins.left += self.nav.left.width;
+        groupMargins.top += insetsForAll.top;
+        groupMargins.right += insetsForAll.right;
+        groupMargins.bottom += insetsForAll.bottom;
+        groupMargins.left += insetsForAll.left;
         self.listGroupMargins = groupMargins;
     }
     

@@ -7,24 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FunApp.h"
 
 @class ViewController;
-@class NavigationController;
+@class FunNavigationController;
 @class NavigationAnimator;
 
-static NavigationController* Nav;
+@interface FunNavigationController : UINavigationController <UINavigationControllerDelegate>
 
-@interface NavigationController : UINavigationController <UINavigationControllerDelegate>
-
+- (void)setup;
 - (void)renderHeadHeight:(CGFloat)height block:(void(^)(UIView* view))block;
-- (void)renderLeftWidth:(CGFloat)width block:(void(^)(UIView* view))block;
 - (void)renderFootHeight:(CGFloat)height block:(void(^)(UIView* view))block;
 
-@property UIView* controls;
 @property UIView* head;
 @property UIView* foot;
-@property UIView* left;
+@property id<UIViewControllerAnimatedTransitioning>currentAnimator;
 
-- (void)push:(ViewController*)viewController withAnimator:(NavigationAnimator*(^)())block;
+- (void)push:(UIViewController*)viewController withAnimator:(id<UIViewControllerAnimatedTransitioning>)animator;
 @end
