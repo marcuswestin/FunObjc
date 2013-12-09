@@ -313,17 +313,21 @@ DeclareAttributedStringStyler(attributedText, str,
 DeclareMStringStyler(bindText, string, [_textField bindTextTo:string]);
 
 DeclareColorStyler(textColor, textColor,
-                   if ([_view isKindOfClass:UILabel.class]) {
+                   if ([_view respondsToSelector:@selector(setTextColor:)]) {
                        _labelView.textColor = textColor;
-                   } else if ([_view isKindOfClass:UIButton.class]) {
+                   } else if ([_view respondsToSelector:@selector(setTitleColor:forState:)]) {
                        [_buttonView setTitleColor:textColor forState:UIControlStateNormal];
                    } else {
-                       [NSException raise:@"Error" format:@"Unknown class in textColor"];
+                       [NSException raise:@"Error" format:@"Can't apply textColor"];
                    })
 
 - (StylerTextAlignment)textAlignment {
     return ^(NSTextAlignment textAlignment) {
-        _labelView.textAlignment = textAlignment;
+        if ([_view respondsToSelector:@selector(setTextAlignment:)]) {
+            _labelView.textAlignment = textAlignment;
+        } else if ([_view respondsToSelector:@selector(titleLabel)]) {
+            _buttonView.titleLabel.textAlignment = textAlignment;
+        }
         return self;
     };
 }
