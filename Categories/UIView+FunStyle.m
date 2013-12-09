@@ -186,6 +186,12 @@ DeclareViewFloatStyler(fillLeftOf, view, offset,
                        frame.origin.x = 0;
                        frame.size.width = view.x - offset;
                        _view.frame = frame)
+DeclareFloatStyler(belowLast, offset,
+                   NSArray* views = _view.superview.subviews;
+                   for (int i=views.count-1; i>0; i--) {
+                       if (views[i] != _view) { continue; }
+                       self.below(views[i-1], offset);
+                   })
 
 /* Size
  ******/

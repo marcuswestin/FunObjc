@@ -90,6 +90,7 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (StylerViewFloat)rightOf;
 - (StylerViewFloat)fillRightOf;
 - (StylerViewFloat)fillLeftOf;
+- (StylerFloat1)belowLast;
 
 /* Size
  ******/
