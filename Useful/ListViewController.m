@@ -68,6 +68,7 @@ static CGFloat START_Y = 99999.0f;
 
 - (UIView *)listViewForIndex:(ListIndex)index {
     for (ListView* view in [self _views]) {
+        if (view.isGroupView) { continue; }
         if (view.index == index) {
             return view.content;
         }
