@@ -26,4 +26,12 @@
     CFRelease(provider);
     return success;
 }
+
++ (UIFont *)medium:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue-Medium" size:size];
+}
+
++ (UIFont*)light:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue-Light" size:size];
+}
 @end
