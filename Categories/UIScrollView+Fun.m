@@ -33,14 +33,14 @@
     self.contentSize = contentSize;
 }
 
+- (void)addContentOffset:(CGFloat)addY {
+    return [self addContentOffset:addY animated:NO];
+}
+
 - (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated {
     CGPoint offset = self.contentOffset;
     offset.y += addY;
     [self setContentOffset:offset animated:animated];
-}
-
-- (NSTimeInterval)scrollAnimationDuration {
-    return 0.3;
 }
 
 @end
