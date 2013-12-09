@@ -24,10 +24,10 @@ static NSMutableDictionary* tagNameToTagNumber;
 #define _labelView ((UILabel*)_view)
 #define _buttonView ((UIButton*)_view)
 #define _textField ((UITextField*)_view)
+#define _textView ((UITextView*)_view)
 #define _imageView ((UIImageView*)_view)
 
 @implementation ViewStyler {
-    CGRect _frame;
     UIEdgeInsets _edgeWidths;
     UIColor* _edgeColor;
     CALayer* _bgLayer;
@@ -42,12 +42,10 @@ static NSMutableDictionary* tagNameToTagNumber;
  ****************/
 - (ViewStyler*)initWithView:(UIView*)view {
     _view = view;
-    _frame = view.frame;
     return self;
 }
 
 - (void)apply {
-    _view.frame = _frame;
     [self _makeEdges];
     _bgLayer.frame = _view.bounds;
     [_view.layer insertSublayer:_bgLayer atIndex:0];
@@ -83,41 +81,52 @@ DeclareStringStyler(name, tagName,
                     )
 /* Position
  **********/
-DeclareFloatStyler(x, x, _frame.origin.x = x)
-DeclareFloatStyler(y, y, _frame.origin.y = y)
+DeclareFloatStyler(x, x,
+                   CGRect frame = _view.frame;
+                   frame.origin.x = x;
+                   _view.frame = frame)
+DeclareFloatStyler(y, y,
+                   CGRect frame = _view.frame;
+                   frame.origin.y = y;
+                   _view.frame = frame)
 DeclareFloat2Styler(xy, x, y,
-                    _frame.origin.x = x;
-                    _frame.origin.y = y;
-                    )
-DeclarePointStyler(position, pos, _frame.origin = pos)
+                    CGRect frame = _view.frame;
+                    frame.origin.x = x;
+                    frame.origin.y = y;
+                    _view.frame = frame)
+DeclarePointStyler(position, pos,
+                   CGRect frame = _view.frame;
+                   frame.origin = pos;
+                   _view.frame = frame)
 
-DeclareStyler(center, [self centerHorizontally]; [self centerVertically])
-DeclareStyler(centerVertically, _frame.origin.y = CGRectGetMidY(_view.superview.bounds) - _frame.size.height/2)
-DeclareStyler(centerHorizontally, _frame.origin.x = CGRectGetMidX(_view.superview.bounds) - _frame.size.width/2)
+DeclareStyler(center,
+              [self centerHorizontally];
+              [self centerVertically])
+DeclareStyler(centerVertically,
+              CGRect frame = _view.frame;
+              frame.origin.y = CGRectGetMidY(_view.superview.bounds) - frame.size.height/2;
+              _view.frame = frame)
+DeclareStyler(centerHorizontally,
+              CGRect frame = _view.frame;
+              frame.origin.x = CGRectGetMidX(_view.superview.bounds) - frame.size.width/2;
+              _view.frame = frame)
 
+DeclareFloatStyler(fromBottom, offset,
+                   CGRect frame = _view.frame;
+                   frame.origin.y = _view.superview.frame.size.height - frame.size.height - offset;
+                   _view.frame = frame)
 
-DeclareFloatStyler(fromBottom, offset, _frame.origin.y = _view.superview.frame.size.height - _frame.size.height - offset)
-DeclareFloatStyler(y2, y2, _frame.origin.y = y2 - _frame.size.height)
+DeclareFloatStyler(y2, y2,
+                   CGRect frame = _view.frame;
+                   frame.origin.y = y2 - frame.size.height;
+                   _view.frame = frame)
 DeclareFloatStyler(fromRight, offset, self.x2(offset))
-DeclareFloatStyler(x2, offset, _frame.origin.x = _view.superview.frame.size.width - _frame.size.width - offset)
+DeclareFloatStyler(x2, offset,
+                   CGRect frame = _view.frame;
+                   frame.origin.x = _view.superview.frame.size.width - frame.size.width - offset;
+                   _view.frame = frame)
 
-DeclareRectStyler(frame, frame, _frame = frame)
-
-DeclareFloat4Styler(inset, top, right, bottom, left,
-                    _frame.origin.y += top;
-                    _frame.size.height -= top;
-                    _frame.size.height -= bottom;
-
-                    _frame.origin.x += left;
-                    _frame.size.width -= left;
-                    _frame.size.width -= right;
-                    )
-DeclareFloatStyler(insetAll, i, self.inset(i,i,i,i))
-DeclareFloatStyler(insetSides, f, self.inset(0,f,0,f))
-DeclareFloatStyler(insetTop, f, self.inset(f,0,0,0))
-DeclareFloatStyler(insetRight, f, self.inset(0,f,0,0))
-DeclareFloatStyler(insetBottom, f, self.inset(0,0,f,0))
-DeclareFloatStyler(insetLeft, f, self.inset(0,0,0,f))
+DeclareRectStyler(frame, frame, _view.frame = frame)
 
 DeclareFloat4Styler(outset, t, r, b, l, self.inset(-t, -r, -b, -l))
 DeclareFloatStyler(outsetAll, f, self.outset(f,f,f,f))
@@ -126,41 +135,100 @@ DeclareFloatStyler(outsetTop, f, self.outset(f,0,0,0))
 DeclareFloatStyler(outsetRight, f, self.outset(0,f,0,0))
 DeclareFloatStyler(outsetBottom, f, self.outset(0,0,f,0))
 DeclareFloatStyler(outsetLeft, f, self.outset(0,0,0,f))
+DeclareFloatStyler(insetAll, i, self.inset(i,i,i,i))
+DeclareFloatStyler(insetSides, f, self.inset(0,f,0,f))
+DeclareFloatStyler(insetTop, f, self.inset(f,0,0,0))
+DeclareFloatStyler(insetRight, f, self.inset(0,f,0,0))
+DeclareFloatStyler(insetBottom, f, self.inset(0,0,f,0))
+DeclareFloatStyler(insetLeft, f, self.inset(0,0,0,f))
+DeclareFloat4Styler(inset, top, right, bottom, left,
+                    CGRect frame = _view.frame;
+                    frame.origin.y += top;
+                    frame.size.height -= top;
+                    frame.size.height -= bottom;
+                    frame.origin.x += left;
+                    frame.size.width -= left;
+                    frame.size.width -= right;
+                    _view.frame = frame)
 
-DeclareFloatStyler(moveUp, amount, _frame.origin.y -= amount)
-DeclareFloatStyler(moveDown, amount, _frame.origin.y += amount)
+DeclareFloatStyler(moveUp, amount,
+                   CGRect frame = _view.frame;
+                   frame.origin.y -= amount;
+                   _view.frame = frame)
+DeclareFloatStyler(moveDown, amount,
+                   CGRect frame = _view.frame;
+                   frame.origin.y += amount;
+                   _view.frame = frame)
 
-DeclareViewFloatStyler(below, view, offset, _frame.origin.y = (view ? view.y2 : 0) + offset)
-DeclareViewFloatStyler(above, view, offset, _frame.origin.y = view.y - _frame.size.height - offset)
-DeclareViewFloatStyler(rightOf, view, offset, _frame.origin.x = (view ? view.x2 : 0) + offset)
-DeclareViewFloatStyler(leftOf, view, offset, _frame.origin.x = (view ? view.x : 0) - _frame.size.width - offset)
+DeclareViewFloatStyler(below, view, offset,
+                       CGRect frame = _view.frame;
+                       frame.origin.y = (view ? view.y2 : 0) + offset;
+                       _view.frame = frame)
+DeclareViewFloatStyler(above, view, offset,
+                       CGRect frame = _view.frame;
+                       frame.origin.y = view.y - frame.size.height - offset;
+                       _view.frame = frame)
+DeclareViewFloatStyler(rightOf, view, offset,
+                       CGRect frame = _view.frame;
+                       frame.origin.x = (view ? view.x2 : 0) + offset;
+                       _view.frame = frame)
+DeclareViewFloatStyler(leftOf, view, offset,
+                       CGRect frame = _view.frame;
+                       frame.origin.x = (view ? view.x : 0) - frame.size.width - offset;
+                       _view.frame = frame)
 DeclareViewFloatStyler(fillRightOf, view, offset,
-                  _frame.origin.x = view.x2 + offset;
-                  _frame.size.width = _view.superview.width - view.x2 - offset;
-                  )
+                       CGRect frame = _view.frame;
+                       frame.origin.x = view.x2 + offset;
+                       frame.size.width = _view.superview.width - view.x2 - offset;
+                       _view.frame = frame)
 DeclareViewFloatStyler(fillLeftOf, view, offset,
-                       _frame.origin.x = 0;
-                       _frame.size.width = view.x - offset;
-                       )
+                       CGRect frame = _view.frame;
+                       frame.origin.x = 0;
+                       frame.size.width = view.x - offset;
+                       _view.frame = frame)
 
 /* Size
  ******/
-DeclareFloatStyler(w, width, _frame.size.width = width)
-DeclareFloatStyler(h, height, _frame.size.height = height)
-DeclareFloat2Styler(wh, w, h, _frame.size = CGSizeMake(w, h))
-DeclareStyler(fill, _frame.size = _view.superview.bounds.size)
-DeclareStyler(fillW, _frame.size.width = _view.superview.width)
-DeclareStyler(fillH, _frame.size.height = _view.superview.height)
-DeclareStyler(square, _frame.size.height = _frame.size.width)
+DeclareFloatStyler(w, width,
+                   CGRect frame = _view.frame;
+                   frame.size.width = width;
+                   _view.frame = frame)
+DeclareFloatStyler(h, height,
+                   CGRect frame = _view.frame;
+                   frame.size.height = height;
+                   _view.frame = frame)
+DeclareFloat2Styler(wh, w, h,
+                    CGRect frame = _view.frame;
+                    frame.size = CGSizeMake(w, h);
+                    _view.frame = frame)
+DeclareStyler(fill,
+              CGRect frame = _view.frame;
+              frame.size = _view.superview.bounds.size;
+              _view.frame = frame)
+DeclareStyler(fillW,
+              CGRect frame = _view.frame;
+              frame.size.width = _view.superview.width;
+              _view.frame = frame)
+DeclareStyler(fillH,
+              CGRect frame = _view.frame;
+              frame.size.height = _view.superview.height;
+              _view.frame = frame)
+DeclareStyler(square,
+              CGRect frame = _view.frame;
+              frame.size.height = frame.size.width;
+              _view.frame = frame)
 
-DeclareSizeStyler(bounds, size, _frame.size = size)
-DeclareStyler(sizeToParent, _frame.size = _view.superview.bounds.size)
-DeclareStyler(size, [self sizeToFit])
-DeclareStyler(sizeToFit,
-              _view.frame = _frame;
-              [_view sizeToFit];
-              _frame.size = _view.frame.size;
-              )
+DeclareSizeStyler(bounds, size,
+                  CGRect frame = _view.frame;
+                  frame.size = size;
+                  _view.frame = frame)
+DeclareStyler(sizeToParent,
+              CGRect frame = _view.frame;
+              frame.size = _view.superview.bounds.size;
+              _view.frame = frame)
+
+DeclareStyler(size, [_view sizeToFit])
+DeclareStyler(sizeToFit, [_view sizeToFit])
 
 
 /* Styling
@@ -187,26 +255,26 @@ DeclareFloatColorStyler(border, width, color,
                         )
 
 DeclareStyler(round,
-              CGFloat radius = MIN(_frame.size.width, _frame.size.height);
+              CGFloat radius = MIN(_view.frame.size.width, _view.frame.size.height);
               _view.layer.cornerRadius = radius/2;
               _view.clipsToBounds = YES;
               )
 
 DeclareFloat4ColorStyler(edges, w1,w2,w3,w4, color,
-                        _edgeWidths = UIEdgeInsetsMake(w1,w2,w3,w4);
-                        _edgeColor = color)
+                         _edgeWidths = UIEdgeInsetsMake(w1,w2,w3,w4);
+                         _edgeColor = color)
 - (void)_makeEdges {
     if (_edgeWidths.top) {
-        [self _addEdge:CGRectMake(0, 0, _frame.size.width, _edgeWidths.top)];
+        [self _addEdge:CGRectMake(0, 0, _view.frame.size.width, _edgeWidths.top)];
     }
     if (_edgeWidths.right) {
-        [self _addEdge:CGRectMake(_frame.size.width - _edgeWidths.right, 0, _edgeWidths.right, _frame.size.height)];
+        [self _addEdge:CGRectMake(_view.frame.size.width - _edgeWidths.right, 0, _edgeWidths.right, _view.frame.size.height)];
     }
     if (_edgeWidths.bottom) {
-        [self _addEdge:CGRectMake(0, _frame.size.height - _edgeWidths.bottom, _frame.size.width, _edgeWidths.bottom)];
+        [self _addEdge:CGRectMake(0, _view.frame.size.height - _edgeWidths.bottom, _view.frame.size.width, _edgeWidths.bottom)];
     }
     if (_edgeWidths.left) {
-        [self _addEdge:CGRectMake(0, 0, _edgeWidths.left, _frame.size.height)];
+        [self _addEdge:CGRectMake(0, 0, _edgeWidths.left, _view.frame.size.height)];
     }
 }
 - (void)_addEdge:(CGRect)rect {
@@ -278,14 +346,14 @@ DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.
  *************/
 DeclareStringStyler(placeholder, placeholder, _textField.placeholder = placeholder)
 DeclareFloatStyler(inputPad, pad,
-                    [_textField setLeftViewMode:UITextFieldViewModeAlways];
-                    [_textField setRightViewMode:UITextFieldViewModeAlways];
-                    [_textField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]];
-                    [_textField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]])
+                   [_textField setLeftViewMode:UITextFieldViewModeAlways];
+                   [_textField setRightViewMode:UITextFieldViewModeAlways];
+                   [_textField setLeftView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]];
+                   [_textField setRightView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, pad, 0)]])
 
 
 
-DeclareColorStyler(blur, color, [_view blur:color size:_frame.size]);
+DeclareColorStyler(blur, color, [_view blur:color size:_view.frame.size]);
 
 DeclareLayerStyler(bgLayer, layer, _bgLayer = layer);
 DeclareFloatStyler(alpha, alpha, _view.alpha = alpha)
@@ -298,16 +366,17 @@ DeclareImageStyler(image, image,
                    }
                    _imageView.image = image;
                    [_imageView sizeToFit];
-                   _frame = _imageView.frame;
+                   CGRect frame = _imageView.frame;
                    CGFloat resolution = [Viewport resolution];
-                   _frame.size.width /= resolution;
-                   _frame.size.height /= resolution)
+                   frame.size.width /= resolution;
+                   frame.size.height /= resolution;
+                   _view.frame = frame)
 
 DeclareImageStyler(imageFill, image,
                    if (![_view respondsToSelector:@selector(setImage:)]) {
                        [NSException raise:@"Error" format:@"Can't set image in image() styler"];
                    }
-                   _imageView.image = [image thumbnailSize:_frame.size transparentBorder:0 cornerRadius:0 interpolationQuality:0])
+                   _imageView.image = [image thumbnailSize:_view.frame.size transparentBorder:0 cornerRadius:0 interpolationQuality:0])
 
 @end
 
