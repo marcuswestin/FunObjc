@@ -10,6 +10,9 @@
 #import "Viewport.h"
 
 @implementation KeyboardEventInfo
+- (void)animate:(id)animations {
+    [UIView animateWithDuration:_duration delay:0 options:_curve animations:animations completion:^(BOOL finished) {}];
+}
 @end
 
 @implementation Keyboard

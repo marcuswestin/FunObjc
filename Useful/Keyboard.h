@@ -16,6 +16,7 @@
 @property CGRect frameEnd;
 @property CGFloat heightChange;
 @property CGFloat height;
+- (void) animate:(void (^)(void))animations;
 @end
 
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
