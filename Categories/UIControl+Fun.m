@@ -121,7 +121,15 @@ static NSString* KeySelectionChange = @"FunKeySelectionChange";
         handler(textView);
     }];
 }
-
+- (void)onEnter:(TextViewBlock)handler {
+    [self onTextShouldChange:^BOOL(UITextView *textView, NSRange range, NSString *replacementText) {
+        if ([replacementText isEqualToString:@"\n"]) {
+            handler(textView);
+            return NO;
+        }
+        return YES;
+    }];
+}
 - (void)onTextShouldChange:(TextViewShouldChangeBlock)handler {
     [self _addHandlerForKey:KeyTextShouldChance handler:handler];
 }

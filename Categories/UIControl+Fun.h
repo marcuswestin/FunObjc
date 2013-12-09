@@ -44,6 +44,7 @@ typedef void (^TextViewBlock)(UITextView* textView);
 @end
 @interface UITextView (UIControlFun) <UITextViewDelegate>
 - (void) onTextDidChange:(TextViewBlock)handler;
+- (void) onEnter:(TextViewBlock)handler;
 - (void) onTextShouldChange:(TextViewShouldChangeBlock)handler;
 - (void) onSelectionDidChange:(TextViewBlock)handler;
 @end
