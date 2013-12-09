@@ -132,6 +132,7 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (Styler)wrapText;
 - (ViewStyler*(^)(UIKeyboardType keyboardType))keyboardType;
 - (ViewStyler*(^)(UIKeyboardAppearance keyboardAppearance))keyboardAppearance;
+- (ViewStyler*(^)(UIReturnKeyType))keyboardReturnKeyType;
 
 /* Text inputs
  *************/

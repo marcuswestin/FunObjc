@@ -347,11 +347,16 @@ DeclareFloat3ColorStyler(textShadow, xOffset, yOffset, radius, color,
     };
 }
 DeclareIntegerStyler(textLines, lines,
-                     _labelView.numberOfLines = lines;
-                     )
-DeclareStyler(wrapText, [_labelView wrapText]; [self size])
-DeclareStyler1(keyboardType, UIKeyboardType, type, _textField.keyboardType = type)
-DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.keyboardAppearance = appearance)
+                     _labelView.numberOfLines = lines)
+DeclareStyler(wrapText,
+              [_labelView wrapText];
+              [self size])
+DeclareStyler1(keyboardType, UIKeyboardType, type,
+               _textField.keyboardType = type)
+DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance,
+               _textField.keyboardAppearance = appearance)
+DeclareStyler1(keyboardReturnKeyType, UIReturnKeyType, returnKeyType,
+               _textField.returnKeyType = returnKeyType)
 
 /* Text inputs
  *************/
