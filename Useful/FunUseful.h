@@ -21,7 +21,6 @@
 #import "FunUseful.h"
 #import "JSON.h"
 #import "Keyboard.h"
-#import "FunListViewController.h"
 #import "Log.h"
 #import "Overlay.h"
 #import "PushNotifications.h"

@@ -150,7 +150,7 @@ static BOOL hasSetup;
 // Events
 /////////
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)uiViewController animated:(BOOL)animated {
-    if ([uiViewController isMemberOfClass:ViewController.class]) {
+    if ([uiViewController isMemberOfClass:FunViewController.class]) {
 //        [(ViewController*)uiViewController willShowAnimated:animated];
     }
 }

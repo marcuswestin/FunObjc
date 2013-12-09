@@ -519,8 +519,8 @@ static BOOL insetsForAllSet;
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
     CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listFootViewForGroupId:withIndex:width:)]
-                    ? [_delegate listFootViewForGroupId:groupId withIndex:index width:width]
+    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupFoot:withIndex:width:)]
+                    ? [_delegate listViewForGroupFoot:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
     view.x = _listGroupMargins.left;
@@ -541,8 +541,8 @@ static BOOL insetsForAllSet;
 
 - (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
     CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listHeadViewForGroupId:withIndex:width:)]
-                    ? [_delegate listHeadViewForGroupId:groupId withIndex:index width:width]
+    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupHead:withIndex:width:)]
+                    ? [_delegate listViewForGroupHead:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
     view.x = _listGroupMargins.left;

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ViewController.h"
+#import "FunViewController.h"
 #import "FunObjc.h"
 
 @protocol FunApp <NSObject>

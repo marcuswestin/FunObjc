@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ViewController.h"
+#import "FunViewController.h"
 
 typedef NSInteger ListIndex;
 typedef id ListGroupId;
@@ -42,8 +42,8 @@ enum ListViewDirection { UP=-1, DOWN=1 };
 - (ListViewLocation) listStartLocation;
 - (id) listGroupIdForIndex:(ListIndex)index;
 
-- (UIView*) listHeadViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
-- (UIView*) listFootViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listViewForGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listViewForGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
 
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
