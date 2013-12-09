@@ -322,13 +322,14 @@ DeclareColorStyler(textColor, textColor,
     };
 }
 DeclareStyler(textCenter, self.textAlignment(NSTextAlignmentCenter))
-- (StylerColorFloat2)textShadow {
-    return ^(UIColor* shadowColor, CGFloat shadowOffsetX, CGFloat shadowOffsetY) {
-        _labelView.shadowColor = shadowColor;
-        _labelView.shadowOffset = CGSizeMake(shadowOffsetX, shadowOffsetY);
-        return self;
-    };
-}
+DeclareFloat3ColorStyler(textShadow, xOffset, yOffset, radius, color,
+                         CALayer* layer = ((CALayer*)_view.layer);
+                         layer.shadowOffset = CGSizeMake(xOffset, yOffset);
+                         layer.shadowRadius = radius;
+                         layer.shadowColor = color.CGColor;
+                         layer.shadowOpacity = 1.0;
+                         layer.masksToBounds = NO;
+                         )
 - (StylerFont)textFont {
     return ^(UIFont* font) {
         _labelView.font = font;

@@ -30,6 +30,7 @@
  **********/
 - (void)centerView;
 - (void)centerVertically;
+- (void)centerHorizontally;
 - (void)moveByX:(CGFloat)x y:(CGFloat)y;
 - (void)moveByY:(CGFloat)y;
 - (void)moveByX:(CGFloat)x;
@@ -64,7 +65,7 @@
 
 /* View hierarchy
  ****************/
-- (void)empty;
+- (instancetype)empty;
 - (void)appendTo:(UIView*)superview;
 - (void)prependTo:(UIView*)superview;
 

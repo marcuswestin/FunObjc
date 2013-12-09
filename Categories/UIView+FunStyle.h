@@ -27,6 +27,7 @@ typedef ViewStyler* (^StylerMString1)(NSMutableString* string);
 typedef ViewStyler* (^StylerInteger1)(NSInteger integer);
 typedef ViewStyler* (^StylerTextAlignment)(NSTextAlignment textAlignment);
 typedef ViewStyler* (^StylerColorFloat2)(UIColor* color, CGFloat f1, CGFloat f2);
+typedef ViewStyler* (^StylerFloat3Color)(CGFloat f1, CGFloat f2, CGFloat f3, UIColor* color);
 typedef ViewStyler* (^StylerColorFloat)(UIColor* color, CGFloat f);
 typedef ViewStyler* (^StylerFont)(UIFont* font);
 typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
@@ -124,7 +125,7 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (StylerAttributedString)attributedText;
 - (StylerColor1)textColor;
 - (StylerTextAlignment)textAlignment;
-- (StylerColorFloat2)textShadow;
+- (StylerFloat3Color)textShadow;
 - (StylerFont)textFont;
 - (StylerInteger1)textLines;
 - (Styler)wrapText;
@@ -285,6 +286,12 @@ STYLER_CODE; return self;\
 #define DeclareFloat4Styler(STYLER_NAME, f1NAME, f2NAME, f3NAME, f4NAME, STYLER_CODE)\
 -(StylerFloat4)STYLER_NAME { \
 return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME, CGFloat f4NAME) {\
+STYLER_CODE; return self;\
+};\
+}
+#define DeclareFloat3ColorStyler(STYLER_NAME, f1NAME, f2NAME, f3NAME, COLOR_NAME, STYLER_CODE)\
+-(StylerFloat3Color)STYLER_NAME { \
+return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME, UIColor* COLOR_NAME) {\
 STYLER_CODE; return self;\
 };\
 }

@@ -1,12 +1,12 @@
 //
-//  ListViewController.m
+//  FunListViewController.m
 //  Dogo-iOS
 //
 //  Created by Marcus Westin on 8/8/13.
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "ListViewController.h"
+#import "FunListViewController.h"
 #import "UIView+FunStyle.h"
 #import "FunTypes.h"
 #import "UIColor+Fun.h"
@@ -15,6 +15,10 @@
 #import "UIView+FunStyle.h"
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
+
+@interface FunListViewController ()
+@property ListViewLocation listStartLocation;
+@end
 
 // Used to differentiate group head views from item views
 @implementation ListView
@@ -46,7 +50,7 @@
 }
 @end
 
-@implementation ListViewController {
+@implementation FunListViewController {
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
@@ -85,6 +89,10 @@ static CGFloat START_Y = 99999.0f;
     // Top should start scrolled down below the navigation bar
     if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
         [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
+    } else if (_listStartLocation == BOTTOM) {
+        // TODO Check if there is a visible status bar
+        // TODO Check if there is a visible navigation bar
+        [_scrollView addContentOffset:20 animated:NO];
     }
 }
 
@@ -92,7 +100,7 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView setContentOffset:_scrollView.contentOffset animated:NO];
 }
 
-- (void)appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
+- (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
     if (numItems == 0) {
         return;
     }
@@ -165,11 +173,12 @@ static CGFloat START_Y = 99999.0f;
         if ([self conformsToProtocol:@protocol(ListViewDelegate)]) {
             _delegate = (id<ListViewDelegate>)self;
         } else {
-            [NSException raise:@"Error" format:@"Make sure your ListViewController subclass implements the ListViewDelegate protocol"];
+            [NSException raise:@"Error" format:@"Make sure your FunListViewController subclass implements the ListViewDelegate protocol"];
         }
     }
-    if (!_listStartLocation) {
-        _listStartLocation = TOP;
+    _listStartLocation = TOP;
+    if ([_delegate respondsToSelector:@selector(listStartLocation)]) {
+        _listStartLocation = [_delegate listStartLocation];
     }
     
     _listView = [[UIView alloc] initWithFrame:self.view.bounds];
@@ -206,10 +215,23 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
+static UIEdgeInsets insetsForAll;
+static BOOL insetsForAllSet;
++ (void)insetAll:(UIEdgeInsets)insets {
+    if (insetsForAllSet) {
+        [NSException raise:@"Error" format:@"FunListViewController insetAll: called twice"];
+    }
+    insetsForAll = insets;
+    insetsForAllSet = YES;
+}
+
 - (void)afterRender:(BOOL)animated {
-    if (self.nav.left) {
+    if (insetsForAllSet) {
         UIEdgeInsets groupMargins = self.listGroupMargins;
-        groupMargins.left += self.nav.left.width;
+        groupMargins.top += insetsForAll.top;
+        groupMargins.right += insetsForAll.right;
+        groupMargins.bottom += insetsForAll.bottom;
+        groupMargins.left += insetsForAll.left;
         self.listGroupMargins = groupMargins;
     }
     
@@ -498,8 +520,8 @@ static CGFloat START_Y = 99999.0f;
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
     CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listFootViewForGroupId:withIndex:width:)]
-                    ? [_delegate listFootViewForGroupId:groupId withIndex:index width:width]
+    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupFoot:withIndex:width:)]
+                    ? [_delegate listViewForGroupFoot:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
     view.x = _listGroupMargins.left;
@@ -520,8 +542,8 @@ static CGFloat START_Y = 99999.0f;
 
 - (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
     CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listHeadViewForGroupId:withIndex:width:)]
-                    ? [_delegate listHeadViewForGroupId:groupId withIndex:index width:width]
+    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupHead:withIndex:width:)]
+                    ? [_delegate listViewForGroupHead:groupId withIndex:index width:width]
                     : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
     
     view.x = _listGroupMargins.left;

@@ -8,11 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "State.h"
-#import "FunApp.h"
 
-@class NavigationController;
-
-@interface ViewController : UIViewController
+@interface FunViewController : UIViewController
 + (instancetype)withoutState;
 + (instancetype)withState:(State*) state;
 + (void)setDefaultBackgroundColor:(UIColor*)color;
@@ -20,7 +17,5 @@
 @property id<NSCoding> state;
 - (void)render:(BOOL)animated;
 
-- (void)pushViewController:(ViewController *)viewController;
-- (NavigationController*)nav;
-
+- (void)pushViewController:(UIViewController *)viewController;
 @end

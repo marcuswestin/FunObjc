@@ -6,10 +6,6 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import "FunTypes.h"
-#import "FunCategories.h"
-#import "FunUseful.h"
-#import "FunData.h"
-#import "FunUI.h"
+#import "FunNavigationController.h"
+#import "FunViewController.h"
+#import "FunListViewController.h"

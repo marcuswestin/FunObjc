@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "FunViewController.h"
 
 @protocol TableViewDelegate <NSObject>
 @required
@@ -22,7 +22,7 @@
 
 typedef void (^ForEachIndexBlock)(NSUInteger rowIndex);
 
-@interface TableViewController : ViewController <UITableViewDataSource, UITableViewDelegate>
+@interface TableViewController : FunViewController <UITableViewDataSource, UITableViewDelegate>
 @property UITableView* tableView;
 @property NSUInteger sectionCount;
 @property NSUInteger* rowCountsPerSection;

@@ -1,5 +1,5 @@
 //
-//  ListViewController.h
+//  FunListViewController.h
 //  Dogo-iOS
 //
 //  Created by Marcus Westin on 8/8/13.
@@ -7,16 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ViewController.h"
+#import "FunViewController.h"
 
 typedef NSInteger ListIndex;
 typedef id ListGroupId;
 
-enum ListViewLocation { TOP=1, BOTTOM=2 };
 typedef enum ListViewLocation ListViewLocation;
+enum ListViewLocation { TOP=1, BOTTOM=2 };
 
-enum ListViewDirection { UP=-1, DOWN=1 };
 typedef enum ListViewDirection ListViewDirection;
+enum ListViewDirection { UP=-1, DOWN=1 };
 
 @interface ListView : UIView
 @property ListGroupId groupId;
@@ -38,11 +38,12 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 
 @optional
-- (ListIndex)listStartIndex;
+- (ListIndex) listStartIndex;
+- (ListViewLocation) listStartLocation;
 - (id) listGroupIdForIndex:(ListIndex)index;
 
-- (UIView*) listHeadViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
-- (UIView*) listFootViewForGroupId:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listViewForGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listViewForGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
 
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
@@ -52,20 +53,20 @@ typedef enum ListViewDirection ListViewDirection;
 @end
 
 
-@interface ListViewController : ViewController <UIScrollViewDelegate>
+@interface FunListViewController : FunViewController <UIScrollViewDelegate>
 @property UIView* listView;
 @property UIScrollView* scrollView;
 @property UIEdgeInsets listGroupMargins;
 @property UIEdgeInsets listItemMargins;
-@property ListViewLocation listStartLocation;
 @property (weak) id<ListViewDelegate> delegate;
 
 /////////////////
 // API methods //
 /////////////////
++ (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
-- (void) appendCountToList:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
+- (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeight;
 - (void) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
 - (void) listSelectVisibleIndex:(ListIndex)index;

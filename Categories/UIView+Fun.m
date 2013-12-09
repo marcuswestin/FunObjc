@@ -284,8 +284,9 @@ static CGFloat STATIC = 0.5f;
 
 /* View hierarchy
  ****************/
-- (void)empty {
+- (instancetype)empty {
     [[self subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    return self;
 }
 - (void)appendTo:(UIView *)superview {
     [superview addSubview:self];
