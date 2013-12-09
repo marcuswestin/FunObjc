@@ -344,7 +344,24 @@ DeclareStyler1(keyboardAppearance, UIKeyboardAppearance, appearance, _textField.
 
 /* Text inputs
  *************/
-DeclareStringStyler(placeholder, placeholder, _textField.placeholder = placeholder)
+DeclareStringStyler(placeholder, placeholderText,
+                    if ([_view respondsToSelector:@selector(setPlaceholder:)]) {
+                        [_textField setPlaceholder:placeholderText];
+                    } else if ([_view isKindOfClass:[UITextView class]]) {
+                        UILabel* placeholderView = [UILabel.appendTo(_textView).fill.inset(8,5,8,5).textColor(rgb(150,150,150)).textFont(_textView.font).text(placeholderText).wrapText render];
+                        [_textView onTextDidChange:^(UITextView *textView) {
+                            if (textView.text.length) {
+                                if (placeholderView.superview) {
+                                    [placeholderView removeFromSuperview];
+                                }
+                            } else if (!placeholderView.superview) {
+                                [placeholderView appendTo:textView];
+                            }
+                        }];
+                        if (_textView.text.length) {
+                            [placeholderView removeFromSuperview];
+                        }
+                    })
 DeclareFloatStyler(inputPad, pad,
                    [_textField setLeftViewMode:UITextFieldViewModeAlways];
                    [_textField setRightViewMode:UITextFieldViewModeAlways];
