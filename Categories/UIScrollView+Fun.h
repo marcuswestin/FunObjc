@@ -15,5 +15,6 @@
 - (void)addContentInsetBottom:(CGFloat)insetBottom;
 - (void)addContentHeight:(CGFloat)addHeight;
 - (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated;
+- (NSTimeInterval)scrollAnimationDuration;
 
 @end

@@ -39,4 +39,8 @@
     [self setContentOffset:offset animated:animated];
 }
 
+- (NSTimeInterval)scrollAnimationDuration {
+    return 0.3;
+}
+
 @end
