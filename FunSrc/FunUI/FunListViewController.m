@@ -16,9 +16,19 @@
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
 
-@interface FunListViewController ()
-@property ListViewLocation listStartLocation;
+@interface ListView : UIView
+@property ListGroupId groupId;
+@property ListIndex index;
+@property BOOL isGroupHead;
+@property BOOL isGroupFoot;
+- (BOOL)isGroupView;
+- (BOOL)isItemView;
+- (UIView*)content;
++ (ListView*)withFrame:(CGRect)frame index:(ListIndex)index;
++ (ListView*)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId;
++ (ListView*)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId;
 @end
+
 
 // Used to differentiate group head views from item views
 @implementation ListView
@@ -50,6 +60,10 @@
 }
 @end
 
+@interface FunListViewController ()
+@property ListViewLocation listStartLocation;
+@end
+
 @implementation FunListViewController {
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
@@ -61,6 +75,7 @@
     ListGroupId _topGroupId;
     CGFloat _topY;
     CGFloat _bottomY;
+    BOOL _scrollViewPurged;
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -98,6 +113,23 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)stopScrollingList {
     [_scrollView setContentOffset:_scrollView.contentOffset animated:NO];
+}
+
+- (void)prependToListCount:(NSUInteger)numItems {
+    if (numItems == 0) {
+        return;
+    }
+    
+    _topItemIndex += numItems;
+    _bottomItemIndex += numItems;
+    for (ListView* view in [self _views]) {
+        view.index += numItems;
+    }
+    
+    if (_hasReachedTheVeryTop) {
+        [self _fixContentTopByAdding:START_Y];
+        _hasReachedTheVeryTop = NO;
+    }
 }
 
 - (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
@@ -142,7 +174,7 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
     CGFloat __block dHeight = 0;
-    [self enumerateViews:^(ListView *view) {
+    for (ListView* view in self._views) {
         if (view.isGroupView) {
             view.y += dHeight;
         } else {
@@ -153,15 +185,9 @@ static CGFloat START_Y = 99999.0f;
                 view.y += dHeight;
             }
         }
-    }];
+    }
     _bottomY += dHeight;
     [_scrollView addContentHeight:dHeight];
-}
-
-- (void)enumerateViews:(void(^)(ListView* view))block {
-    [_scrollView.subviews enumerateObjectsUsingBlock:^(id view, NSUInteger i, BOOL *stop) {
-        block(view);
-    }];
 }
 
 //////////////////////
@@ -170,10 +196,10 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)beforeRender:(BOOL)animated {
     if (!_delegate) {
-        if ([self conformsToProtocol:@protocol(ListViewDelegate)]) {
-            _delegate = (id<ListViewDelegate>)self;
+        if ([self conformsToProtocol:@protocol(FunListViewDelegate)]) {
+            _delegate = (id<FunListViewDelegate>)self;
         } else {
-            [NSException raise:@"Error" format:@"Make sure your FunListViewController subclass implements the ListViewDelegate protocol"];
+            [NSException raise:@"Error" format:@"Make sure your FunListViewController subclass implements the FunListViewDelegate protocol"];
         }
     }
     _listStartLocation = TOP;
@@ -359,7 +385,7 @@ static BOOL insetsForAllSet;
     while (_bottomY < targetY) {
         BOOL didAddView = [self _listAddNextViewDown];
         if (!didAddView) {
-            [self _didReachTheVeryBottom];
+            [self _onDidReachTheVeryBottom];
             break;
         }
     }
@@ -371,7 +397,7 @@ static BOOL insetsForAllSet;
     while (_topY > targetY) {
         BOOL didAddView = [self _listAddNextViewUp];
         if (!didAddView) {
-            [self _didReachTheVeryTop];
+            [self _onDidReachTheVeryTop];
             break;
         }
     }
@@ -422,12 +448,8 @@ static BOOL insetsForAllSet;
 }
 
 - (BOOL)_listAddNextViewUp {
-    NSInteger index = _topItemIndex - 1;
-    
-    UIView* view = [self _getViewForIndex:index];
     ListView* topView = [self _topView];
-    
-    if (!view) {
+    if (_topItemIndex == 0) {
         // There are no more items to display at the top.
         // Last thing: add a group head view at the top.
         if (topView.isGroupHead) {
@@ -437,6 +459,13 @@ static BOOL insetsForAllSet;
             [self _addGroupHeadViewForIndex:_topItemIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
         }
+    }
+    
+    NSInteger index = _topItemIndex - 1;
+    
+    UIView* view = [self _getViewForIndex:index];
+    if (!view) {
+        [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
     }
     
     ListGroupId groupId = [self _groupIdForIndex:index];
@@ -602,22 +631,26 @@ static BOOL insetsForAllSet;
     }
 }
 
-- (void)_didReachTheVeryBottom {
+- (void)_onDidReachTheVeryBottom {
     _hasReachedTheVeryBottom = YES;
     _scrollView.contentSize = CGSizeMake(_scrollView.width, CGRectGetMaxY([self _bottomView].frame));
 }
 
-- (void)_didReachTheVeryTop {
+- (void)_onDidReachTheVeryTop {
     _hasReachedTheVeryTop = YES;
     CGFloat changeInHeight = CGRectGetMinY([self _topView].frame);
     if (changeInHeight == 0) { return; }
-    _topY -= changeInHeight;
-    _bottomY -= changeInHeight;
+    [self _fixContentTopByAdding:-changeInHeight];
+}
+
+- (void)_fixContentTopByAdding:(CGFloat)changeInHeight {
+    _topY += changeInHeight;
+    _bottomY += changeInHeight;
     [self _withoutScrollEvents:^{
-        _scrollView.contentOffset = CGPointMake(0, _scrollView.contentOffset.y - changeInHeight);
-        _scrollView.contentSize = CGSizeMake(_listView.width,  _scrollView.contentSize.height - changeInHeight);
+        [_scrollView addContentOffset:changeInHeight];
+        [_scrollView addContentHeight:changeInHeight];
         for (UIView* subView in self._views) {
-            [subView moveByY:-changeInHeight];
+            [subView moveByY:changeInHeight];
         }
     }];
 }
@@ -635,11 +668,16 @@ static BOOL insetsForAllSet;
 }
 
 - (NSArray*)_views {
+    if (!_scrollViewPurged) {
+        for (UIView* view in _scrollView.subviews) {
+            if (![view isKindOfClass:[ListView class]]) {
+                [view removeFromSuperview];
+            }
+        }
+        _scrollViewPurged = YES;
+    }
     if (!_scrollView.subviews || !_scrollView.subviews.count) { return @[]; }
-    return [_scrollView.subviews filter:^BOOL(UIView* view, NSUInteger i) {
-        // Why is a random UIImageView hanging in the scroll view? Asch.
-        return ![view isKindOfClass:UIImageView.class];
-    }];
+    return _scrollView.subviews;
 }
 - (ListView*)_topView {
     return self._views.firstObject;
