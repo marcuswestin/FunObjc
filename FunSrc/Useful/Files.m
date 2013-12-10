@@ -100,4 +100,17 @@ static BOOL isReset;
     NSString* path = [[NSBundle mainBundle] pathForResource:name ofType:type];
     return [NSData dataWithContentsOfFile:path];
 }
+
++ (void)writeNumber:(NSNumber *)number name:(NSString *)name {
+    [Files writeJsonDocument:name data:number];
+}
++ (NSNumber *)readNumber:(NSString *)name {
+    return (NSNumber*)[Files readJsonDocument:name];
+}
++ (void)writeString:(NSString *)string name:(NSString *)name {
+    [Files writeJsonDocument:name data:string];
+}
++ (NSString *)readString:(NSString *)name {
+    return (NSString*)[Files readJsonDocument:name];
+}
 @end

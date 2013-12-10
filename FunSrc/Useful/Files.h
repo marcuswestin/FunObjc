@@ -29,4 +29,9 @@
 + (void)resetFileRoot;
 + (BOOL)isReset;
 
++ (void)writeNumber:(NSNumber*)number name:(NSString*)name;
++ (NSNumber*)readNumber:(NSString*)name;
+
++ (void)writeString:(NSString*)string name:(NSString*)name;
++ (NSString*)readString:(NSString*)name;
 @end
