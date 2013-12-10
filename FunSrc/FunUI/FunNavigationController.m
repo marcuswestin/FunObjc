@@ -84,6 +84,13 @@ static NSTimeInterval duration = 0.25;
 // Custom navigation animations
 ///////////////////////////////
 
++ (instancetype)withRootViewController:(UIViewController *)rootViewController navigationBar:(BOOL)navigationBarVisible {
+    FunNavigationController* instance = [[self class] new];
+    instance.viewControllers = @[rootViewController];
+    instance.navigationBarHidden = !navigationBarVisible;
+    return instance;
+}
+
 - (id)init {
     self = [super init];
     return [self _setup];
@@ -101,17 +108,10 @@ static BOOL hasSetup;
 
 - (id)_setup {
     if (hasSetup) {
-        [NSException raise:@"Error" format:@"Expects only one NavigationController to be created"];
+        [NSException raise:@"Error" format:@"Expects only one FunNavigationController to be created"];
     }
     hasSetup = true;
     self.delegate = self;
-    self.navigationBarHidden = YES;
-
-    CGFloat headHeight = 50;
-    self.head = [UIView.appendTo(self.view).h([Viewport height]).y2(headHeight) render];
-    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
-    self.foot = [UIView.appendTo(self.view).h([Viewport height]).y([Viewport height]) render];
-    
     [self setup];
     return self;
 }

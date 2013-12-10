@@ -14,12 +14,10 @@
 
 @interface FunNavigationController : UINavigationController <UINavigationControllerDelegate>
 
-- (void)setup;
-- (void)renderHeadHeight:(CGFloat)height block:(void(^)(UIView* view))block;
-- (void)renderFootHeight:(CGFloat)height block:(void(^)(UIView* view))block;
++ (instancetype)withRootViewController:(UIViewController*)rootViewController navigationBar:(BOOL)navigationBarVisible;
 
-@property UIView* head;
-@property UIView* foot;
+- (void)setup;
+
 @property id<UIViewControllerAnimatedTransitioning>currentAnimator;
 
 - (void)push:(UIViewController*)viewController withAnimator:(id<UIViewControllerAnimatedTransitioning>)animator;
