@@ -68,6 +68,8 @@
 - (instancetype)empty;
 - (void)appendTo:(UIView*)superview;
 - (void)prependTo:(UIView*)superview;
+- (UIView*)firstSubview;
+- (UIView*)lastSubview;
 
 /* Screenshot
  ************/

@@ -294,6 +294,12 @@ static CGFloat STATIC = 0.5f;
 - (void)prependTo:(UIView *)superview {
     [superview insertSubview:self atIndex:0];
 }
+- (UIView *)firstSubview {
+    return self.subviews.firstObject;
+}
+- (UIView *)lastSubview {
+    return self.subviews.lastObject;
+}
 
 /* Screenshot
  ************/
