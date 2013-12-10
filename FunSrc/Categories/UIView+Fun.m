@@ -369,7 +369,7 @@ static CGFloat STATIC = 0.5f;
 @end
 @implementation UIView (Blur)
 - (void)blur {
-    [self blur:WHITE];
+    [self blur:nil];
 }
 - (void)blur:(UIColor *)color {
     [self blur:color size:self.frame.size];

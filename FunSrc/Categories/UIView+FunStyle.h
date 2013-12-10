@@ -12,30 +12,30 @@
 @class ViewStyler;
 
 typedef ViewStyler* Styler;
-typedef ViewStyler* (^StylerView)(UIView* view);
-typedef ViewStyler* (^StylerSize)(CGSize size);
-typedef ViewStyler* (^StylerFloat1)(CGFloat num);
-typedef ViewStyler* (^StylerFloat2)(CGFloat f1, CGFloat f2);
-typedef ViewStyler* (^StylerFloat3)(CGFloat f1, CGFloat f2, CGFloat f3);
-typedef ViewStyler* (^StylerFloat4)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4);
-typedef ViewStyler* (^StylerColor1)(UIColor* color);
-typedef ViewStyler* (^StylerPoint)(CGPoint point);
-typedef ViewStyler* (^StylerRect)(CGRect rect);
-typedef ViewStyler* (^StylerString1)(NSString* string);
-typedef ViewStyler* (^StylerAttributedString)(NSAttributedString* string);
-typedef ViewStyler* (^StylerMString1)(NSMutableString* string);
-typedef ViewStyler* (^StylerInteger1)(NSInteger integer);
-typedef ViewStyler* (^StylerTextAlignment)(NSTextAlignment textAlignment);
-typedef ViewStyler* (^StylerColorFloat2)(UIColor* color, CGFloat f1, CGFloat f2);
-typedef ViewStyler* (^StylerFloat3Color)(CGFloat f1, CGFloat f2, CGFloat f3, UIColor* color);
-typedef ViewStyler* (^StylerColorFloat)(UIColor* color, CGFloat f);
-typedef ViewStyler* (^StylerFont)(UIFont* font);
-typedef ViewStyler* (^StylerViewFloat)(UIView* view, CGFloat f);
-typedef ViewStyler* (^StylerFloatColor)(CGFloat f, UIColor* color);
-typedef ViewStyler* (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
-typedef ViewStyler* (^StylerImage)(UIImage* image);
-typedef ViewStyler* (^StylerLayer)(CALayer* layer);
-typedef ViewStyler* (^StylerDate)(NSDate* date);
+typedef Styler (^StylerView)(UIView* view);
+typedef Styler (^StylerSize)(CGSize size);
+typedef Styler (^StylerFloat1)(CGFloat num);
+typedef Styler (^StylerFloat2)(CGFloat f1, CGFloat f2);
+typedef Styler (^StylerFloat3)(CGFloat f1, CGFloat f2, CGFloat f3);
+typedef Styler (^StylerFloat4)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4);
+typedef Styler (^StylerColor1)(UIColor* color);
+typedef Styler (^StylerPoint)(CGPoint point);
+typedef Styler (^StylerRect)(CGRect rect);
+typedef Styler (^StylerString1)(NSString* string);
+typedef Styler (^StylerAttributedString)(NSAttributedString* string);
+typedef Styler (^StylerMString1)(NSMutableString* string);
+typedef Styler (^StylerInteger1)(NSInteger integer);
+typedef Styler (^StylerTextAlignment)(NSTextAlignment textAlignment);
+typedef Styler (^StylerColorFloat2)(UIColor* color, CGFloat f1, CGFloat f2);
+typedef Styler (^StylerFloat3Color)(CGFloat f1, CGFloat f2, CGFloat f3, UIColor* color);
+typedef Styler (^StylerColorFloat)(UIColor* color, CGFloat f);
+typedef Styler (^StylerFont)(UIFont* font);
+typedef Styler (^StylerViewFloat)(UIView* view, CGFloat f);
+typedef Styler (^StylerFloatColor)(CGFloat f, UIColor* color);
+typedef Styler (^StylerFloat4Color)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4, UIColor* color);
+typedef Styler (^StylerImage)(UIImage* image);
+typedef Styler (^StylerLayer)(CALayer* layer);
+typedef Styler (^StylerDate)(NSDate* date);
 
 @interface ViewStyler : NSObject
 
@@ -59,9 +59,9 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (StylerFloat1)x;
 - (StylerFloat1)y;
 - (StylerFloat2)xy;
-- (ViewStyler*)center;
-- (ViewStyler*)centerVertically;
-- (ViewStyler*)centerHorizontally;
+- (Styler)center;
+- (Styler)centerVertically;
+- (Styler)centerHorizontally;
 - (StylerFloat1)fromRight;
 - (StylerFloat1)x2;
 - (StylerFloat1)fromBottom;
@@ -98,24 +98,24 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (StylerFloat1)h;
 - (StylerFloat2)wh;
 - (StylerSize)bounds;
-- (ViewStyler*)size;
-- (ViewStyler*)sizeToFit;
-- (ViewStyler*)fill;
-- (ViewStyler*)fillW;
-- (ViewStyler*)fillH;
-- (ViewStyler*)square;
+- (Styler)size;
+- (Styler)sizeToFit;
+- (Styler)fill;
+- (Styler)fillW;
+- (Styler)fillH;
+- (Styler)square;
 
 /* Styling
  *********/
 - (StylerColor1)bg;
 - (StylerFloat3)shadow;
 - (StylerFloat1)radius;
-- (ViewStyler*)round;
+- (Styler)round;
 - (StylerFloatColor)border;
 - (StylerFloat4Color)edges;
-- (ViewStyler*)hide;
-- (ViewStyler*)clip;
-- (StylerColor1)blur;
+- (Styler)hide;
+- (Styler)clip;
+- (Styler)blur;
 - (StylerLayer)bgLayer;
 - (StylerFloat1)alpha;
 
@@ -130,9 +130,9 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 - (StylerFont)textFont;
 - (StylerInteger1)textLines;
 - (Styler)wrapText;
-- (ViewStyler*(^)(UIKeyboardType keyboardType))keyboardType;
-- (ViewStyler*(^)(UIKeyboardAppearance keyboardAppearance))keyboardAppearance;
-- (ViewStyler*(^)(UIReturnKeyType))keyboardReturnKeyType;
+- (Styler(^)(UIKeyboardType keyboardType))keyboardType;
+- (Styler(^)(UIKeyboardAppearance keyboardAppearance))keyboardAppearance;
+- (Styler(^)(UIReturnKeyType))keyboardReturnKeyType;
 
 /* Text inputs
  *************/
@@ -152,15 +152,15 @@ typedef ViewStyler* (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
-+ (ViewStyler*) styler;
++ (Styler) styler;
 + (StylerRect) frame;
-- (ViewStyler*) styler;
+- (Styler) styler;
 - (void)render;
 - (UIView*)viewByName:(NSString*)name;
 - (UILabel*)labelByName:(NSString*)name;
 @end
 @interface UIButton (FunStyler)
-+ (ViewStyler*) styler;
++ (Styler) styler;
 - (void)setImage:(UIImage *)image;
 @end
 
@@ -231,7 +231,7 @@ STYLER_CODE; return self;\
 };\
 }
 #define DeclareStyler1(STYLER_NAME, ARG1_TYPE, ARG1_NAME, STYLER_CODE)\
--(ViewStyler*(^)(ARG1_TYPE)) STYLER_NAME {\
+-(Styler(^)(ARG1_TYPE)) STYLER_NAME {\
 return ^(ARG1_TYPE ARG1_NAME) {\
 STYLER_CODE; return self;\
 };\
