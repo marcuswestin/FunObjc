@@ -7,7 +7,6 @@
 //
 
 #import "Images.h"
-#import "Cache.h"
 
 @implementation Images
 

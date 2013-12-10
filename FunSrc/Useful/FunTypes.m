@@ -12,7 +12,8 @@
 #import "UIControl+Fun.h"
 #import "FunTypes.h"
 #import "UIColor+Fun.h"
-#import "Camera.h"
+#import "Overlay.h"
+#import "FunAppDelegate.h"
 
 #include <stdio.h>
 
@@ -33,7 +34,10 @@ static UIView* errorView;
 void error(NSError* err) {
     if (!err) { return; }
     asyncMain(^{
-        [Camera hide];
+        Class cameraClass = NSClassFromString(@"Camera");
+        if (cameraClass) {
+            [cameraClass hide];
+        }
         UIView* navView = [FunAppDelegate instance].window.rootViewController.view;
         UIView* __block view;
         if (errorView) {
