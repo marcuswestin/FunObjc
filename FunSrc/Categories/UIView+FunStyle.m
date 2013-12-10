@@ -451,7 +451,9 @@ DeclareImageStyler(imageFill, image,
 @end
 @implementation UIButton (FunStyler)
 + (ViewStyler *)styler {
-    return [[UIButton buttonWithType:UIButtonTypeCustom] styler];
+    UIView* instance = [UIButton buttonWithType:UIButtonTypeCustom];
+    [[[instance class] styles] applyTo:instance];
+    return instance.styler;
 }
 - (void)setImage:(UIImage *)image {
     [self setImage:image forState:UIControlStateNormal];
