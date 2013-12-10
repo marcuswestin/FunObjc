@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "FunViewController.h"
 #import "FunObjc.h"
 
 static UIColor* defaultBackgroundColor;

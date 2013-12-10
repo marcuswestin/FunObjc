@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "State.h"
+#import "FunCategories.h"
+#import "FunData.h"
+#import "FunNavigationController.h"
 
 @interface FunViewController : UIViewController
 + (instancetype)withoutState;
