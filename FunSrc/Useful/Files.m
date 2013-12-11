@@ -84,6 +84,17 @@ static BOOL isReset;
 + (NSString*)documentPath:(NSString*)filename {
     return [_funDocumentsDirectory stringByAppendingPathComponent:filename];
 }
+static NSCharacterSet* illegalFileNameCharacters;
++ (void)load {
+    illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<> {}"];
+}
++ (NSString*)sanitizeName:(NSString*)filename {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<> {}"];
+    });
+    return [[filename componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@""];
+}
 + (BOOL)removeCache:(NSString *)name {
     return [Files removeFile:[Files cachePath:name]];
 }

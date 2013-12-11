@@ -31,7 +31,7 @@ static NSString* cacheKeyBase;
 
 + (UIImage *)getLocal:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
     NSString* processedKey = [self _cacheKeyFor:url resize:resize radius:radius];
-    NSData* data = [Cache get:processedKey];
+    NSData* data = [Files readCache:processedKey];
     return (data ? [UIImage imageWithData:data] : nil);
 }
 
@@ -48,7 +48,7 @@ static NSString* cacheKeyBase;
     callback = [self _mainThreadCallback:callback];
     asyncDefault(^{
         NSString* processedKey = [self _cacheKeyFor:url resize:resize radius:radius];
-        NSData* processedData = [Cache get:processedKey];
+        NSData* processedData = [Files readCache:processedKey];
         if (processedData) {
             callback(nil, [UIImage imageWithData:processedData]);
             return;
@@ -56,7 +56,7 @@ static NSString* cacheKeyBase;
 
         // Original cached
         NSString* originalKey = [self _cacheKeyFor:url resize:noResize radius:noRadius];
-        NSData* originalData = [Cache get:originalKey];
+        NSData* originalData = [Files readCache:originalKey];
         if (originalData) {
             [self _processAndCache:url data:originalData resize:resize radius:radius callback:callback];
             return;
@@ -67,7 +67,7 @@ static NSString* cacheKeyBase;
             if (err) { return callback(err,nil); }
             
             // Multiple load calls could have been made for the same un-fetched image with the same processing parameters
-            NSData* processedData = [Cache get:processedKey];
+            NSData* processedData = [Files readCache:processedKey];
             if (processedData) {
                 callback(nil, [UIImage imageWithData:processedData]);
             }
@@ -104,7 +104,7 @@ static NSString* cacheKeyBase;
             return [self _onFetched:url error:@"Error getting image :(" data:nil];
         }
         
-        [Cache store:key data:netData];
+        [Files writeCache:key data:netData];
 
         [self _onFetched:url error:nil data:netData];
     }];
@@ -127,14 +127,15 @@ static NSString* cacheKeyBase;
     if (resize.width || resize.height || radius) {
         image = [image thumbnailSize:CGSizeMake(resize.width*2, resize.height*2) transparentBorder:0 cornerRadius:radius interpolationQuality:kCGInterpolationDefault];
         NSString* key = [self _cacheKeyFor:url resize:resize radius:radius];
-        [Cache store:key data:UIImagePNGRepresentation(image)]; // Radius require PNG transparency
+        [Files writeCache:key data:UIImagePNGRepresentation(image)]; // Radius require PNG transparency
     }
     
     callback(nil, image);
 }
 
 + (NSString*)_cacheKeyFor:(NSString*)url resize:(CGSize)resize radius:(CGFloat)radius {
-    return [NSString stringWithFormat:@"%@:url:%@+resize:%@+radius:%f", cacheKeyBase, url, NSStringFromCGSize(resize), radius];
+    NSString* name = [NSString stringWithFormat:@"%@:url:%@+resize:%@+radius:%f", cacheKeyBase, url, NSStringFromCGSize(resize), radius];
+    return [Files sanitizeName:name];
 }
 
 @end

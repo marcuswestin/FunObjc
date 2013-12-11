@@ -20,6 +20,7 @@
 + (BOOL)writeCache:(NSString*)filename data:(NSData*)data;
 + (NSString*)cachePath:(NSString*)filename;
 + (NSString*)documentPath:(NSString*)filename;
++ (NSString*)sanitizeName:(NSString*)filename;
 + (BOOL)removeDocument:(NSString*)name;
 + (BOOL)removeCache:(NSString*)name;
 
