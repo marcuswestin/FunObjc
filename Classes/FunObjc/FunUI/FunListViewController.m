@@ -85,7 +85,7 @@ static CGFloat START_Y = 99999.0f;
 // API methods //
 /////////////////
 
-- (UIView *)listViewForIndex:(ListIndex)index {
+- (UIView *)visibleViewWithIndex:(ListIndex)index {
     for (ListView* view in [self _views]) {
         if (view.isGroupView) { continue; }
         if (view.index == index) {
@@ -299,7 +299,7 @@ static BOOL insetsForAllSet;
     }];
 }
 
-- (void)listSelectVisibleIndex:(ListIndex)index {
+- (void)selectVisibleIndex:(ListIndex)index {
     for (ListView* view in [self _views]) {
         if ([view isItemView] && view.index == index) {
             [_delegate listSelectIndex:index view:view.content];

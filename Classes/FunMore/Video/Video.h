@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "FunGlobals.h"
 
-@interface Videos : NSObject
+@interface Video : NSObject
 
 + (instancetype)playVideo:(NSString*)url fromView:(UIView*)view callback:(StringErrorCallback)callback;
 

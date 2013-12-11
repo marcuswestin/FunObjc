@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "Videos.h"
+#import "Video.h"
 #import <MediaPlayer/MediaPlayer.h>
 
-static Videos* instance;
+static Video* instance;
 
-@implementation Videos {
+@implementation Video {
     MPMoviePlayerController* _moviePlayer;
     StringErrorCallback _playbackCallback;
 }
@@ -33,7 +33,7 @@ static Videos* instance;
 }
 
 + (instancetype)playVideo:(NSString *)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
-    return instance = [[Videos alloc] initWithUrl:url fromView:fromView callback:callback];
+    return instance = [[Video alloc] initWithUrl:url fromView:fromView callback:callback];
 }
 
 - (void) _playbackDidFinish:(NSNotification*)notification {
