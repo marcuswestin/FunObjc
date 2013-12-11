@@ -11,7 +11,7 @@
 @implementation ExampleListViewController
 
 - (void)render:(BOOL)animated {
-    self.title = @"Infinite List View";
+    self.title = @"List Example";
     self.view.backgroundColor = WHITE;
     [self renderFoot];
 }
