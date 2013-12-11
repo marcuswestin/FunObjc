@@ -12,7 +12,7 @@
 @implementation AppDelegate
 
 - (void)interfaceWillLoad {
-    ENABLE_AUTO(@"View ListView Example")
+//    ENABLE_AUTO(@"View ListView Example")
 }
 
 - (void)interfaceDidLoad:(UIWindow *)window {
