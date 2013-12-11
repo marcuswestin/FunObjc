@@ -13,12 +13,7 @@
 @class NavigationAnimator;
 
 @interface FunNavigationController : UINavigationController <UINavigationControllerDelegate>
-
 + (instancetype)withRootViewController:(UIViewController*)rootViewController navigationBar:(BOOL)navigationBarVisible;
-
 - (void)setup;
-
-@property id<UIViewControllerAnimatedTransitioning>currentAnimator;
-
 - (void)push:(UIViewController*)viewController withAnimator:(id<UIViewControllerAnimatedTransitioning>)animator;
 @end

@@ -21,6 +21,10 @@ void SetPropertyAssign(id obj, NSString* key, id val) {
     objc_setAssociatedObject(obj, (__bridge const void *)(key), val, OBJC_ASSOCIATION_ASSIGN);
 }
 
+void RemoveRuntimeProperties(id obj) {
+    objc_removeAssociatedObjects(obj);
+}
+
 id GetProperty(id obj, NSString* key) {
     return objc_getAssociatedObject(obj, (__bridge const void *)(key));
 }

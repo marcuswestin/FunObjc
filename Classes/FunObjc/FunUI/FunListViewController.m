@@ -16,6 +16,11 @@
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
 
+@interface FunViewController ()
+// For access to the private method
+- (void)_funViewControllerRender:(BOOL)animated;
+@end
+
 @interface ListView : UIView
 @property ListGroupId groupId;
 @property ListIndex index;
@@ -195,7 +200,19 @@ static CGFloat START_Y = 99999.0f;
 // Setup & Teardown //
 //////////////////////
 
-- (void)beforeRender:(BOOL)animated {
+- (void)didMoveToParentViewController:(UIViewController *)parent {
+    [super didMoveToParentViewController:parent];
+    if (parent) { return; }
+    _scrollView.delegate = nil;
+}
+
+- (void)_funViewControllerRender:(BOOL)animated {
+    [self _beforeRender];
+    [super _funViewControllerRender:animated];
+    [self _afterRender];
+}
+
+- (void)_beforeRender {
     if (!_delegate) {
         if ([self conformsToProtocol:@protocol(FunListViewDelegate)]) {
             _delegate = (id<FunListViewDelegate>)self;
@@ -213,17 +230,6 @@ static CGFloat START_Y = 99999.0f;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
     [_scrollView appendTo:_listView];
-
-    [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
-        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self _handleKeyboardWithHeightChange:info.heightChange];
-        }];
-    }];
-    [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
-        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self _handleKeyboardWithHeightChange:info.heightChange];
-        }];
-    }];
 }
 
 - (void)_handleKeyboardWithHeightChange:(CGFloat)heightChange {
@@ -252,7 +258,7 @@ static BOOL insetsForAllSet;
     insetsForAllSet = YES;
 }
 
-- (void)afterRender:(BOOL)animated {
+- (void)_afterRender {
     if (insetsForAllSet) {
         UIEdgeInsets groupMargins = self.listGroupMargins;
         groupMargins.top += insetsForAll.top;
@@ -268,8 +274,22 @@ static BOOL insetsForAllSet;
     [self.view insertSubview:_listView atIndex:0];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
+        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+            [self _handleKeyboardWithHeightChange:info.heightChange];
+        }];
+    }];
+    [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
+        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+            [self _handleKeyboardWithHeightChange:info.heightChange];
+        }];
+    }];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
     [Keyboard offWillShow:self];
     [Keyboard offWillHide:self];
 }

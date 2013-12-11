@@ -66,8 +66,12 @@ static NSMutableDictionary* tagNameToTagNumber;
 
 /* View Hierarchy
  ****************/
-DeclareViewStyler(appendTo, view, [_view appendTo:view])
-DeclareViewStyler(prependTo, view, [_view prependTo:view])
+DeclareViewStyler(appendTo, view,
+                  [_view appendTo:view];
+                  [_view sizeToParent])
+DeclareViewStyler(prependTo, view,
+                  [_view prependTo:view];
+                  [_view sizeToParent])
 
 DeclareIntegerStyler(tag, tagI, _view.tag = tagI)
 
@@ -153,46 +157,49 @@ DeclareFloat4Styler(inset, top, right, bottom, left,
                     _view.frame = frame)
 
 DeclareFloatStyler(moveUp, amount,
-                   CGRect frame = _view.frame;
-                   frame.origin.y -= amount;
-                   _view.frame = frame)
+                   _view.y -= amount)
 DeclareFloatStyler(moveDown, amount,
-                   CGRect frame = _view.frame;
-                   frame.origin.y += amount;
-                   _view.frame = frame)
+                   _view.y += amount)
+
+- (UIView*)last {
+    NSArray* views = _view.superview.subviews;
+    if (views.count <= 1) {
+        return nil;
+    }
+    return views[views.count - 2];
+}
 
 DeclareViewFloatStyler(below, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.y = (view ? view.y2 : 0) + offset;
-                       _view.frame = frame)
-DeclareViewFloatStyler(above, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.y = view.y - frame.size.height - offset;
-                       _view.frame = frame)
-DeclareViewFloatStyler(rightOf, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.x = (view ? view.x2 : 0) + offset;
-                       _view.frame = frame)
-DeclareViewFloatStyler(leftOf, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.x = (view ? view.x : 0) - frame.size.width - offset;
-                       _view.frame = frame)
-DeclareViewFloatStyler(fillRightOf, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.x = view.x2 + offset;
-                       frame.size.width = _view.superview.width - view.x2 - offset;
-                       _view.frame = frame)
-DeclareViewFloatStyler(fillLeftOf, view, offset,
-                       CGRect frame = _view.frame;
-                       frame.origin.x = 0;
-                       frame.size.width = view.x - offset;
-                       _view.frame = frame)
+                       _view.y = (view ? view.y2 : 0) + offset)
 DeclareFloatStyler(belowLast, offset,
-                   NSArray* views = _view.superview.subviews;
-                   for (int i=views.count-1; i>0; i--) {
-                       if (views[i] != _view) { continue; }
-                       self.below(views[i-1], offset);
-                   })
+                   self.below(self.last, offset))
+
+DeclareViewFloatStyler(above, view, offset,
+                       _view.y2 = view.y - offset)
+DeclareFloatStyler(aboveLast, offset,
+                   self.above(self.last, offset))
+
+DeclareViewFloatStyler(rightOf, view, offset,
+                       _view.x = (view ? view.x2 : 0) + offset)
+DeclareFloatStyler(rightOfLast, offset,
+                   self.rightOf(self.last, offset))
+
+DeclareViewFloatStyler(leftOf, view, offset,
+                       _view.x2 = (view ? view.x : 0) - offset)
+DeclareFloatStyler(leftOfLast, offset,
+                   self.leftOf(self.last, offset))
+
+DeclareViewFloatStyler(fillRightOf, view, offset,
+                       _view.x = view.x2 + offset;
+                       _view.width = _view.superview.width - view.x2 - offset)
+DeclareFloatStyler(fillRightOfLast, offset,
+                   self.fillRightOf(self.last, offset))
+
+DeclareViewFloatStyler(fillLeftOf, view, offset,
+                       _view.x = 0;
+                       _view.width = view.x - offset)
+DeclareFloatStyler(fillLeftOfLast, offset,
+                   self.fillLeftOf(self.last, offset))
 
 /* Size
  ******/
@@ -387,7 +394,7 @@ DeclareFloatStyler(inputPad, pad,
 
 
 
-DeclareStyler(blur, [_view blur:_view.frame.size]);
+DeclareStyler(blur, [_view blur]);
 
 DeclareLayerStyler(bgLayer, layer, _bgLayer = layer);
 DeclareFloatStyler(alpha, alpha, _view.alpha = alpha)
@@ -420,18 +427,20 @@ DeclareImageStyler(imageFill, image,
 @implementation UIView (FunStyler)
 + (StylerView)appendTo {
     return ^(UIView* view) {
-        return self.styler.appendTo(view).fillW;
+        return self.styler.appendTo(view);
     };
 }
 + (StylerView)prependTo {
     return ^(UIView* view) {
-        return self.styler.prependTo(view).fillW;
+        return self.styler.prependTo(view);
     };
+}
+- (void)sizeToParent {
+    self.width = self.superview.width;
 }
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];
 }
-- (void)render {}
 
 + (StylerRect)frame {
     return self.styler.frame;

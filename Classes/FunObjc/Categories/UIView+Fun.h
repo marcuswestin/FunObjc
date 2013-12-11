@@ -11,6 +11,13 @@
 
 @interface UIView (Fun)
 
+/* Lifecycle
+ ***********/
+// First time render
+- (void)render;
+// Clean up when removed from window
+- (void)cleanup;
+
 /* Size
  ******/
 - (CGFloat)height;
@@ -54,14 +61,15 @@
 - (CGRect)frameInWindow;
 - (CGRect)frameOnScreen;
 
-/* Borders, Shadows & Insets
- ***************************/
+/* Borders, Shadows, Insets & Blurs
+ **********************************/
 - (void)setOutsetShadowColor:(UIColor*)color radius:(CGFloat)radius spread:(CGFloat)spread x:(CGFloat)offsetX y:(CGFloat)offsetY;
 - (void)setInsetShadowColor:(UIColor*)color radius:(CGFloat)radius spread:(CGFloat)spread x:(CGFloat)offsetX y:(CGFloat)offsetY;
 - (void)setOutsetShadowColor:(UIColor*)color radius:(CGFloat)radius;
 - (void)setInsetShadowColor:(UIColor*)color radius:(CGFloat)radius;
 - (void)setBorderColor:(UIColor*)color width:(CGFloat)width;
 - (void)setGradientColors:(NSArray*)colors;
+- (void)blur;
 
 /* View hierarchy
  ****************/
@@ -87,22 +95,4 @@ typedef void(^GhostCallback)(UIView* ghostView);
 /* Animations
  ************/
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations;
-@end
-
-@interface UIView (Blur)
-- (void)blur;
-- (void)blur:(CGSize)size;
-@end
-
-typedef BOOL (^ShouldChangeStringCallback)(NSString* fromString, NSString* toString, NSRange replacementRange, NSString* replacementString);
-
-@interface UITextField (Fun)
-- (void)bindTextTo:(NSMutableString*)str;
-- (void)excludeInputsMatching:(NSString*)pattern;
-- (void)limitLengthTo:(NSUInteger)maxLength;
-- (void)shouldChange:(ShouldChangeStringCallback)shouldChangeStringCallback;
-@end
-
-@interface UILabel (Fun)
-- (void)wrapText;
 @end

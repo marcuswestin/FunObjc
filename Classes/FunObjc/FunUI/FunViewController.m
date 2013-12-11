@@ -10,9 +10,47 @@
 #import "FunObjc.h"
 
 static UIColor* defaultBackgroundColor;
+static NSUInteger deallocCount;
+
+@interface UIView ()
+- (void)_funViewControllerRecursiveViewCleanup;
+@end
 
 @implementation FunViewController {
     BOOL _didRender;
+    BOOL _didCleanup;
+}
+
+- (void)dealloc {
+    deallocCount += 1;
+}
+
+- (void)_funViewControllerCleanup {
+    [self cleanup];
+}
+- (void)cleanup {
+    // Override in subclass
+}
+
+- (void)didMoveToParentViewController:(UIViewController *)parent {
+    if (parent) {
+        if (_didCleanup) {
+            [NSException raise:@"Error" format:@"Don't reuse FunViewControllers. Once it has been removed from a view controller stack, it helps all contained views free up its resources."];
+        }
+        return;
+    }
+    _didCleanup = YES;
+    [self.view _funViewControllerRecursiveViewCleanup];
+    [self _funViewControllerCleanup];
+    [FunViewController _checkDeallocCount:[self className]];
+}
+
++ (void)_checkDeallocCount:(NSString*)className {
+    NSUInteger before = deallocCount;
+    after(1, ^{
+        if (deallocCount > before) { return; }
+        [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
+    });
 }
 
 + (void)load {
@@ -70,17 +108,17 @@ static UIColor* defaultBackgroundColor;
         _didRender = YES;
         self.view.backgroundColor = defaultBackgroundColor;
         self.view.opaque = (defaultBackgroundColor.alpha == 1.0);
-        [self beforeRender:animated];
-        [self render:animated];
-        [self afterRender:animated];
+        [self _funViewControllerRender:animated];
     }
 }
 
-- (void)beforeRender:(BOOL)animated{} // Private hook - see e.g. FunListViewController
+- (void)_funViewControllerRender:(BOOL)animated {
+    [self render:animated];
+}
+
 - (void)render:(BOOL)animated {
     [UILabel.appendTo(self.view).text(@"You should implement -render in your ViewController").wrapText.center render];
 }
-- (void)afterRender:(BOOL)animated{} // Private hook - see e.g. FunListViewController
 
 - (void)pushViewController:(UIViewController *)viewController {
     [self.navigationController pushViewController:viewController animated:YES];

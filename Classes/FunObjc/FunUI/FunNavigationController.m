@@ -9,6 +9,10 @@
 #import "FunNavigationController.h"
 #import "FunObjc.h"
 
+@interface FunNavigationController ()
+@property id<UIViewControllerAnimatedTransitioning>currentAnimator;
+@end
+
 @interface ViewControllerTransition : NSObject <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 //@property UIViewController* from;
 //@property UIViewController* to;

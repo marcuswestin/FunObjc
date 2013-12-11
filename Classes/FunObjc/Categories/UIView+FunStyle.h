@@ -86,11 +86,16 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat1)moveDown;
 - (StylerViewFloat)below;
 - (StylerViewFloat)above;
-- (StylerViewFloat)leftOf;
-- (StylerViewFloat)rightOf;
-- (StylerViewFloat)fillRightOf;
-- (StylerViewFloat)fillLeftOf;
 - (StylerFloat1)belowLast;
+- (StylerFloat1)aboveLast;
+- (StylerViewFloat)leftOf;
+- (StylerFloat1)leftOfLast;
+- (StylerViewFloat)rightOf;
+- (StylerFloat1)rightOfLast;
+- (StylerViewFloat)fillRightOf;
+- (StylerFloat1)fillRightOfLast;
+- (StylerViewFloat)fillLeftOf;
+- (StylerFloat1)fillLeftOfLast;
 
 /* Size
  ******/
@@ -152,10 +157,10 @@ typedef Styler (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
+- (void)sizeToParent;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
-- (void)render;
 - (UIView*)viewByName:(NSString*)name;
 - (UILabel*)labelByName:(NSString*)name;
 @end

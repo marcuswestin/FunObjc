@@ -14,3 +14,5 @@
 #import "UIScrollView+Fun.h"
 #import "NSNull+Fun.h"
 #import "NSDate-Utilities.h"
+#import "UITextField+Fun.h"
+#import "UILabel+Fun.h"

@@ -9,9 +9,43 @@
 #import "UIView+Fun.h"
 #import "FunObjc.h"
 
-@class FunBlurView;
+// Blur effect
+//////////////
+@interface FunBlurView : UIView
+@property UIToolbar *toolbar;
+@end
+@implementation FunBlurView
++ (void)inSuperview:(UIView*)superview {
+    FunBlurView* blurView = [[FunBlurView alloc] initWithFrame:superview.bounds];
+    blurView.clipsToBounds = YES; // toolbar draws a thin shadow on top without clip
+    blurView.toolbar = [[UIToolbar alloc] initWithFrame:superview.bounds];
+    [superview addSubview:blurView];
+    [superview.layer insertSublayer:[blurView.toolbar layer] atIndex:0];
+}
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self.toolbar setFrame:[self bounds]];
+}
+@end
 
+// UIView
+/////////
 @implementation UIView (Fun)
+
+/* Lifecycle
+ ***********/
+
+- (void)render {}
+- (void)cleanup {}
+- (void)_funViewControllerRecursiveViewCleanup {
+    // This fires when the parent FunUIViewController didMoveToParentViewController:nil
+    for (UIView* view in self.subviews) {
+        [view _funViewControllerRecursiveViewCleanup];
+    }
+    [self cleanup];
+    RemoveRuntimeProperties(self);
+}
+
 /* Size
  ******/
 - (CGFloat)height {
@@ -282,6 +316,10 @@ static CGFloat STATIC = 0.5f;
     [self.layer insertSublayer:left atIndex:0];
 }
 
+- (void)blur {
+    [FunBlurView inSuperview:self];
+}
+
 /* View hierarchy
  ****************/
 - (instancetype)empty {
@@ -349,100 +387,5 @@ static CGFloat STATIC = 0.5f;
  ************/
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations {
     return [UIView animateWithDuration:duration delay:delay options:options animations:animations completion:nil];
-}
-@end
-
-// Blur effect
-//////////////
-@interface FunBlurView : UIView
-@property UIToolbar *toolbar;
-@end
-@implementation FunBlurView
-- (id)initWithSuperview:(UIView*)view size:(CGSize)size {
-    self = [super initWithFrame:CGRectMake(0, 0, size.width, size.height)];
-    self.clipsToBounds = YES; // toolbar draws a thin shadow on top without clip
-    self.toolbar = [[UIToolbar alloc] initWithFrame:[self bounds]];
-    [self.layer insertSublayer:[self.toolbar layer] atIndex:0];
-    return self;
-}
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    [self.toolbar setFrame:[self bounds]];
-}
-@end
-@implementation UIView (Blur)
-- (void)blur {
-    [self blur:self.frame.size];
-}
-- (void)blur:(CGSize)size {
-    [self addSubview:[[FunBlurView alloc] initWithSuperview:self size:size]];
-}
-@end
-
-@interface UITextFieldFunDelegate : NSObject<UITextFieldDelegate>
-@property NSPredicate* excludePredicate;
-@property NSUInteger maxLength;
-@property (copy)ShouldChangeStringCallback shouldChangeStringCallback;
-@end
-@implementation UITextFieldFunDelegate
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if ([_excludePredicate evaluateWithObject:string]) {
-        return NO;
-    }
-    if (_maxLength && textField.text.length - range.length + string.length > _maxLength) {
-        return NO;
-    }
-    NSString* toString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    if (_shouldChangeStringCallback) {
-        return _shouldChangeStringCallback(textField.text, toString, range, string);
-    }
-    return YES;
-}
-@end
-
-@implementation UITextField (Fun)
-- (void)bindTextTo:(NSMutableString *)str {
-    if (!str || str.isNull) {
-        NSLog(@"WARNING UITextField -bindTextTo: got nil string");
-        return;
-    }
-    self.text = str;
-    [self onChange:^(UIEvent *event) {
-        [str setString:self.text];
-    }];
-}
-- (UITextFieldFunDelegate*) funDelegate {
-    UITextFieldFunDelegate* delegate = GetProperty(self, @"FunDelegate");
-    if (delegate) {
-        if (![delegate isKindOfClass:[UITextFieldFunDelegate class]]) {
-            [NSException raise:@"" format:@"UITextField (Fun) has already been assigned a delegate"];
-        }
-    } else {
-        delegate = [UITextFieldFunDelegate new];
-        SetProperty(self, @"FunDelegate", delegate);
-        self.delegate = delegate;
-    }
-    return delegate;
-}
-- (void)excludeInputsMatching:(NSString *)pattern {
-    UITextFieldFunDelegate* delegate = [self funDelegate];
-    if (delegate.excludePredicate) {
-        [NSException raise:@"" format:@"excludeInputsMatching: called multiple times on the same input"];
-    }
-    delegate.excludePredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
-}
-- (void)limitLengthTo:(NSUInteger)maxLength {
-    [self funDelegate].maxLength = maxLength;
-}
-- (void)shouldChange:(ShouldChangeStringCallback)shouldChangeStringCallback {
-    [self funDelegate].shouldChangeStringCallback = shouldChangeStringCallback;
-}
-@end
-
-@implementation UILabel (Fun)
-- (void)wrapText {
-    self.numberOfLines = 0;
-    self.lineBreakMode = NSLineBreakByWordWrapping;
-    [self sizeToFit];
 }
 @end

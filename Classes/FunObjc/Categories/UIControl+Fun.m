@@ -10,6 +10,7 @@
 #import "NSArray+Fun.h"
 #import "FunGlobals.h"
 #import "FunRuntimeProperties.h"
+#import "UIView+Fun.h"
 
 static NSString* KeyOnEditingChanged = @"Fun_OnEditingChanged";
 static NSString* KeyOnTap = @"Fun_OnTap";
