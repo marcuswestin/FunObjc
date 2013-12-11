@@ -9,30 +9,39 @@
 #import "Events.h"
 #import "FunBase.h"
 
+@interface Subscription : NSObject
+@property (weak) EventSubscriber subscriber;
+@property (copy) EventCallback callback;
++ (instancetype)withSubscriber:(EventSubscriber)subscriber callback:(EventCallback)callback;
+@end
+@implementation Subscription
++ (instancetype)withSubscriber:(EventSubscriber)subscriber callback:(EventCallback)callback {
+    Subscription* subscription = [Subscription new];
+    subscription.subscriber = subscriber;
+    subscription.callback = callback;
+    return subscription;
+}
+@end
+
 @implementation Events
-
 static NSMutableDictionary* signals;
-static const NSString* RefKey = @"Sub";
-static const NSString* CbKey = @"Cb";
-
 #pragma mark - API
-
 + (void)initialize {
     signals = [NSMutableDictionary dictionary];
 }
 
 + (void)on:(NSString *)signal subscriber:(EventSubscriber)subscriber callback:(EventCallback)callback {
     if (!signals[signal]) {
-        signals[signal] = [NSMutableArray array];
+        signals[signal] = [NSMutableSet set];
     }
-    [signals[signal] addObject:@{RefKey:subscriber, CbKey:callback}];
+    [signals[signal] addObject:[Subscription withSubscriber:subscriber callback:callback]];
 }
 
 + (void)off:(NSString *)signal subscriber:(EventSubscriber)subscriber {
-    NSMutableArray* callbacks = signals[signal];
-    for (NSDictionary* obj in callbacks) {
-        if (obj[RefKey] == subscriber) {
-            [callbacks removeObject:obj];
+    NSMutableSet* callbacks = signals[signal];
+    for (Subscription* subscription in callbacks) {
+        if (subscription.subscriber == subscriber) {
+            [callbacks removeObject:subscription];
             break;
         }
     }
@@ -43,14 +52,14 @@ static const NSString* CbKey = @"Cb";
 }
 
 + (void)fire:(NSString *)signal info:(id)info {
-    NSArray* callbacks = [signals[signal] copy];
+    NSSet* callbacks = [signals[signal] copy];
     asyncMain(^{
         [self syncFire:signal callbacks:callbacks info:info];
     });
 }
 
 + (void)syncFire:(NSString *)signal info:(id)info {
-    NSArray* callbacks = [signals[signal] copy];
+    NSSet* callbacks = [signals[signal] copy];
     [Events syncFire:signal callbacks:callbacks info:info];
 }
 
@@ -58,15 +67,14 @@ static const NSString* CbKey = @"Cb";
 + (void)syncFire:(NSString *)signal {
     [self syncFire:signal info:nil];
 }
-+ (void)syncFire:(NSString *)signal callbacks:(NSArray*)callbacks info:(id)info {
++ (void)syncFire:(NSString *)signal callbacks:(NSSet*)callbacks info:(id)info {
     if (info) {
         NSLog(@"@ Event %@, Info: %@", signal, info);
     } else {
         NSLog(@"@ Event %@", signal);
     }
-    for (NSDictionary* obj in callbacks) {
-        EventCallback callback = obj[CbKey];
-        callback(info);
+    for (Subscription* subscription in callbacks) {
+        subscription.callback(info);
     }
 }
 @end
