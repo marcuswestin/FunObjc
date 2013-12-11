@@ -130,6 +130,7 @@ static CGFloat START_Y = 99999.0f;
         [self _fixContentTopByAdding:START_Y];
         _hasReachedTheVeryTop = NO;
     }
+    [self _extendTop];
 }
 
 - (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
