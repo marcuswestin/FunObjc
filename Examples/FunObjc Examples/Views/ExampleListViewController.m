@@ -8,6 +8,10 @@
 
 #import "ExampleListViewController.h"
 
+@interface ExampleListViewController ()
+@property NSUInteger groupBy;
+@end
+
 @implementation ExampleListViewController
 
 - (void)render:(BOOL)animated {
@@ -20,6 +24,10 @@
     UIView* view = [UIView.appendTo(self.view).h(50).fromBottom(0).blur render];
     [UIButton.appendTo(view).text(@"Prepend 5").size.centerVertically.x(8) onTap:^(UIEvent *event) {
         [self prependToListCount:5];
+    }];
+    self.groupBy = 10;
+    [UIButton.appendTo(view).text(@"Group by: add 10").size.centerVertically.fromRight(8) onTap:^(UIEvent *event) {
+        self.groupBy += 10;
     }];
 }
 
@@ -39,6 +47,18 @@
         [[view viewByName:@"label"] centerVertically];
         [self setHeight:view.height forVisibleViewWithIndex:index];
     }];
+}
+
+- (id)listGroupIdForIndex:(ListIndex)index {
+    return [NSNumber numberWithInt:index / self.groupBy];
+}
+
+- (UIView *)listViewForGroupHead:(NSNumber*)groupId withIndex:(ListIndex)index width:(CGFloat)width {
+    UIView* view = [UIView.styler.wh(width, 30).bg(BLACK) render];
+    NSNumber* nextGroupId = [self listGroupIdForIndex:index + self.groupBy];
+    NSString* text = [NSString stringWithFormat:@"%d-%d", groupId.integerValue * self.groupBy, nextGroupId.integerValue * self.groupBy];
+    [UILabel.appendTo(view).text(text).textColor(WHITE).size.center render];
+    return view;
 }
 
 @end
