@@ -281,12 +281,12 @@ static BOOL insetsForAllSet;
 
 - (void)_afterRender {
     if (insetsForAllSet) {
-        UIEdgeInsets groupMargins = self.listGroupMargins;
-        groupMargins.top += insetsForAll.top;
-        groupMargins.right += insetsForAll.right;
-        groupMargins.bottom += insetsForAll.bottom;
-        groupMargins.left += insetsForAll.left;
-        self.listGroupMargins = groupMargins;
+        UIEdgeInsets insets = self.scrollView.contentInset;
+        insets.top += insetsForAll.top;
+        insets.right += insetsForAll.right;
+        insets.bottom += insetsForAll.bottom;
+        insets.left += insetsForAll.left;
+        self.scrollView.contentInset = insets;
     }
     
     [self reloadDataForList];
