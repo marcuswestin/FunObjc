@@ -26,7 +26,7 @@ typedef enum ListViewDirection ListViewDirection;
 //////////////
 @protocol FunListViewDelegate <NSObject>
 @required
-- (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width;
+- (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width location:(ListViewLocation)location;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 @optional
 - (ListIndex) listStartIndex;

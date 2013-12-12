@@ -175,7 +175,7 @@ static CGFloat START_Y = 99999.0f;
     
     for (NSUInteger i=0; i<numItems; i++) {
         ListIndex index = firstIndex + i;
-        ListContentView* view = [self _getViewForIndex:index];
+        ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
         changeInHeight += view.height;
     }
     
@@ -357,7 +357,7 @@ static BOOL insetsForAllSet;
     ListIndex startIndex = ([_delegate respondsToSelector:@selector(listStartIndex)] ? [_delegate listStartIndex] : 0);
     ListGroupId startGroupId = [self _groupIdForIndex:startIndex];
     
-    if (![self _getViewForIndex:startIndex]) {
+    if (![self _getViewForIndex:startIndex location:_listStartLocation]) {
         return; // Empty list
     }
 
@@ -370,7 +370,7 @@ static BOOL insetsForAllSet;
         {
             ListIndex previousIndex = _topListIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
-            ListContentView* previousView = [self _getViewForIndex:previousIndex];
+            ListContentView* previousView = [self _getViewForIndex:previousIndex location:TOP];
             if (!previousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
                 [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
             }
@@ -387,7 +387,7 @@ static BOOL insetsForAllSet;
         {
             ListIndex nextIndex = _bottomItemIndex + 1;
             ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
-            ListContentView* nextView = [self _getViewForIndex:nextIndex];
+            ListContentView* nextView = [self _getViewForIndex:nextIndex location:BOTTOM];
             if (!nextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
                 [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
             }
@@ -450,7 +450,7 @@ static BOOL insetsForAllSet;
 
 - (BOOL)_listAddNextViewDown {
     NSInteger index = _bottomItemIndex + 1;
-    ListContentView* view = [self _getViewForIndex:index];
+    ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
     
     if (!view) {
         // There are no more items to display at the bottom.
@@ -507,7 +507,7 @@ static BOOL insetsForAllSet;
     
     NSInteger index = _topListIndex - 1;
     
-    ListContentView* view = [self _getViewForIndex:index];
+    ListContentView* view = [self _getViewForIndex:index location:TOP];
     if (!view) {
         [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
     }
@@ -574,8 +574,8 @@ static BOOL insetsForAllSet;
     return _listView.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
 }
 
-- (ListContentView*)_getViewForIndex:(ListIndex)index {
-    UIView* content = [_delegate listViewForIndex:index width:[self _widthForItemView]];
+- (ListContentView*)_getViewForIndex:(ListIndex)index location:(ListViewLocation)location {
+    UIView* content = [_delegate listViewForIndex:index width:[self _widthForItemView] location:location];
     if (!content) { return nil; }
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
