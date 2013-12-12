@@ -48,8 +48,10 @@ static NSMutableDictionary* tagNameToTagNumber;
 
 - (void)apply {
     [self _makeEdges];
-    _bgLayer.frame = _view.bounds;
-    [_view.layer insertSublayer:_bgLayer atIndex:0];
+    if (_bgLayer) {
+        _bgLayer.frame = _view.bounds;
+        [_view.layer insertSublayer:_bgLayer atIndex:0];
+    }
 }
 
 - (id)render {
