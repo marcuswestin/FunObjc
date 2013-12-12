@@ -417,7 +417,7 @@
     return names[month];
 }
 - (NSString *)nameOfDayNumeric {
-    return [NSString stringWithFormat:@"%d", self.day + 1];
+    return [NSString stringWithFormat:@"%d", self.day];
 }
 - (NSString*)nameOfDayNumericSuffix {
     return [NSNumber suffix:self.day+1];
