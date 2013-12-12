@@ -60,14 +60,27 @@
 }
 @end
 
-@interface FunListViewController ()
-@property ListViewLocation listStartLocation;
+@interface ListStickyView : UIView
+@property CGFloat naturalOffset;
+@property ListStickyView* viewAbove;
+@property ListStickyView* viewBelow;
+@end
+@implementation ListStickyView
+@end
+
+///////////////////////////
+// FunListViewController //
+///////////////////////////
+
+@interface FunViewController ()
+- (void)_funViewControllerRender:(BOOL)animated;
 @end
 
 @implementation FunListViewController {
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
+    ListViewLocation _listStartLocation;
     NSInteger _topItemIndex;
     NSInteger _bottomItemIndex;
     CGFloat _previousContentOffsetY;
@@ -76,6 +89,17 @@
     CGFloat _topY;
     CGFloat _bottomY;
     BOOL _scrollViewPurged;
+
+    // Stickies
+    ///////////
+    ListStickyView* _stickiesTopmost;
+    ListStickyView* _stickiesCurrent;
+    ListStickyView* _stickiesBottommost;
+    NSMutableArray*  _stickiesAddedForView;
+    UIView* _stickiesContainerNonInteractive;
+    CGFloat _stickyY1;
+    CGFloat _stickyY2;
+    CGFloat _stickyHeight;
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -99,6 +123,7 @@ static CGFloat START_Y = 99999.0f;
     [self _withoutScrollEvents:^{
         [self.scrollView empty];
         [self _renderInitialContent];
+        [self _stickiesOnInitialContentRendered];
     }];
     
     // Top should start scrolled down below the navigation bar
@@ -225,6 +250,7 @@ static CGFloat START_Y = 99999.0f;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
     [_scrollView appendTo:_listView];
+    [self _stickiesBeforeRender];
 }
 
 - (void)_handleKeyboardWithHeightChange:(CGFloat)heightChange {
@@ -383,10 +409,12 @@ static BOOL insetsForAllSet;
     if (contentOffsetY > _previousContentOffsetY) {
         // scrolled down
         [self extendBottom];
+        [self _stickiesUpdateOnContentMoved:UP];
         
     } else if (contentOffsetY < _previousContentOffsetY) {
         // scrolled up
         [self _extendTop];
+        [self _stickiesUpdateOnContentMoved:DOWN];
         
     } else {
         // no change (contentOffsetY == _previousContentOffsetY)
@@ -617,6 +645,9 @@ static BOOL insetsForAllSet;
         _bottomY += view.height;
         [_scrollView addSubview:view];
     }
+    if (view.isItemView) {
+        [self _stickiesOnDidAddView:view at:location];
+    }
 }
 
 ////////////////
@@ -669,6 +700,7 @@ static BOOL insetsForAllSet;
             [subView moveByY:changeInHeight];
         }
     }];
+    [self _stickiesRepositionByChangeInHeight:changeInHeight];
 }
 
 - (void)_withoutScrollEvents:(Block)block {
@@ -700,6 +732,159 @@ static BOOL insetsForAllSet;
 }
 - (ListContentView*)_bottomView {
     return self._views.lastObject;
+}
+
+//////////////
+// Stickies //
+//////////////
+
+// Stickies API
+///////////////
+- (void)setStickyPoint:(CGFloat)y height:(CGFloat)height {
+    _stickyY1 = y;
+    _stickyY2 = y + height;
+    _stickyHeight = height;
+}
+
+- (UIView *)stickyView {
+    CGFloat left = _listGroupMargins.left + _listItemMargins.left;
+    CGFloat right = _listGroupMargins.right + _listItemMargins.right;
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(left, 0, _listView.width - left - right, 0)];
+    [_stickiesAddedForView addObject:view];
+    return view;
+}
+
+// Stickies Internal
+////////////////////
+- (void)_stickiesBeforeRender {
+    _stickiesAddedForView = [NSMutableArray array];
+    _stickiesContainerNonInteractive = [UIView.appendTo(_listView) render];
+}
+
+- (void)_stickiesOnInitialContentRendered {
+    if (!_stickiesTopmost) {
+        if (_stickyY1 || _stickyY2) {
+            [NSException raise:@"Error" format:@"Expected at least one sticky to be rendered in list view"];
+        }
+        return;
+    }
+    // Elect a first sticky
+    ListStickyView* closest = _stickiesTopmost;
+    CGFloat distance = 999999;
+    CGFloat point = _stickyY1 + (_stickyY2 - _stickyY1)/2;
+    ListStickyView* view = closest;
+    while ((view = view.viewBelow)) {
+        if (abs(view.center.y - point) < distance) {
+            distance = abs(view.center.y - point);
+            closest = view;
+        }
+    }
+    _stickiesCurrent = closest;
+    _stickiesCurrent.y = _stickyY1;
+}
+
+- (void)_stickiesUpdateOnContentMoved:(ListViewDirection)contentMoved {
+    CGFloat offset = _scrollView.contentOffset.y;
+
+    ListStickyView* stickyView = _stickiesTopmost;
+    while (stickyView) {
+        if (stickyView != _stickiesCurrent) {
+            stickyView.y = stickyView.naturalOffset - offset;
+        }
+        stickyView = stickyView.viewBelow;
+    }
+
+    ListStickyView* enroaching;
+    // TODO There may be multiple enroaching per loop
+    if (_stickiesCurrent.viewBelow.y < _stickyY2) {
+        // From below
+        enroaching = _stickiesCurrent.viewBelow;
+        if (enroaching.y <= _stickyY1) {
+            _stickiesCurrent.naturalOffset = offset + _stickyY1 - _stickyHeight;
+            _stickiesCurrent.y = _stickiesCurrent.naturalOffset - offset;
+            _stickiesCurrent = enroaching;
+            _stickiesCurrent.y = _stickyY1;
+        } else {
+            _stickiesCurrent.y2 = enroaching.y;
+        }
+    }
+    if (_stickiesCurrent.viewAbove.y2 > _stickyY1) {
+        // From above
+        enroaching = _stickiesCurrent.viewAbove;
+        if (enroaching.y2 >= _stickyY2) {
+            _stickiesCurrent.naturalOffset = offset + _stickyY2;
+            _stickiesCurrent.y = _stickiesCurrent.naturalOffset - offset;
+            _stickiesCurrent = enroaching;
+            _stickiesCurrent.y = _stickyY1;
+        } else {
+            _stickiesCurrent.y = enroaching.y2;
+        }
+    }
+
+    if (contentMoved == UP) {
+        [self _stickiesCleanupTop];
+        
+    } else if (contentMoved == DOWN) {
+        [self _stickiesCleanupBottom];
+    }
+}
+
+- (void)_stickiesOnDidAddView:(ListContentView*)view at:(ListViewLocation)location {
+    if (!_stickiesAddedForView.count) { return; }
+    ListStickyView* stickyView = [ListStickyView.appendTo(_stickiesContainerNonInteractive).h(_stickyHeight) render];
+    for (UIView* view in _stickiesAddedForView) {
+        [stickyView addSubview:view];
+    }
+    stickyView.naturalOffset = view.y;
+    stickyView.y = stickyView.naturalOffset - _scrollView.contentOffset.y;
+    [_stickiesAddedForView removeAllObjects];
+
+    if (!_stickiesTopmost) {
+        // First sticky
+        _stickiesTopmost = stickyView;
+        _stickiesBottommost = stickyView;
+    } else if (location == TOP) {
+        [self _stickyMakeTopmost:stickyView];
+    } else if (location == BOTTOM) {
+        [self _stickyMakeBottommost:stickyView];
+    }
+}
+
+-(void)_stickiesRepositionByChangeInHeight:(CGFloat)changeInHeight {
+    ListStickyView* stickyView = _stickiesTopmost;
+    while (stickyView) {
+        stickyView.naturalOffset += changeInHeight;
+        stickyView = stickyView.viewBelow;
+    }
+}
+
+// Stickies linked list
+///////////////////////
+- (void)_stickyMakeBottommost:(ListStickyView*)stickyView {
+    _stickiesBottommost.viewBelow = stickyView;
+    stickyView.viewAbove = _stickiesBottommost;
+    _stickiesBottommost = stickyView;
+}
+- (void)_stickyMakeTopmost:(ListStickyView*)stickyView {
+    stickyView.viewBelow = _stickiesTopmost;
+    _stickiesTopmost.viewAbove = stickyView;
+    _stickiesTopmost = stickyView;
+}
+- (void)_stickiesCleanupTop {
+    CGFloat targetY = 0;
+    while (_stickiesTopmost && _stickiesTopmost != _stickiesCurrent && _stickiesTopmost.y2 < targetY) {
+        [_stickiesTopmost removeFromSuperview];
+        _stickiesTopmost = _stickiesTopmost.viewBelow;
+        _stickiesTopmost.viewAbove = nil;
+    }
+}
+- (void)_stickiesCleanupBottom {
+    CGFloat targetY = _listView.y2;
+    while (_stickiesBottommost && _stickiesBottommost != _stickiesCurrent && _stickiesBottommost.y > targetY) {
+        [_stickiesBottommost removeFromSuperview];
+        _stickiesBottommost = _stickiesBottommost.viewAbove;
+        _stickiesBottommost.viewBelow = nil;
+    }
 }
 
 @end

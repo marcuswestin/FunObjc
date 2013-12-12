@@ -49,9 +49,6 @@ typedef enum ListViewDirection ListViewDirection;
 @property UIEdgeInsets listGroupMargins;
 @property UIEdgeInsets listItemMargins;
 @property (weak) id<FunListViewDelegate> delegate;
-
-// ListView API methods
-//---------------------
 + (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
@@ -62,4 +59,6 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) selectVisibleIndex:(ListIndex)index;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;
+- (UIView*) stickyView;
+- (void) setStickyPoint:(CGFloat)y height:(CGFloat)height;
 @end
