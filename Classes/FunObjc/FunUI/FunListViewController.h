@@ -61,4 +61,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;
 - (UIView*) stickyView;
 - (void) setStickyPoint:(CGFloat)y height:(CGFloat)height;
+@property (readonly) CGFloat stickyHeight;
 @end
