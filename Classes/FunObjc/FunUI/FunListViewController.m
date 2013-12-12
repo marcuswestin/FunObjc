@@ -253,11 +253,11 @@ static CGFloat START_Y = 99999.0f;
     [self _stickiesBeforeRender];
 }
 
-- (void)_handleKeyboardWithHeightChange:(CGFloat)heightChange {
+- (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
     if ([self _shouldMoveWithKeyboard]) {
-        [self moveListWithKeyboard:heightChange];
+        [self moveListWithKeyboard:info.heightChange];
     } else {
-        [self makeRoomForKeyboard:heightChange];
+        [self makeRoomForKeyboard:info.heightChange];
     }
 }
 
@@ -299,12 +299,12 @@ static BOOL insetsForAllSet;
     [super viewWillAppear:animated];
     [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self _handleKeyboardWithHeightChange:info.heightChange];
+            [self _handleKeyboardEvent:info];
         }];
     }];
     [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self _handleKeyboardWithHeightChange:info.heightChange];
+            [self _handleKeyboardEvent:info];
         }];
     }];
 }
