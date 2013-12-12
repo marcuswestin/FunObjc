@@ -37,10 +37,10 @@
 
 - (void)render {}
 - (void)cleanup {}
-- (void)_funViewControllerRecursiveViewCleanup {
+- (void)recursivelyCleanup {
     // This fires when the parent FunUIViewController didMoveToParentViewController:nil
     for (UIView* view in self.subviews) {
-        [view _funViewControllerRecursiveViewCleanup];
+        [view recursivelyCleanup];
     }
     [self cleanup];
     RemoveRuntimeProperties(self);

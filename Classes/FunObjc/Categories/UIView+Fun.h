@@ -17,6 +17,9 @@
 - (void)render;
 // Clean up when removed from window
 - (void)cleanup;
+// Recursively call cleanup on all subviews.
+// This gets called automatically on any FunViewController subview.
+- (void)recursivelyCleanup;
 
 /* Size
  ******/

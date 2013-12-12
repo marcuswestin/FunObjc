@@ -12,10 +12,6 @@
 static UIColor* defaultBackgroundColor;
 static NSUInteger deallocCount;
 
-@interface UIView ()
-- (void)_funViewControllerRecursiveViewCleanup;
-@end
-
 @implementation FunViewController {
     BOOL _didRender;
     BOOL _didCleanup;
@@ -40,7 +36,7 @@ static NSUInteger deallocCount;
         return;
     }
     _didCleanup = YES;
-    [self.view _funViewControllerRecursiveViewCleanup];
+    [self.view recursivelyCleanup];
     [self _funViewControllerCleanup];
     [FunViewController _checkDeallocCount:[self className]];
 }
