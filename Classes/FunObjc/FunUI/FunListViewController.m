@@ -81,11 +81,11 @@
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
     ListViewLocation _listStartLocation;
-    NSInteger _topItemIndex;
-    NSInteger _bottomItemIndex;
-    CGFloat _previousContentOffsetY;
+    ListIndex _topListIndex;
+    ListIndex _bottomItemIndex;
     ListGroupId _bottomGroupId;
     ListGroupId _topGroupId;
+    CGFloat _previousContentOffsetY;
     CGFloat _topY;
     CGFloat _bottomY;
     BOOL _scrollViewPurged;
@@ -145,7 +145,7 @@ static CGFloat START_Y = 99999.0f;
         return;
     }
     
-    _topItemIndex += numItems;
+    _topListIndex += numItems;
     _bottomItemIndex += numItems;
     for (ListContentView* view in [self _views]) {
         view.index += numItems;
@@ -319,7 +319,7 @@ static BOOL insetsForAllSet;
     [_scrollView setDelegate:self];
     [_scrollView onTap:^(UITapGestureRecognizer *sender) {
         CGPoint tapPoint = [sender locationInView:_scrollView];
-        NSInteger index = _topItemIndex;
+        NSInteger index = _topListIndex;
         for (ListContentView* view in self._views) {
             if (CGRectContainsPoint(view.frame, tapPoint)) {
                 if (view.isGroupView) {
@@ -364,11 +364,11 @@ static BOOL insetsForAllSet;
     if (_listStartLocation == TOP) {
         // Starting at the top, render items downwards
         _topY = _bottomY = START_Y;
-        _topItemIndex = startIndex;
+        _topListIndex = startIndex;
         _bottomItemIndex = startIndex - 1;
         _bottomGroupId = startGroupId;
         {
-            ListIndex previousIndex = _topItemIndex - 1;
+            ListIndex previousIndex = _topListIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
             ListContentView* previousView = [self _getViewForIndex:previousIndex];
             if (!previousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
@@ -382,7 +382,7 @@ static BOOL insetsForAllSet;
         // Starting at the bottom, render items upwards
         _topY = _bottomY = START_Y + _listView.height;
         _bottomItemIndex = startIndex;
-        _topItemIndex = startIndex + 1;
+        _topListIndex = startIndex + 1;
         _topGroupId = startGroupId;
         {
             ListIndex nextIndex = _bottomItemIndex + 1;
@@ -493,19 +493,19 @@ static BOOL insetsForAllSet;
 
 - (BOOL)_listAddNextViewUp {
     ListContentView* topView = [self _topView];
-    if (_topItemIndex == 0) {
+    if (_topListIndex == 0) {
         // There are no more items to display at the top.
         // Last thing: add a group head view at the top.
         if (topView.isGroupHead) {
             return NO; // All done!
             
         } else {
-            [self _addGroupHeadViewForIndex:_topItemIndex withGroupId:_topGroupId atLocation:TOP];
+            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
         }
     }
     
-    NSInteger index = _topItemIndex - 1;
+    NSInteger index = _topListIndex - 1;
     
     ListContentView* view = [self _getViewForIndex:index];
     if (!view) {
@@ -520,7 +520,7 @@ static BOOL insetsForAllSet;
         // 3) The item view
         
         if (topView.isItemView) {
-            [self _addGroupHeadViewForIndex:_topItemIndex withGroupId:_topGroupId atLocation:TOP];
+            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
             
         } else if (topView.isGroupHead) {
@@ -533,7 +533,7 @@ static BOOL insetsForAllSet;
     }
     
     [self _addView:view at:TOP];
-    _topItemIndex = index;
+    _topListIndex = index;
     return YES;
 }
 
@@ -545,9 +545,9 @@ static BOOL insetsForAllSet;
         [view removeFromSuperview];
         _topY += view.height;
         if (view.isItemView) {
-            _topItemIndex += 1;
+            _topListIndex += 1;
         } else if (view.isGroupFoot) {
-            [self _setTopGroupId:[self _groupIdForIndex:_topItemIndex] index:_topItemIndex];
+            [self _setTopGroupId:[self _groupIdForIndex:_topListIndex] index:_topListIndex];
         }
     }
 }
