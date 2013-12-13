@@ -157,7 +157,7 @@
 - (void)centerHorizontally {
     [self moveToX:CGRectGetMidX(self.superview.bounds) - self.width/2];
 }
-- (void)centerView {
+- (void)centerInSuperview {
     [self centerVertically];
     [self centerHorizontally];
 }

@@ -38,7 +38,7 @@
 
 /* Position
  **********/
-- (void)centerView;
+- (void)centerInSuperview;
 - (void)centerVertically;
 - (void)centerHorizontally;
 - (void)moveByX:(CGFloat)x y:(CGFloat)y;
