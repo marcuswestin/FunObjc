@@ -762,16 +762,16 @@ static BOOL insetsForAllSet;
     ListStickyView* _stickiesBottommost;
     NSMutableArray*  _stickiesAddedForView;
     UIView* _stickiesContainerNonInteractive;
-    CGFloat _stickyY1;
-    CGFloat _stickyY2;
+    CGFloat _y1;
+    CGFloat _y2;
     CGFloat _stickyHeight;
     FunListViewController* __weak _vc;
 }
 
 - (id)initWithViewController:(FunListViewController *)vc point:(CGFloat)y height:(CGFloat)height {
     _vc = vc;
-    _stickyY1 = y;
-    _stickyY2 = y + height;
+    _y1 = y;
+    _y2 = y + height;
     _stickyHeight = height;
     _stickiesAddedForView = [NSMutableArray array];
     _stickiesContainerNonInteractive = [UIView.appendTo(_vc.listView) render];
@@ -810,7 +810,7 @@ static BOOL insetsForAllSet;
 
 - (void)onInitialContentRendered {
     if (!_stickiesTopmost) {
-        if (_stickyY1 || _stickyY2) {
+        if (_y1 || _y2) {
             [NSException raise:@"Error" format:@"Expected at least one sticky to be rendered in list view"];
         }
         return;
@@ -818,7 +818,7 @@ static BOOL insetsForAllSet;
     // Elect a first sticky
     ListStickyView* closest = _stickiesTopmost;
     CGFloat distance = 999999;
-    CGFloat point = _stickyY1 + (_stickyY2 - _stickyY1)/2;
+    CGFloat point = _y1 + (_y2 - _y1)/2;
     ListStickyView* view = closest;
     while ((view = view.viewBelow)) {
         if (abs(view.center.y - point) < distance) {
@@ -827,7 +827,7 @@ static BOOL insetsForAllSet;
         }
     }
     _stickiesCurrent = closest;
-    _stickiesCurrent.y = _stickyY1;
+    _stickiesCurrent.y = _y1;
 }
 
 - (void)onContentMoved:(ListViewDirection)contentMoved {
@@ -846,24 +846,24 @@ static BOOL insetsForAllSet;
     // TODO There may be multiple enroaching per loop
     // From below
     enroaching = _stickiesCurrent.viewBelow;
-    if (enroaching && enroaching.y < _stickyY2) {
-        if (enroaching.y <= _stickyY1) {
-            _stickiesCurrent.naturalOffset = offset + _stickyY1 - _stickyHeight;
+    if (enroaching && enroaching.y < _y2) {
+        if (enroaching.y <= _y1) {
+            _stickiesCurrent.naturalOffset = offset + _y1 - _stickyHeight;
             _stickiesCurrent.y = _stickiesCurrent.naturalOffset - offset;
             _stickiesCurrent = enroaching;
-            _stickiesCurrent.y = _stickyY1;
+            _stickiesCurrent.y = _y1;
         } else {
             _stickiesCurrent.y2 = enroaching.y;
         }
     }
     // From above
     enroaching = _stickiesCurrent.viewAbove;
-    if (enroaching && enroaching.y2 > _stickyY1) {
-        if (enroaching.y2 >= _stickyY2) {
-            _stickiesCurrent.naturalOffset = offset + _stickyY2;
+    if (enroaching && enroaching.y2 > _y1) {
+        if (enroaching.y2 >= _y2) {
+            _stickiesCurrent.naturalOffset = offset + _y2;
             _stickiesCurrent.y = _stickiesCurrent.naturalOffset - offset;
             _stickiesCurrent = enroaching;
-            _stickiesCurrent.y = _stickyY1;
+            _stickiesCurrent.y = _y1;
         } else {
             _stickiesCurrent.y = enroaching.y2;
         }
