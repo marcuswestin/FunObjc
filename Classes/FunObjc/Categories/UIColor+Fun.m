@@ -43,8 +43,9 @@ UIColor* hsv(NSUInteger h, NSUInteger s, NSUInteger v) {
 }
 
 - (UIColor*)withAlpha:(CGFloat)alpha {
-    const CGFloat *components = CGColorGetComponents(self.CGColor);
-    return [UIColor colorWithRed:components[0] green:components[1] blue:components[2] alpha:alpha];
+    CGFloat hue, saturation, brightness;
+    [self getHue:&hue saturation:&saturation brightness:&brightness alpha:NULL];
+    return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:alpha];
 }
 
 - (BOOL)hasTransparency {
