@@ -40,6 +40,14 @@ typedef enum ListViewDirection ListViewDirection;
 - (BOOL) listShouldMoveWithKeyboard;
 @end
 
+////////////////////////
+// Sticky view groups //
+////////////////////////
+@interface FunListViewStickyGroup : NSObject
+- (UIView*)newView;
+@property (readonly) CGFloat height;
+@end
+
 /////////////////////////
 // ListView Controller //
 /////////////////////////
@@ -63,7 +71,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) selectVisibleIndex:(ListIndex)index;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;
-- (UIView*) stickyView;
-- (void) setStickyPoint:(CGFloat)y height:(CGFloat)height;
-@property (readonly) CGFloat stickyHeight;
+- (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height;
 @end

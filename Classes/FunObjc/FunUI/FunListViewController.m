@@ -16,9 +16,9 @@
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
 
-/////////////////////////////////////////////////////////////////
-// Custom subviews - differentiate head/foot/item/sticky views //
-/////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+// Custom subviews - differentiate head/foot/item views //
+//////////////////////////////////////////////////////////
 @interface ListContentView : UIView
 @property ListGroupId groupId;
 @property ListIndex index;
@@ -60,20 +60,20 @@
 }
 @end
 
-@interface ListStickyView : UIView
-@property CGFloat naturalOffset;
-@property ListStickyView* viewAbove;
-@property ListStickyView* viewBelow;
-@end
-@implementation ListStickyView
-@end
-
 ///////////////////////////
 // FunListViewController //
 ///////////////////////////
 
 @interface FunViewController ()
 - (void)_funViewControllerRender:(BOOL)animated;
+@end
+
+@interface FunListViewStickyGroup ()
+- (id)initWithViewController:(FunListViewController*)vc point:(CGFloat)y height:(CGFloat)height;
+- (void)onInitialContentRendered;
+- (void)onContentMoved:(ListViewDirection)direction;
+- (void)onDidAddView:(ListContentView*)view location:(ListViewLocation)location;
+- (void)onListViewChangeInHeight:(CGFloat)changeInHeight;
 @end
 
 @implementation FunListViewController {
@@ -89,17 +89,7 @@
     CGFloat _topY;
     CGFloat _bottomY;
     BOOL _scrollViewPurged;
-
-    // Stickies
-    ///////////
-    ListStickyView* _stickiesTopmost;
-    ListStickyView* _stickiesCurrent;
-    ListStickyView* _stickiesBottommost;
-    NSMutableArray*  _stickiesAddedForView;
-    UIView* _stickiesContainerNonInteractive;
-    CGFloat _stickyY1;
-    CGFloat _stickyY2;
-    CGFloat _stickyHeight;
+    NSMutableArray* _stickyGroups;
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -123,7 +113,9 @@ static CGFloat START_Y = 99999.0f;
     [self _withoutScrollEvents:^{
         [self.scrollView empty];
         [self _renderInitialContent];
-        [self _stickiesOnInitialContentRendered];
+        for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+            [stickyGroup onInitialContentRendered];
+        }
     }];
     
     // Top should start scrolled down below the navigation bar
@@ -216,6 +208,12 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView addContentHeight:dHeight];
 }
 
+- (FunListViewStickyGroup*)stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height {
+    id group = [[FunListViewStickyGroup alloc] initWithViewController:self point:y height:height];
+    [_stickyGroups addObject:group];
+    return group;
+}
+
 //////////////////////
 // Setup & Teardown //
 //////////////////////
@@ -250,7 +248,8 @@ static CGFloat START_Y = 99999.0f;
     _scrollView.showsVerticalScrollIndicator = NO;
     _scrollView.alwaysBounceVertical = YES;
     [_scrollView appendTo:_listView];
-    [self _stickiesBeforeRender];
+    
+    _stickyGroups = [NSMutableArray array];
 }
 
 - (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
@@ -409,12 +408,16 @@ static BOOL insetsForAllSet;
     if (contentOffsetY > _previousContentOffsetY) {
         // scrolled down
         [self extendBottom];
-        [self _stickiesUpdateOnContentMoved:UP];
+        for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+            [stickyGroup onContentMoved:UP];
+        }
         
     } else if (contentOffsetY < _previousContentOffsetY) {
         // scrolled up
         [self _extendTop];
-        [self _stickiesUpdateOnContentMoved:DOWN];
+        for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+            [stickyGroup onContentMoved:DOWN];
+        }
         
     } else {
         // no change (contentOffsetY == _previousContentOffsetY)
@@ -645,8 +648,8 @@ static BOOL insetsForAllSet;
         _bottomY += view.height;
         [_scrollView addSubview:view];
     }
-    if (view.isItemView) {
-        [self _stickiesOnDidAddView:view location:location];
+    for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+        [stickyGroup onDidAddView:view location:location];
     }
 }
 
@@ -700,7 +703,9 @@ static BOOL insetsForAllSet;
             [subView moveByY:changeInHeight];
         }
     }];
-    [self _stickiesRepositionByChangeInHeight:changeInHeight];
+    for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+        [stickyGroup onListViewChangeInHeight:changeInHeight];
+    }
 }
 
 - (void)_withoutScrollEvents:(Block)block {
@@ -733,35 +738,73 @@ static BOOL insetsForAllSet;
 - (ListContentView*)_bottomView {
     return self._views.lastObject;
 }
+@end
 
 //////////////
 // Stickies //
 //////////////
 
-// Stickies API
-///////////////
-- (void)setStickyPoint:(CGFloat)y height:(CGFloat)height {
+@interface ListStickyView : UIView
+@property CGFloat naturalOffset;
+@property ListStickyView* viewAbove;
+@property ListStickyView* viewBelow;
+@end
+@implementation ListStickyView
+@end
+
+@implementation FunListViewStickyGroup {
+    ListStickyView* _stickiesTopmost;
+    ListStickyView* _stickiesCurrent;
+    ListStickyView* _stickiesBottommost;
+    NSMutableArray*  _stickiesAddedForView;
+    UIView* _stickiesContainerNonInteractive;
+    CGFloat _stickyY1;
+    CGFloat _stickyY2;
+    CGFloat _stickyHeight;
+    FunListViewController* __weak _vc;
+}
+
+- (id)initWithViewController:(FunListViewController *)vc point:(CGFloat)y height:(CGFloat)height {
+    _vc = vc;
     _stickyY1 = y;
     _stickyY2 = y + height;
     _stickyHeight = height;
+    _stickiesAddedForView = [NSMutableArray array];
+    _stickiesContainerNonInteractive = [UIView.appendTo(_vc.listView) render];
+    return self;
 }
 
-- (UIView *)stickyView {
-    CGFloat left = _listGroupMargins.left + _listItemMargins.left;
-    CGFloat right = _listGroupMargins.right + _listItemMargins.right;
-    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(left, 0, _listView.width - left - right, 0)];
+- (UIView *)newView {
+    CGFloat left = _vc.listGroupMargins.left + _vc.listItemMargins.left;
+    CGFloat right = _vc.listGroupMargins.right + _vc.listItemMargins.right;
+    UIView* view = [[UIView alloc] initWithFrame:CGRectMake(left, 0, _vc.listView.width - left - right, 0)];
     [_stickiesAddedForView addObject:view];
     return view;
 }
 
-// Stickies Internal
-////////////////////
-- (void)_stickiesBeforeRender {
-    _stickiesAddedForView = [NSMutableArray array];
-    _stickiesContainerNonInteractive = [UIView.appendTo(_listView) render];
+- (void)onDidAddView:(ListContentView*)view location:(ListViewLocation)location {
+    if (!view.isItemView) { return; } // TODO Handle stickies for group views
+    if (!_stickiesAddedForView.count) { return; }
+    ListStickyView* stickyView = [ListStickyView.appendTo(_stickiesContainerNonInteractive).h(_stickyHeight) render];
+    for (UIView* view in _stickiesAddedForView) {
+        [stickyView addSubview:view];
+    }
+    stickyView.naturalOffset = view.y;
+    stickyView.y = stickyView.naturalOffset - _vc.scrollView.contentOffset.y;
+    [_stickiesAddedForView removeAllObjects];
+    
+    if (!_stickiesTopmost) {
+        // First sticky
+        [self _stickyMakeTopmost:stickyView];
+        [self _stickyMakeBottommost:stickyView];
+    } else if (location == TOP) {
+        [self _stickyMakeTopmost:stickyView];
+    } else if (location == BOTTOM) {
+        [self _stickyMakeBottommost:stickyView];
+    }
 }
 
-- (void)_stickiesOnInitialContentRendered {
+- (void)onInitialContentRendered {
     if (!_stickiesTopmost) {
         if (_stickyY1 || _stickyY2) {
             [NSException raise:@"Error" format:@"Expected at least one sticky to be rendered in list view"];
@@ -783,9 +826,9 @@ static BOOL insetsForAllSet;
     _stickiesCurrent.y = _stickyY1;
 }
 
-- (void)_stickiesUpdateOnContentMoved:(ListViewDirection)contentMoved {
-    CGFloat offset = _scrollView.contentOffset.y;
-
+- (void)onContentMoved:(ListViewDirection)contentMoved {
+    CGFloat offset = _vc.scrollView.contentOffset.y;
+    
     ListStickyView* stickyView = _stickiesTopmost;
     while (stickyView) {
         if (stickyView != _stickiesCurrent) {
@@ -830,28 +873,7 @@ static BOOL insetsForAllSet;
     }
 }
 
-- (void)_stickiesOnDidAddView:(ListContentView*)view location:(ListViewLocation)location {
-    if (!_stickiesAddedForView.count) { return; }
-    ListStickyView* stickyView = [ListStickyView.appendTo(_stickiesContainerNonInteractive).h(_stickyHeight) render];
-    for (UIView* view in _stickiesAddedForView) {
-        [stickyView addSubview:view];
-    }
-    stickyView.naturalOffset = view.y;
-    stickyView.y = stickyView.naturalOffset - _scrollView.contentOffset.y;
-    [_stickiesAddedForView removeAllObjects];
-
-    if (!_stickiesTopmost) {
-        // First sticky
-        [self _stickyMakeTopmost:stickyView];
-        [self _stickyMakeBottommost:stickyView];
-    } else if (location == TOP) {
-        [self _stickyMakeTopmost:stickyView];
-    } else if (location == BOTTOM) {
-        [self _stickyMakeBottommost:stickyView];
-    }
-}
-
--(void)_stickiesRepositionByChangeInHeight:(CGFloat)changeInHeight {
+- (void)onListViewChangeInHeight:(CGFloat)changeInHeight {
     ListStickyView* stickyView = _stickiesTopmost;
     while (stickyView) {
         stickyView.naturalOffset += changeInHeight;
@@ -883,7 +905,7 @@ static BOOL insetsForAllSet;
     }
 }
 - (void)_stickiesCleanupBottom {
-    CGFloat targetY = _listView.y2;
+    CGFloat targetY = _vc.listView.y2;
     while (_stickiesBottommost != _stickiesCurrent && _stickiesBottommost.y > targetY) {
         [_stickiesBottommost removeFromSuperview];
         _stickiesBottommost = _stickiesBottommost.viewAbove;
