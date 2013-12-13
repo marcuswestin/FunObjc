@@ -24,4 +24,22 @@
     NSData* data = (__bridge NSData *)(ABPersonCopyImageData(person));
     return [UIImage imageWithData:data];
 }
+- (NSString *)displayName {
+    if (!_firstName.isEmpty && !_lastName.isEmpty) {
+        return [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
+    }
+    if (!_firstName.isEmpty) {
+        return _firstName;
+    }
+    if (!_lastName.isEmpty) {
+        return _lastName;
+    }
+    if (_phoneNumbers.count) {
+        return _phoneNumbers.firstObject;
+    }
+    if (_emailAddresses.count) {
+        return _emailAddresses.firstObject;
+    }
+    return @"(no name)";
+}
 @end

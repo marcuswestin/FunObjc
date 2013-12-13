@@ -14,6 +14,7 @@
 @property ABRecordID recordId;
 @property NSString* firstName;
 @property NSString* lastName;
+@property NSString* displayName;
 @property NSArray* phoneNumbers;
 @property NSArray* emailAddresses;
 @property BOOL hasImage;
