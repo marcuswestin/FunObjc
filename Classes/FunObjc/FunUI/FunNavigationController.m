@@ -81,9 +81,6 @@ static NSTimeInterval duration = 0.25;
 //}
 @end
 
-@interface FunNavigationController ()
-@property UIView* parallax;
-@end
 @implementation FunNavigationController
 // Custom navigation animations
 ///////////////////////////////
@@ -116,9 +113,6 @@ static BOOL hasSetup;
     }
     hasSetup = true;
     self.delegate = self;
-    
-    self.parallax = [UIImageView.prependTo(self.view).fill.image([UIImage imageNamed:@"img/bg/3"]) render];
-
     [self setup];
     return self;
 }
