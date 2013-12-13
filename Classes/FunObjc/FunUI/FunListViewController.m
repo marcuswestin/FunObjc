@@ -470,10 +470,10 @@ static BOOL insetsForAllSet;
     // Check if the new item falls outside of the group of the current bottom-most item.
     ListGroupId groupId = [self _groupIdForIndex:index];
     if (![groupId isEqual:_bottomGroupId]) {
-        // This item is the first of a new group. In order, add:
-        // 1) A foot view for the current bottom group
-        // 2) A gead view for the next bottom group
-        // 3) The item view
+        // This item is the first of a new group.
+        // First time around, add a foot view for the current bottom group
+        // Second time around, add a head view for the next bottom group
+        // After these two have happened, the actual item view is added (see below)
         
         ListContentView* bottomView = [self _bottomView];
         if (bottomView.isItemView) {
@@ -484,8 +484,10 @@ static BOOL insetsForAllSet;
             [self _addGroupHeadViewForIndex:index withGroupId:groupId atLocation:BOTTOM];
             return YES;
             
+        } else if (bottomView.isGroupHead) {
+            [NSException raise:@"Error" format:@"If `bottomView.isGroupHead`, then the next groupId should equal bottomGroupId"];
         } else {
-            [NSException raise:@"Error" format:@"Should not get here"];
+            [NSException raise:@"Error" format:@"bottomView should always be an item, foot or head view."];
         }
     }
     
@@ -530,8 +532,10 @@ static BOOL insetsForAllSet;
             [self _addGroupFootViewForIndex:index withGroupId:groupId atLocation:TOP];
             return YES;
             
+        } else if (topView.isGroupFoot) {
+            [NSException raise:@"Error" format:@"If `topView.isGroupFoot`, then the previous groupId should equal _topGroupId"];
         } else {
-            [NSException raise:@"Error" format:@"Should not get here"];
+            [NSException raise:@"Error" format:@"topView should always be an item, foot or head view."];
         }
     }
     
