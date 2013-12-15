@@ -29,6 +29,7 @@ typedef enum ListViewDirection ListViewDirection;
 - (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width location:(ListViewLocation)location;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 @optional
+- (void) listRenderEmptyInView:(UIView*)view;
 - (ListIndex) listStartIndex;
 - (ListViewLocation) listStartLocation;
 - (id) listGroupIdForIndex:(ListIndex)index;
@@ -46,6 +47,7 @@ typedef enum ListViewDirection ListViewDirection;
 @interface FunListViewStickyGroup : NSObject
 - (UIView*)newView;
 @property (readonly) CGFloat height;
+@property (readonly) BOOL isEmpty;
 @end
 
 /////////////////////////

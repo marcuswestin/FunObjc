@@ -90,6 +90,8 @@
     CGFloat _bottomY;
     BOOL _scrollViewPurged;
     NSMutableArray* _stickyGroups;
+    UIView* _emptyView;
+    BOOL _hasContent;
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -110,13 +112,7 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)reloadDataForList {
-    [self _withoutScrollEvents:^{
-        [self.scrollView empty];
-        [self _renderInitialContent];
-        for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
-            [stickyGroup onInitialContentRendered];
-        }
-    }];
+    [self _renderInitialContent];
     
     // Top should start scrolled down below the navigation bar
     if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
@@ -134,6 +130,11 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)prependToListCount:(NSUInteger)numItems {
     if (numItems == 0) {
+        return;
+    }
+    
+    if (!_hasContent) {
+        [self _renderInitialContent];
         return;
     }
     
@@ -155,11 +156,16 @@ static CGFloat START_Y = 99999.0f;
         return;
     }
     
-    if (firstIndex <= _bottomItemIndex) {
+    if (_hasContent && firstIndex <= _bottomItemIndex) {
         [NSException raise:@"Invalid state" format:@"Appended item with index <= current bottom item index"];
         return;
     }
-    
+
+    if (!_hasContent) {
+        [self _renderInitialContent];
+        return;
+    }
+
     CGFloat changeInHeight = 0;
     
     CGFloat screenVisibleFold = (_scrollView.height - _scrollView.contentInset.bottom);
@@ -348,15 +354,31 @@ static BOOL insetsForAllSet;
     }
 }
 
+- (void)_renderEmpty {
+    _emptyView = [UIView.appendTo(_listView).fill render];
+    _hasContent = NO;
+    if ([_delegate respondsToSelector:@selector(listRenderEmptyInView:)]) {
+        [_delegate listRenderEmptyInView:_emptyView];
+    } else {
+        [UILabel.appendTo(_emptyView).text(@"Nothing here").size.center render];
+    }
+}
+
 - (void)_renderInitialContent {
-    _scrollView.contentSize = CGSizeMake(_listView.width, MAX_Y);
-    _scrollView.contentOffset = CGPointMake(0, START_Y);
-    _previousContentOffsetY = _scrollView.contentOffset.y;
+    [self.scrollView empty];
+
+    [self _withoutScrollEvents:^{
+        _scrollView.contentSize = CGSizeMake(_listView.width, MAX_Y);
+        _scrollView.contentOffset = CGPointMake(0, START_Y);
+        _previousContentOffsetY = START_Y;
+    }];
+
 
     ListIndex startIndex = ([_delegate respondsToSelector:@selector(listStartIndex)] ? [_delegate listStartIndex] : 0);
     ListGroupId startGroupId = [self _groupIdForIndex:startIndex];
     
     if (![self _getViewForIndex:startIndex location:_listStartLocation]) {
+        [self _renderEmpty];
         return; // Empty list
     }
 
@@ -396,6 +418,12 @@ static BOOL insetsForAllSet;
         
     } else {
         [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
+    }
+    
+    [_emptyView removeFromSuperview];
+    _hasContent = YES;
+    for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+        [stickyGroup onInitialContentRendered];
     }
 }
 
@@ -480,7 +508,7 @@ static BOOL insetsForAllSet;
             [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:BOTTOM];
             return YES;
             
-        } else if (bottomView.isGroupFoot) {
+        } else if (!_hasContent || bottomView.isGroupFoot) {
             [self _addGroupHeadViewForIndex:index withGroupId:groupId atLocation:BOTTOM];
             return YES;
             
@@ -775,6 +803,7 @@ static BOOL insetsForAllSet;
     _height = height;
     _stickiesAddedForView = [NSMutableArray array];
     _stickiesContainerNonInteractive = [UIView.appendTo(_vc.listView) render];
+    _isEmpty = YES;
     return self;
 }
 
@@ -797,10 +826,11 @@ static BOOL insetsForAllSet;
     stickyView.y = stickyView.naturalOffset - _vc.scrollView.contentOffset.y;
     [_stickiesAddedForView removeAllObjects];
     
-    if (!_topmost) {
+    if (_isEmpty) {
         // First sticky
         [self _stickyMakeTopmost:stickyView];
         [self _stickyMakeBottommost:stickyView];
+        _isEmpty = NO;
     } else if (location == TOP) {
         [self _stickyMakeTopmost:stickyView];
     } else if (location == BOTTOM) {
@@ -809,7 +839,7 @@ static BOOL insetsForAllSet;
 }
 
 - (void)onInitialContentRendered {
-    if (!_topmost) {
+    if (_isEmpty) {
         if (_y1 || _y2) {
             [NSException raise:@"Error" format:@"Expected at least one sticky to be rendered in list view"];
         }
