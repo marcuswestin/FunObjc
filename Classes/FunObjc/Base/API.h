@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FunGlobals.h"
 
 @interface Multipart : NSObject
 + (instancetype)json:(NSDictionary*)obj;
@@ -38,4 +39,5 @@ typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res)
 + (void)get:(NSString*)path queries:(NSDictionary*)queries callback:(APICallback)callback;
 + (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback;
 + (void)addErrorCheck:(APIErrorCheck)errorCheck;
++ (void)waitForCurrentRequests:(Block)callback;
 @end

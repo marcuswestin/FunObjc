@@ -246,16 +246,36 @@ static NSString* uuidHeader;
 }
 
 + (void)_hideSpinner {
+    NSArray* callbacks;
     @synchronized(self) {
         numRequests -= 1;
         if (numRequests == 0) {
             UIApplication.sharedApplication.networkActivityIndicatorVisible = NO;
+            callbacks = waitingForCurrentRequests;
+            waitingForCurrentRequests = nil;
         }
+    }
+    for (Block callback in callbacks) {
+        callback();
     }
 }
 
 + (NSDictionary*)_devIntercept:(NSString*)path {
     return nil;
+}
+
+static NSMutableArray* waitingForCurrentRequests;
++ (void)waitForCurrentRequests:(Block)callback {
+    @synchronized(self) {
+        if (numRequests) {
+            if (!waitingForCurrentRequests) {
+                waitingForCurrentRequests = [NSMutableArray array];
+            }
+            [waitingForCurrentRequests addObject:[callback copy]];
+            return;
+        }
+    }
+    callback();
 }
 
 @end

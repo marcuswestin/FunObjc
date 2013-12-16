@@ -43,10 +43,12 @@ static NSUInteger deallocCount;
 
 + (void)_checkDeallocCount:(NSString*)className {
     NSUInteger before = deallocCount;
-    after(1, ^{
-        if (deallocCount > before) { return; }
-        [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
-    });
+    [API waitForCurrentRequests:^{
+        after(1, ^{
+            if (deallocCount > before) { return; }
+            [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
+        });
+    }];
 }
 
 + (void)load {
