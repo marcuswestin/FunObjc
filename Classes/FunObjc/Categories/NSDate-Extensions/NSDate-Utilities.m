@@ -396,25 +396,22 @@
 
 // Names
 - (NSString *)nameOfMonth {
-    static NSArray* names;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        names = @[@"January", @"February", @"March", @"April", @"May", @"June", @"July", @"August", @"September", @"October", @"November", @"December"];
-    });
-    NSInteger month = self.month - 1;
-    if (month < 0 || month >= names.count) { return nil; }
-    return names[month];
+    return [[NSDateFormatter new] monthSymbols][self.month - 1];
 }
-- (NSString *)nameOfMonthAbreviated
-{
-    static NSArray* names;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        names = @[@"Jan", @"Feb", @"Mar", @"Apr", @"May", @"Jun", @"Jul", @"Aug", @"Sep", @"Oct", @"Nov", @"Dec"];
-    });
-    NSInteger month = self.month - 1;
-    if (month < 0 || month >= names.count) { return nil; }
-    return names[month];
+- (NSString *)nameOfMonthShort {
+    return [[NSDateFormatter new] shortMonthSymbols][self.month - 1];
+}
+- (NSString *)nameOfMonthVeryShort {
+    return [[NSDateFormatter new] veryShortMonthSymbols][self.month - 1];
+}
+- (NSString *)nameOfDay {
+    return [[NSDateFormatter new] weekdaySymbols][self.weekday];
+}
+- (NSString *)nameOfDayShort {
+    return [[NSDateFormatter new] shortWeekdaySymbols][self.weekday];
+}
+- (NSString *)nameOfDayVeryShort {
+    return [[NSDateFormatter new] veryShortWeekdaySymbols][self.weekday];
 }
 - (NSString *)nameOfDayNumeric {
     return [NSString stringWithFormat:@"%d", self.day];

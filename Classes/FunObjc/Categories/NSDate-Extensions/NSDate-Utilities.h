@@ -83,8 +83,12 @@
 @property (readonly) NSInteger year;
 
 // Names
-@property (readonly) NSString* nameOfMonthAbreviated;
 @property (readonly) NSString* nameOfMonth;
+@property (readonly) NSString* nameOfMonthShort;
+@property (readonly) NSString* nameOfMonthVeryShort;
+@property (readonly) NSString* nameOfDay;
+@property (readonly) NSString* nameOfDayShort;
+@property (readonly) NSString* nameOfDayVeryShort;
 @property (readonly) NSString* nameOfDayNumeric;
 @property (readonly) NSString* nameOfDayNumericSuffix;
 @end
