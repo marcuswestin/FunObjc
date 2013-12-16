@@ -46,7 +46,7 @@ static FunAppDelegate* instance;
 }
 
 - (void)_setupDevMenu {
-    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetAll(4).x(4).fromBottom(4).textCenter render];
+    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetAll(4).x(4).fromBottom(50).textCenter render];
     DragAndDrop* drag = [DragAndDrop forView:devButton];
     [drag onTap:^(UITapGestureRecognizer *tap) {
         [self _showDevMenu];
