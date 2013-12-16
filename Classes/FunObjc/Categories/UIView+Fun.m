@@ -17,9 +17,9 @@
 @implementation FunBlurView
 + (void)inSuperview:(UIView*)superview {
     FunBlurView* blurView = [[FunBlurView alloc] initWithFrame:superview.bounds];
-    blurView.clipsToBounds = YES; // toolbar draws a thin shadow on top without clip
     blurView.toolbar = [[UIToolbar alloc] initWithFrame:superview.bounds];
-    [superview addSubview:blurView];
+    blurView.toolbar.clipsToBounds = YES;
+    [superview insertSubview:blurView atIndex:0];
     [superview.layer insertSublayer:[blurView.toolbar layer] atIndex:0];
 }
 - (void)layoutSubviews {
