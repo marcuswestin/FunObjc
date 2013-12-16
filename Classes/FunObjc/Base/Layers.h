@@ -16,4 +16,6 @@
 +(CAGradientLayer*) greyGradient;
 +(CAGradientLayer*) blueGradient;
 
++(CAGradientLayer*) horizontalGradient:(NSArray*)colors;
+
 @end

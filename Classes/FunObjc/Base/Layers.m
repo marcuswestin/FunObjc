@@ -18,6 +18,23 @@
     return layer;
 }
 
++ (CALayer *)horizontalGradient:(NSArray *)colors {
+    if (colors.count < 2) {
+        [NSException raise:@"Error" format:@"horizontalGradient expects at least two colors"];
+    }
+    CAGradientLayer* layer = [CAGradientLayer layer];
+    layer.colors = [colors map:^id(UIColor* color, NSUInteger i) {
+        return (id)color.CGColor;
+    }];
+    CGFloat step = 1.0/(colors.count - 1);
+    layer.locations = [colors map:^id(id _, NSUInteger i) {
+        return numf(step * i);
+    }];
+    layer.startPoint = CGPointMake(0.0, 0.5);
+    layer.endPoint = CGPointMake(1.0, 0.5);
+    return layer;
+}
+
 + (CAGradientLayer*) greyGradient {
     UIColor *colorOne = [UIColor colorWithWhite:0.9 alpha:1.0];
     UIColor *colorTwo = [UIColor colorWithHue:0.625 saturation:0.0 brightness:0.85 alpha:1.0];
