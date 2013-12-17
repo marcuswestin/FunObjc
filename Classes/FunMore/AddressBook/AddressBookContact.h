@@ -14,11 +14,11 @@
 @property ABRecordID recordId;
 @property NSString* firstName;
 @property NSString* lastName;
-@property NSString* displayName;
 @property NSArray* phoneNumbers;
 @property NSArray* emailAddresses;
 @property BOOL hasImage;
 @property NSDate* birthday;
 - (UIImage*)image;
 - (UIImage*)imageWithAddressBook:(ABAddressBookRef)addressBook;
+- (NSString*)displayName;
 @end
