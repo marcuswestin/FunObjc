@@ -42,4 +42,8 @@
 + (UIFont *)ultraLight:(CGFloat)size {
     return [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:size];
 }
+
++ (UIFont *)regular:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue" size:size];
+}
 @end
