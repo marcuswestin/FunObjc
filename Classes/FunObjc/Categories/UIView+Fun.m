@@ -192,6 +192,12 @@
 - (CGFloat)y2 {
     return CGRectGetMaxY(self.frame);
 }
+- (CGFloat)centerX {
+    return self.center.x;
+}
+- (CGFloat)centerY {
+    return self.center.y;
+}
 - (void)setX:(CGFloat)x {
     [self moveToX:x];
 }
@@ -203,6 +209,16 @@
 }
 - (void)setY2:(CGFloat)y2 {
     [self moveToY:y2 - self.height];
+}
+- (void)setCenterX:(CGFloat)x {
+    CGPoint center = self.center;
+    center.x = x;
+    self.center = center;
+}
+- (void)setCenterY:(CGFloat)y {
+    CGPoint center = self.center;
+    center.y = y;
+    self.center = center;
 }
 - (CGRect)frameInWindow {
     return [self convertRect:self.bounds toView:self.window];

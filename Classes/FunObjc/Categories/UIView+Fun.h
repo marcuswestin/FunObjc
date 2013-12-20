@@ -57,6 +57,10 @@
 - (CGFloat)y;
 - (CGFloat)x2;
 - (CGFloat)y2;
+- (CGFloat)centerX;
+- (CGFloat)centerY;
+- (void)setCenterX:(CGFloat)x;
+- (void)setCenterY:(CGFloat)y;
 - (void)setX:(CGFloat)x;
 - (void)setY:(CGFloat)y;
 - (void)setX2:(CGFloat)x2;
