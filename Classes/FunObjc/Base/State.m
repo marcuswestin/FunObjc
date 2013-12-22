@@ -36,8 +36,17 @@
 - (void)setDefaults{}
 
 - (instancetype)initWithDict:(NSDictionary*)dict {
+    [self _setPropertiesFromDict:dict];
+    [self setDefaults];
+    return self;
+}
+
+- (void)mergeDict:(NSDictionary *)dict {
+    [self _setPropertiesFromDict:dict];
+}
+
+- (void)_setPropertiesFromDict:(NSDictionary*)dict {
     NSDictionary* props = [self classProperties];
-    
     for (NSString* key in dict) {
         NSString* className = props[key];
         if (!className) {
@@ -61,9 +70,6 @@
             [self setValue:val forKey:key];
         }
     }
-    
-    [self setDefaults];
-    return self;
 }
 
 - (id)copy {

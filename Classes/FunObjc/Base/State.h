@@ -14,6 +14,7 @@
 + (instancetype) fromDict:(NSDictionary*)dict;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
 - (NSDictionary*)toDictionary;
+- (void)mergeDict:(NSDictionary*)dict;
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName;
 - (instancetype) copyWithDictionary:(NSDictionary*)dict;
 - (void)setDefaults;
