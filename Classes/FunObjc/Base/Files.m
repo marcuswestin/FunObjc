@@ -94,13 +94,9 @@ static BOOL isReset;
 }
 static NSCharacterSet* illegalFileNameCharacters;
 + (void)load {
-    illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<> {}"];
+    illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<>:"];
 }
 + (NSString*)sanitizeName:(NSString*)filename {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        illegalFileNameCharacters = [NSCharacterSet characterSetWithCharactersInString:@"/\\?%*|\"<> {}"];
-    });
     return [[filename componentsSeparatedByCharactersInSet:illegalFileNameCharacters] componentsJoinedByString:@""];
 }
 + (BOOL)removeCache:(NSString *)name {
@@ -126,10 +122,10 @@ static NSCharacterSet* illegalFileNameCharacters;
 + (NSNumber *)readNumber:(NSString *)name {
     return (NSNumber*)[Files readJsonDocument:name];
 }
-+ (void)writeString:(NSString *)string name:(NSString *)name {
++ (void)writeStringDocument:(NSString *)string name:(NSString *)name {
     [Files writeJsonDocument:name data:string];
 }
-+ (NSString *)readString:(NSString *)name {
++ (NSString *)readStringDocument:(NSString *)name {
     return (NSString*)[Files readJsonDocument:name];
 }
 @end
