@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @interface LinkedList : NSObject
-- (void)push:(id)obj;
-- (id)pop;
-- (void)unshift:(id)obj;
-- (id)shift;
-- (id)first;
-- (id)last;
+- (void)addObjectToHead:(id)obj;
+- (id)removeObjectFromHead;
+- (void)addObjectToTail:(id)obj;
+- (id)removeObjectFromTail;
+- (id)tail;
+- (id)head;
 - (BOOL)isEmpty;
+- (void)enumerateWithBlock:(void(^)(id obj))block;
 @end

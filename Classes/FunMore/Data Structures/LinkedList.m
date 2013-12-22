@@ -32,7 +32,7 @@
 - (BOOL)isEmpty {
     return !_head;
 }
-- (void)push:(id)obj {
+- (void)addObjectToHead:(id)obj {
     Link* newHead = [Link withObject:obj];
     if ([self isEmpty]) {
         _head = _tail = newHead;
@@ -42,7 +42,7 @@
         _head = newHead;
     }
 }
-- (void)unshift:(id)obj {
+- (void)addObjectToTail:(id)obj {
     Link* newTail = [Link withObject:obj];
     if ([self isEmpty]) {
         _head = _tail = newTail;
@@ -52,20 +52,21 @@
         _tail = newTail;
     }
 }
-- (id)first {
-    return _tail;
-}
-- (id)last {
-    return _head;
-}
-- (id)pop {
+- (id)removeObjectFromHead {
     id object = _head.object;
     _head = _head.prev;
     return object;
 }
-- (id)shift {
+- (id)removeObjectFromTail {
     id object = _tail.object;
     _tail = _tail.next;
     return object;
+}
+- (void)enumerateWithBlock:(void (^)(id))block {
+    Link* link = _tail;
+    while (link) {
+        block(link.object);
+        link = link.next;
+    }
 }
 @end
