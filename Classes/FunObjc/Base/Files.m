@@ -73,10 +73,18 @@ static BOOL isReset;
     return [NSData dataWithContentsOfFile:[self cachePath:name]];
 }
 + (BOOL)writeCache:(NSString*)name data:(NSData*)data {
-    return [data writeToFile:[self cachePath:name] atomically:YES];
+    return [self _write:[self cachePath:name] data:data];
 }
 + (BOOL)writeDocument:(NSString *)name data:(NSData *)data {
-    return [data writeToFile:[self documentPath:name] atomically:YES];
+    return [self _write:[self documentPath:name] data:data];
+}
++ (BOOL)_write:(NSString*)path data:(NSData*)data {
+    NSError* err;
+    if (![data writeToFile:path options:NSDataWritingAtomic error:&err]) {
+        NSLog(@"Error writing file: %@", err);
+        return NO;
+    }
+    return YES;
 }
 + (NSString*)cachePath:(NSString*)filename {
     return [_funCachesDirectory stringByAppendingPathComponent:filename];
