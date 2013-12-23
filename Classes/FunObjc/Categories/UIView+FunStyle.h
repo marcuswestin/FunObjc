@@ -13,6 +13,7 @@
 
 typedef ViewStyler* Styler;
 typedef Styler (^StylerView)(UIView* view);
+typedef Styler (^StylerView2)(UIView* view, UIView* view2);
 typedef Styler (^StylerSize)(CGSize size);
 typedef Styler (^StylerFloat1)(CGFloat num);
 typedef Styler (^StylerFloat2)(CGFloat f1, CGFloat f2);
@@ -155,6 +156,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
++ (StylerView2) prependBefore;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
