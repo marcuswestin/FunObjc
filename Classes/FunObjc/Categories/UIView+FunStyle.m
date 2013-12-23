@@ -110,6 +110,12 @@ DeclareStyler(centerHorizontally,
               CGRect frame = _view.frame;
               frame.origin.x = CGRectGetMidX(_view.superview.bounds) - frame.size.width/2;
               _view.frame = frame)
+DeclareFloatStyler(centerX, centerX,
+                   _view.centerX = centerX);
+DeclareFloatStyler(centerY, centerY,
+                   _view.centerY = centerY);
+DeclareFloat2Styler(centerXY, centerX, centerY,
+                    _view.center = CGPointMake(centerX, centerY));
 
 DeclareFloatStyler(fromBottom, offset,
                    CGRect frame = _view.frame;
