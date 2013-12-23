@@ -68,13 +68,6 @@ static NSMutableDictionary* tagNameToTagNumber;
 
 /* View Hierarchy
  ****************/
-DeclareViewStyler(appendTo, view,
-                  [_view appendTo:view];
-                  [_view sizeToParent])
-DeclareViewStyler(prependTo, view,
-                  [_view prependTo:view];
-                  [_view sizeToParent])
-
 DeclareIntegerStyler(tag, tagI, _view.tag = tagI)
 
 DeclareStringStyler(name, tagName,
@@ -238,10 +231,6 @@ DeclareSizeStyler(bounds, size,
                   CGRect frame = _view.frame;
                   frame.size = size;
                   _view.frame = frame)
-DeclareStyler(sizeToParent,
-              CGRect frame = _view.frame;
-              frame.size = _view.superview.bounds.size;
-              _view.frame = frame)
 
 DeclareStyler(size, [_view sizeToFit])
 DeclareStyler(sizeToFit, [_view sizeToFit])
@@ -428,17 +417,21 @@ DeclareImageStyler(imageFill, image,
  ****************/
 @implementation UIView (FunStyler)
 + (StylerView)appendTo {
-    return ^(UIView* view) {
-        return self.styler.appendTo(view);
+    return ^(UIView* superview) {
+        ViewStyler* styler = self.styler;
+        [styler.view appendTo:superview];
+        styler.view.width = superview.width;
+        return styler;
     };
 }
 + (StylerView)prependTo {
-    return ^(UIView* view) {
-        return self.styler.prependTo(view);
+    return ^(UIView* superview) {
+        ViewStyler* styler = self.styler;
+        [styler.view prependTo:superview];
+        styler.view.width = superview.width;
+        return styler;
     };
 }
-- (void)sizeToParent {
-    self.width = self.superview.width;
 }
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];

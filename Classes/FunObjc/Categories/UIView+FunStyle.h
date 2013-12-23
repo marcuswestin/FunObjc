@@ -45,8 +45,6 @@ typedef Styler (^StylerDate)(NSDate* date);
  ****************/
 - (void)apply;
 - (id)render;
-- (StylerView)appendTo;
-- (StylerView)prependTo;
 - (id)onTap:(EventHandler)handler;
 
 /* View hierarchy
@@ -157,7 +155,6 @@ typedef Styler (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
-- (void)sizeToParent;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
