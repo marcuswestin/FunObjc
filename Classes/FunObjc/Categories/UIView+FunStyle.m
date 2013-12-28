@@ -373,14 +373,14 @@ DeclareStringStyler(placeholder, placeholderText,
                         [_textView onTextDidChange:^(UITextView *textView) {
                             if (textView.text.length) {
                                 if (placeholderView.superview) {
-                                    [placeholderView removeFromSuperview];
+                                    [placeholderView removeAndClean];
                                 }
                             } else if (!placeholderView.superview) {
                                 [placeholderView appendTo:textView];
                             }
                         }];
                         if (_textView.text.length) {
-                            [placeholderView removeFromSuperview];
+                            [placeholderView removeAndClean];
                         }
                     })
 DeclareFloatStyler(inputPad, pad,

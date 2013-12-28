@@ -86,6 +86,7 @@
 - (void)prependTo:(UIView*)superview;
 - (UIView*)firstSubview;
 - (UIView*)lastSubview;
+- (void)removeAndClean;
 
 /* Screenshot
  ************/

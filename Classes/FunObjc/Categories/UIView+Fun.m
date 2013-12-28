@@ -345,7 +345,7 @@ static CGFloat STATIC = 0.5f;
 /* View hierarchy
  ****************/
 - (instancetype)empty {
-    [[self subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [[self subviews] makeObjectsPerformSelector:@selector(removeAndClean)];
     return self;
 }
 - (void)appendTo:(UIView *)superview {
@@ -359,6 +359,10 @@ static CGFloat STATIC = 0.5f;
 }
 - (UIView *)lastSubview {
     return self.subviews.lastObject;
+}
+- (void)removeAndClean {
+    [self removeFromSuperview];
+    [self recursivelyCleanup];
 }
 
 /* Screenshot
@@ -393,7 +397,7 @@ static CGFloat STATIC = 0.5f;
 }
 - (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback {
     [self ghostWithDuration:duration options:options animations:animationCallback completion:^(UIView *ghostView) {
-        [ghostView removeFromSuperview];
+        [ghostView removeAndClean];
     }];
 }
 - (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback {

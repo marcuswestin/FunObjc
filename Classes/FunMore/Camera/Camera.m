@@ -132,7 +132,7 @@ static Camera* camera;
     if (camera.modalViewController) {
         [camera.modalViewController dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [camera.picker.view removeFromSuperview];
+        [camera.picker.view removeAndClean];
     }
 
     camera = nil;
