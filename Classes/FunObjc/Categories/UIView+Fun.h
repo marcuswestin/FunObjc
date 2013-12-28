@@ -32,7 +32,8 @@
 - (void)resizeByAddingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)containSubviews;
-- (void)containSubviewsHorizontally:(BOOL)containHorizontally vertically:(BOOL)vertically;
+- (void)containSubviewsHorizontally;
+- (void)containSubviewsVertically;
 - (void)setHeightUp:(CGFloat)height;
 - (void)addHeightUp:(CGFloat)addHeight;
 

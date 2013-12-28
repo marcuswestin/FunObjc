@@ -58,7 +58,7 @@ void error(NSError* err) {
             view = nil;
         };
         
-        [view containSubviewsHorizontally:NO vertically:YES];
+        [view containSubviewsVertically];
         view.height += 32;
         [label.styler.fromBottom(8) apply];
         view.y2 = 0;

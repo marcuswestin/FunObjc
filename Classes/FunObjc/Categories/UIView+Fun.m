@@ -86,6 +86,12 @@
 - (void)containSubviews {
     [self containSubviewsHorizontally:YES vertically:YES];
 }
+- (void)containSubviewsHorizontally {
+    [self containSubviewsHorizontally:YES vertically:NO];
+}
+- (void)containSubviewsVertically {
+    [self containSubviewsHorizontally:NO vertically:YES];
+}
 - (void)containSubviewsHorizontally:(BOOL)horizontally vertically:(BOOL)vertically {
     CGRect frame = self.frame;
     if (horizontally) { frame.size.width = 0; }
