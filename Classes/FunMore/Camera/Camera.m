@@ -216,4 +216,13 @@ static Camera* camera;
     return thumbImage;
 }
 
++ (BOOL)isAvailable {
+    return [self isAvailableInFront] || [self isAvailableInRear];
+}
++ (BOOL)isAvailableInRear {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
++ (BOOL)isAvailableInFront {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
+}
 @end

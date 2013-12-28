@@ -85,4 +85,8 @@ typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
 + (UIImagePickerController*)picker;
 
++ (BOOL)isAvailable;
++ (BOOL)isAvailableInRear;
++ (BOOL)isAvailableInFront;
+
 @end
