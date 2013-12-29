@@ -414,4 +414,16 @@ static CGFloat STATIC = 0.5f;
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations {
     return [UIView animateWithDuration:duration delay:delay options:options animations:animations completion:nil];
 }
+- (void)rotate:(NSTimeInterval)duration {
+    CABasicAnimation *rotation;
+    rotation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+    rotation.fromValue = num(0);
+    rotation.toValue = numf(2*M_PI);
+    rotation.duration = duration;
+    rotation.repeatCount = HUGE_VALF;
+    [self.layer addAnimation:rotation forKey:@"FunRotateAnimation"];
+}
+- (void)stopRotating {
+    [self.layer removeAnimationForKey:@"FunRotateAnimation"];
+}
 @end

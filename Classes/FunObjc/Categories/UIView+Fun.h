@@ -104,4 +104,6 @@ typedef void(^GhostCallback)(UIView* ghostView);
 /* Animations
  ************/
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations;
+- (void)rotate:(NSTimeInterval)duration;
+- (void)stopRotating;
 @end
