@@ -415,6 +415,7 @@ static CGFloat STATIC = 0.5f;
     return [UIView animateWithDuration:duration delay:delay options:options animations:animations completion:nil];
 }
 - (void)rotate:(NSTimeInterval)duration {
+    [self stopRotating];
     CABasicAnimation *rotation;
     rotation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
     rotation.fromValue = num(0);
