@@ -402,13 +402,11 @@ DeclareImageStyler(image, image,
                    if (![_view respondsToSelector:@selector(setImage:)]) {
                        [NSException raise:@"Error" format:@"Can't set image in image() styler"];
                    }
-                   _imageView.image = image;
-                   [_imageView sizeToFit];
                    CGRect frame = _imageView.frame;
-                   CGFloat resolution = [UIScreen mainScreen].scale;
-                   frame.size.width /= resolution;
-                   frame.size.height /= resolution;
-                   _view.frame = frame)
+                   frame.size.width = image.size.width / 2;
+                   frame.size.height = image.size.height / 2;
+                   _imageView.image = image;
+                   _imageView.frame = frame;)
 
 DeclareImageStyler(imageFill, image,
                    if (![_view respondsToSelector:@selector(setImage:)]) {
