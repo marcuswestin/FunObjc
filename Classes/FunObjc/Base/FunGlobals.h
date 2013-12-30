@@ -50,6 +50,7 @@ static const BOOL isSimulator = NO;
 #endif
 
 typedef void (^Block)();
+typedef void (^StopBlock)(BOOL* stop);
 typedef void (^Callback)(NSError* err, NSDictionary* res);
 typedef void (^StringErrorCallback)(NSError* err, NSString* res);
 typedef void (^StringCallback)(NSString* res);
@@ -68,7 +69,7 @@ void error(NSError* err);
 void fatal(NSError* err);
 NSError* makeError(NSString* localMessage);
 void after(NSTimeInterval delayInSeconds, Block block);
-void every(NSTimeInterval delayInSeconds, Block block);
+void every(NSTimeInterval delayInSeconds, StopBlock block);
 void async(Block block);
 void asyncDefault(Block block);
 void asyncHigh(Block block);
