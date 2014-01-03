@@ -9,5 +9,5 @@
 #import "NSNull+Fun.h"
 
 @implementation NSNull (Fun)
-
+- (BOOL)isEmpty { return YES; }
 @end
