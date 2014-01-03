@@ -24,6 +24,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (NSMutableArray*) filter:(Filter)filterFn;
 - (id) pickOne:(Filter)pickFn;
 - (id) item:(NSInteger)index;
+- (id) reverseItem:(NSInteger)index;
 
 - (NSString*)joinBy:(NSString*)joiner;
 - (NSString*)joinBy:(NSString*)joiner last:(NSString*)lastJoiner;

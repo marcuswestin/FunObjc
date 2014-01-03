@@ -82,6 +82,13 @@
     return self[index];
 }
 
+- (id)reverseItem:(NSInteger)index {
+    if (index < 0 || index >= self.count) {
+        return 0;
+    }
+    return self[self.count - 1 - index];
+}
+
 - (NSString*) joinBy:(NSString*)joiner {
     return [self componentsJoinedByString:joiner];
 }
