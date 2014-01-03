@@ -40,4 +40,6 @@ typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res)
 + (void)postMultipart:(NSString *)path parts:(NSArray *)parts callback:(APICallback)callback;
 + (void)addErrorCheck:(APIErrorCheck)errorCheck;
 + (void)waitForCurrentRequests:(Block)callback;
++ (void)showSpinner;
++ (void)hideSpinner;
 @end

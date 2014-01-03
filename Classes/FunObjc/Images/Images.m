@@ -63,7 +63,9 @@ static NSString* cacheKeyBase;
         }
     
         // Fetch from network
+        [API showSpinner];
         [self _fetch:url cacheKey:originalKey callback:^(id err, NSData* data) {
+            [API hideSpinner];
             if (err) { return callback(err,nil); }
             
             // Multiple load calls could have been made for the same un-fetched image with the same processing parameters

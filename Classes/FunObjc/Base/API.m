@@ -168,7 +168,7 @@ static NSString* uuidHeader;
     request.HTTPBody = data;
     request.allHTTPHeaderFields = [API headers:contentType data:data];
 
-    [API _showSpinner];
+    [API showSpinner];
     
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         
@@ -180,7 +180,7 @@ static NSString* uuidHeader;
 
 + (void)_handleResponse:(NSHTTPURLResponse*)httpRes forMethod:(NSString*)method path:(NSString*)path data:(NSData*)data error:(NSError*)connectionError callback:(APICallback)callback {
     
-    [API _hideSpinner];
+    [API hideSpinner];
     
     if (connectionError) {
         return callback(connectionError, nil);
@@ -236,7 +236,7 @@ static NSString* uuidHeader;
     return headers;
 }
 
-+ (void)_showSpinner {
++ (void)showSpinner {
     @synchronized(self) {
         if (numRequests == 0) {
             UIApplication.sharedApplication.networkActivityIndicatorVisible = YES;
@@ -245,7 +245,7 @@ static NSString* uuidHeader;
     }
 }
 
-+ (void)_hideSpinner {
++ (void)hideSpinner {
     NSArray* callbacks;
     @synchronized(self) {
         numRequests -= 1;
