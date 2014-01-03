@@ -201,6 +201,10 @@
 - (CGFloat)centerY {
     return self.center.y;
 }
+- (CGRect)centerSquare:(CGFloat)size {
+    CGSize mySize = self.frame.size;
+    return CGRectMake(mySize.width/2-size/2, mySize.height/2-size/2, size, size);
+}
 - (void)setX:(CGFloat)x {
     [self moveToX:x];
 }

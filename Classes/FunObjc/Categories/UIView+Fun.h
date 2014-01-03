@@ -60,6 +60,7 @@
 - (CGFloat)y2;
 - (CGFloat)centerX;
 - (CGFloat)centerY;
+- (CGRect)centerSquare:(CGFloat)size;
 - (void)setCenterX:(CGFloat)x;
 - (void)setCenterY:(CGFloat)y;
 - (void)setX:(CGFloat)x;
