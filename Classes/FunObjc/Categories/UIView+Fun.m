@@ -115,6 +115,9 @@
     
     self.frame = frame;
 }
+- (void)containLastViewVertically {
+    self.height = self.lastSubview.y2;
+}
 
 /* Position
  **********/
