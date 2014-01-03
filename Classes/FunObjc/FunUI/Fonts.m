@@ -27,8 +27,16 @@
     return success;
 }
 
++ (UIFont *)bold:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue-Bold" size:size];
+}
+
 + (UIFont *)medium:(CGFloat)size {
     return [UIFont fontWithName:@"HelveticaNeue-Medium" size:size];
+}
+
++ (UIFont*)regular:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue" size:size];
 }
 
 + (UIFont*)light:(CGFloat)size {
@@ -41,9 +49,5 @@
 
 + (UIFont *)ultraLight:(CGFloat)size {
     return [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:size];
-}
-
-+ (UIFont *)regular:(CGFloat)size {
-    return [UIFont fontWithName:@"HelveticaNeue" size:size];
 }
 @end

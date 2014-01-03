@@ -10,9 +10,10 @@
 
 @interface Fonts : NSObject
 +(BOOL)loadData:(NSData*)fontData;
++(UIFont*)bold:(CGFloat)size;
 +(UIFont*)medium:(CGFloat)size;
++(UIFont*)regular:(CGFloat)size;
 +(UIFont*)light:(CGFloat)size;
 +(UIFont*)thin:(CGFloat)size;
 +(UIFont*)ultraLight:(CGFloat)size;
-+(UIFont*)regular:(CGFloat)size;
 @end
