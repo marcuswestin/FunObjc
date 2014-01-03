@@ -107,4 +107,8 @@
     return [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", regexPattern] evaluateWithObject:self];
 }
 
+- (BOOL)startsWith:(NSString *)string {
+    return [[self substringToIndex:string.length] isEqualToString:string];
+}
+
 @end

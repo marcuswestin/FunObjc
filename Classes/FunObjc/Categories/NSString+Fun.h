@@ -28,5 +28,6 @@
 - (NSString*)stringByRemovingPattern:(NSString*)regexPattern;
 - (NSString*)stringByInjecting:(NSString*)string every:(NSUInteger)nth;
 - (BOOL)matchesPattern:(NSString*)regexPattern;
+- (BOOL)startsWith:(NSString*)string;
 
 @end
