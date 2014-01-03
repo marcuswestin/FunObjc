@@ -161,7 +161,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
-- (UIView*)viewByName:(NSString*)name;
+- (id)viewByName:(NSString*)name;
 - (UILabel*)labelByName:(NSString*)name;
 @end
 @interface UIButton (FunStyler)
