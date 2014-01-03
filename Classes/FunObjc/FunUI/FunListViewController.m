@@ -429,7 +429,7 @@ static BOOL insetsForAllSet;
         [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
     }
     
-    [_emptyView removeFromSuperview];
+    [_emptyView removeAndClean];
     _hasContent = YES;
     for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
         [stickyGroup onInitialContentRendered];
@@ -593,7 +593,7 @@ static BOOL insetsForAllSet;
     CGFloat targetY = _scrollView.contentOffset.y;
     ListContentView* view;
     while ((view = [self _topView]) && CGRectGetMaxY(view.frame) < targetY) {
-        [view removeFromSuperview];
+        [view removeAndClean];
         _topY += view.height;
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
@@ -611,7 +611,7 @@ static BOOL insetsForAllSet;
     CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
     ListContentView* view;
     while ((view = [self _bottomView]) && CGRectGetMinY(view.frame) > targetY) {
-        [view removeFromSuperview];
+        [view removeAndClean];
         _bottomY -= view.height;
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
@@ -779,7 +779,7 @@ static BOOL insetsForAllSet;
     if (!_scrollViewPurged) {
         for (UIView* view in _scrollView.subviews) {
             if (![view isKindOfClass:[ListContentView class]]) {
-                [view removeFromSuperview];
+                [view removeAndClean];
             }
         }
         _scrollViewPurged = YES;
@@ -962,7 +962,7 @@ static BOOL insetsForAllSet;
 - (void)_stickiesCleanupTop {
     CGFloat targetY = 0;
     while (_topmost != _current && _topmost.y2 < targetY) {
-        [_topmost removeFromSuperview];
+        [_topmost removeAndClean];
         _topmost = _topmost.viewBelow;
         _topmost.viewAbove = nil;
         if (!_topmost) {
@@ -973,7 +973,7 @@ static BOOL insetsForAllSet;
 - (void)_stickiesCleanupBottom {
     CGFloat targetY = _vc.listView.y2;
     while (_bottommost != _current && _bottommost.y > targetY) {
-        [_bottommost removeFromSuperview];
+        [_bottommost removeAndClean];
         _bottommost = _bottommost.viewAbove;
         _bottommost.viewBelow = nil;
         if (!_bottommost) {

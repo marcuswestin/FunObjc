@@ -34,8 +34,7 @@ static DevColorPicker* picker;
 }
 
 + (void)hide {
-    [picker.overlay removeFromSuperview];
-    [picker.overlay recursivelyCleanup];
+    [picker.overlay removeAndClean];
     picker = nil;
 }
 

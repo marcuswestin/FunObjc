@@ -43,4 +43,10 @@
     [self setContentOffset:offset animated:animated];
 }
 
+- (void)setContentInsetBottom:(CGFloat)insetBottom {
+    UIEdgeInsets insets = self.contentInset;
+    insets.bottom = insetBottom;
+    self.contentInset = insets;
+}
+
 @end

@@ -86,6 +86,12 @@
 - (void)containSubviews {
     [self containSubviewsHorizontally:YES vertically:YES];
 }
+- (void)containSubviewsHorizontally {
+    [self containSubviewsHorizontally:YES vertically:NO];
+}
+- (void)containSubviewsVertically {
+    [self containSubviewsHorizontally:NO vertically:YES];
+}
 - (void)containSubviewsHorizontally:(BOOL)horizontally vertically:(BOOL)vertically {
     CGRect frame = self.frame;
     if (horizontally) { frame.size.width = 0; }
@@ -346,7 +352,7 @@ static CGFloat STATIC = 0.5f;
 /* View hierarchy
  ****************/
 - (instancetype)empty {
-    [[self subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [[self subviews] makeObjectsPerformSelector:@selector(removeAndClean)];
     return self;
 }
 - (void)appendTo:(UIView *)superview {
@@ -360,6 +366,10 @@ static CGFloat STATIC = 0.5f;
 }
 - (UIView *)lastSubview {
     return self.subviews.lastObject;
+}
+- (void)removeAndClean {
+    [self removeFromSuperview];
+    [self recursivelyCleanup];
 }
 
 /* Screenshot
@@ -394,7 +404,7 @@ static CGFloat STATIC = 0.5f;
 }
 - (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback {
     [self ghostWithDuration:duration options:options animations:animationCallback completion:^(UIView *ghostView) {
-        [ghostView removeFromSuperview];
+        [ghostView removeAndClean];
     }];
 }
 - (void)ghostWithDuration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(GhostCallback)animationCallback completion:(GhostCallback)completionCallback {
@@ -410,5 +420,18 @@ static CGFloat STATIC = 0.5f;
  ************/
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations {
     return [UIView animateWithDuration:duration delay:delay options:options animations:animations completion:nil];
+}
+- (void)rotate:(NSTimeInterval)duration {
+    [self stopRotating];
+    CABasicAnimation *rotation;
+    rotation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+    rotation.fromValue = num(0);
+    rotation.toValue = numf(2*M_PI);
+    rotation.duration = duration;
+    rotation.repeatCount = HUGE_VALF;
+    [self.layer addAnimation:rotation forKey:@"FunRotateAnimation"];
+}
+- (void)stopRotating {
+    [self.layer removeAnimationForKey:@"FunRotateAnimation"];
 }
 @end

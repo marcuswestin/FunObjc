@@ -25,4 +25,6 @@ typedef float Pitch; // pitch=[-1,1]
 + (float)readFromFile:(NSString*)fromPath toFile:(NSString*)toPath;
 + (float)readFromFile:(NSString*)fromPath toFile:(NSString*)toPath effects:(AudioEffects*)effects;
 + (NSTimeInterval)getDurationForFile:(NSString*)path;
+
++ (void)playToSpeakerFromUrl:(NSString*)url;
 @end

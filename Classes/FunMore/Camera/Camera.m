@@ -132,7 +132,7 @@ static Camera* camera;
     if (camera.modalViewController) {
         [camera.modalViewController dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [camera.picker.view removeFromSuperview];
+        [camera.picker.view removeAndClean];
     }
 
     camera = nil;
@@ -216,4 +216,13 @@ static Camera* camera;
     return thumbImage;
 }
 
++ (BOOL)isAvailable {
+    return [self isAvailableInFront] || [self isAvailableInRear];
+}
++ (BOOL)isAvailableInRear {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
++ (BOOL)isAvailableInFront {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
+}
 @end

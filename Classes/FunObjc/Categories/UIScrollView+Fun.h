@@ -13,6 +13,7 @@
 - (void)addContentInset:(UIEdgeInsets)insets;
 - (void)addContentInsetTop:(CGFloat)insetTop;
 - (void)addContentInsetBottom:(CGFloat)insetBottom;
+- (void)setContentInsetBottom:(CGFloat)insetBottom;
 - (void)addContentHeight:(CGFloat)addHeight;
 - (void)addContentOffset:(CGFloat)addY;
 - (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated;

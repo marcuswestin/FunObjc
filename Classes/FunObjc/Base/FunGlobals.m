@@ -58,7 +58,7 @@ void error(NSError* err) {
             view = nil;
         };
         
-        [view containSubviewsHorizontally:NO vertically:YES];
+        [view containSubviewsVertically];
         view.height += 32;
         [label.styler.fromBottom(8) apply];
         view.y2 = 0;
@@ -79,10 +79,13 @@ void after(NSTimeInterval delayInSeconds, Block block) {
     dispatch_after(popTime, dispatch_get_main_queue(), block);
 }
 
-void every(NSTimeInterval intervalInSeconds, Block block) {
+void every(NSTimeInterval intervalInSeconds, StopBlock block) {
     after(intervalInSeconds, ^{
-        block();
-        every(intervalInSeconds, block);
+        BOOL stop = NO;
+        block(&stop);
+        if (!stop) {
+            every(intervalInSeconds, block);
+        }
     });
 }
 

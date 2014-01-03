@@ -32,8 +32,9 @@
 - (void)resizeByAddingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height;
 - (void)containSubviews;
-- (void)containSubviewsHorizontally:(BOOL)containHorizontally vertically:(BOOL)vertically;
 - (void)containLastViewVertically;
+- (void)containSubviewsHorizontally;
+- (void)containSubviewsVertically;
 - (void)setHeightUp:(CGFloat)height;
 - (void)addHeightUp:(CGFloat)addHeight;
 
@@ -87,6 +88,7 @@
 - (void)prependTo:(UIView*)superview;
 - (UIView*)firstSubview;
 - (UIView*)lastSubview;
+- (void)removeAndClean;
 
 /* Screenshot
  ************/
@@ -104,4 +106,6 @@ typedef void(^GhostCallback)(UIView* ghostView);
 /* Animations
  ************/
 + (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations;
+- (void)rotate:(NSTimeInterval)duration;
+- (void)stopRotating;
 @end

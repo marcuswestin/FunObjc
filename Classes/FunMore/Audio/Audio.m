@@ -10,6 +10,7 @@
 
 static AVAudioSession* _session;
 static AudioGraph* _graph;
+static AVAudioPlayer* _player;
 
 @implementation AudioEffects
 + (instancetype)withPitch:(Pitch)pitch {
@@ -20,6 +21,22 @@ static AudioGraph* _graph;
 @end
 
 @implementation Audio
+
++ (void)playToSpeakerFromUrl:(NSString *)url {
+    if (_player) {
+        [_player stop];
+        _player = nil;
+    }
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *err) {
+        if (err) { return error(err); }
+        
+        _player = [[AVAudioPlayer alloc] initWithData:data error:&err];
+        if (err) { return error(err); }
+        
+        [_player play];
+    }];
+}
 
 /*
  

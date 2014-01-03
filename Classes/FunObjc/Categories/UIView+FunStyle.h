@@ -13,6 +13,7 @@
 
 typedef ViewStyler* Styler;
 typedef Styler (^StylerView)(UIView* view);
+typedef Styler (^StylerView2)(UIView* view, UIView* view2);
 typedef Styler (^StylerSize)(CGSize size);
 typedef Styler (^StylerFloat1)(CGFloat num);
 typedef Styler (^StylerFloat2)(CGFloat f1, CGFloat f2);
@@ -45,8 +46,6 @@ typedef Styler (^StylerDate)(NSDate* date);
  ****************/
 - (void)apply;
 - (id)render;
-- (StylerView)appendTo;
-- (StylerView)prependTo;
 - (id)onTap:(EventHandler)handler;
 
 /* View hierarchy
@@ -62,6 +61,9 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (Styler)center;
 - (Styler)centerVertically;
 - (Styler)centerHorizontally;
+- (StylerFloat1)centerX;
+- (StylerFloat1)centerY;
+- (StylerFloat2)centerXY;
 - (StylerFloat1)fromRight;
 - (StylerFloat1)x2;
 - (StylerFloat1)fromBottom;
@@ -157,7 +159,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
-- (void)sizeToParent;
++ (StylerView2) prependBefore;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;

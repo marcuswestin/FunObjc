@@ -68,13 +68,6 @@ static NSMutableDictionary* tagNameToTagNumber;
 
 /* View Hierarchy
  ****************/
-DeclareViewStyler(appendTo, view,
-                  [_view appendTo:view];
-                  [_view sizeToParent])
-DeclareViewStyler(prependTo, view,
-                  [_view prependTo:view];
-                  [_view sizeToParent])
-
 DeclareIntegerStyler(tag, tagI, _view.tag = tagI)
 
 DeclareStringStyler(name, tagName,
@@ -117,6 +110,12 @@ DeclareStyler(centerHorizontally,
               CGRect frame = _view.frame;
               frame.origin.x = CGRectGetMidX(_view.superview.bounds) - frame.size.width/2;
               _view.frame = frame)
+DeclareFloatStyler(centerX, centerX,
+                   _view.centerX = centerX);
+DeclareFloatStyler(centerY, centerY,
+                   _view.centerY = centerY);
+DeclareFloat2Styler(centerXY, centerX, centerY,
+                    _view.center = CGPointMake(centerX, centerY));
 
 DeclareFloatStyler(fromBottom, offset,
                    CGRect frame = _view.frame;
@@ -238,10 +237,6 @@ DeclareSizeStyler(bounds, size,
                   CGRect frame = _view.frame;
                   frame.size = size;
                   _view.frame = frame)
-DeclareStyler(sizeToParent,
-              CGRect frame = _view.frame;
-              frame.size = _view.superview.bounds.size;
-              _view.frame = frame)
 
 DeclareStyler(size, [_view sizeToFit])
 DeclareStyler(sizeToFit, [_view sizeToFit])
@@ -378,14 +373,14 @@ DeclareStringStyler(placeholder, placeholderText,
                         [_textView onTextDidChange:^(UITextView *textView) {
                             if (textView.text.length) {
                                 if (placeholderView.superview) {
-                                    [placeholderView removeFromSuperview];
+                                    [placeholderView removeAndClean];
                                 }
                             } else if (!placeholderView.superview) {
                                 [placeholderView appendTo:textView];
                             }
                         }];
                         if (_textView.text.length) {
-                            [placeholderView removeFromSuperview];
+                            [placeholderView removeAndClean];
                         }
                     })
 DeclareFloatStyler(inputPad, pad,
@@ -407,13 +402,11 @@ DeclareImageStyler(image, image,
                    if (![_view respondsToSelector:@selector(setImage:)]) {
                        [NSException raise:@"Error" format:@"Can't set image in image() styler"];
                    }
-                   _imageView.image = image;
-                   [_imageView sizeToFit];
                    CGRect frame = _imageView.frame;
-                   CGFloat resolution = [UIScreen mainScreen].scale;
-                   frame.size.width /= resolution;
-                   frame.size.height /= resolution;
-                   _view.frame = frame)
+                   frame.size.width = image.size.width / 2;
+                   frame.size.height = image.size.height / 2;
+                   _imageView.image = image;
+                   _imageView.frame = frame;)
 
 DeclareImageStyler(imageFill, image,
                    if (![_view respondsToSelector:@selector(setImage:)]) {
@@ -428,17 +421,28 @@ DeclareImageStyler(imageFill, image,
  ****************/
 @implementation UIView (FunStyler)
 + (StylerView)appendTo {
-    return ^(UIView* view) {
-        return self.styler.appendTo(view);
+    return ^(UIView* superview) {
+        ViewStyler* styler = self.styler;
+        [styler.view appendTo:superview];
+        styler.view.width = superview.width;
+        return styler;
     };
 }
 + (StylerView)prependTo {
-    return ^(UIView* view) {
-        return self.styler.prependTo(view);
+    return ^(UIView* superview) {
+        ViewStyler* styler = self.styler;
+        [styler.view prependTo:superview];
+        styler.view.width = superview.width;
+        return styler;
     };
 }
-- (void)sizeToParent {
-    self.width = self.superview.width;
++ (StylerView2)prependBefore {
+    return ^(UIView* superview, UIView* siblingView) {
+        ViewStyler* styler = self.styler;
+        [superview insertSubview:styler.view belowSubview:siblingView];
+        styler.view.width = superview.width;
+        return styler;
+    };
 }
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];
