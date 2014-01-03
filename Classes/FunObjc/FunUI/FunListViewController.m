@@ -69,7 +69,7 @@
 @end
 
 @interface FunListViewStickyGroup ()
-- (id)initWithViewController:(FunListViewController*)vc point:(CGFloat)y height:(CGFloat)height;
+- (id)initWithViewController:(FunListViewController*)vc point:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
 - (void)onInitialContentRendered;
 - (void)onContentMoved:(ListViewDirection)direction;
 - (void)onDidAddView:(ListContentView*)view location:(ListViewLocation)location;
@@ -148,6 +148,15 @@ static CGFloat START_Y = 99999.0f;
         [self _fixContentTopByAdding:START_Y];
         _hasReachedTheVeryTop = NO;
     }
+    
+    // If the current top view is a group head, we may have prepended an item
+    // above current top group above when it should have gone inside the group
+    ListContentView* topView = [self _topView];
+    if (topView.isGroupHead) {
+        [topView removeFromSuperview];
+        _topY += topView.height;
+    }
+    
     [self _extendTop];
 }
 
@@ -214,8 +223,8 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView addContentHeight:dHeight];
 }
 
-- (FunListViewStickyGroup*)stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height {
-    id group = [[FunListViewStickyGroup alloc] initWithViewController:self point:y height:height];
+- (FunListViewStickyGroup*)stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset {
+    id group = [[FunListViewStickyGroup alloc] initWithViewController:self point:y height:height viewOffset:viewOffset];
     [_stickyGroups addObject:group];
     return group;
 }
@@ -377,7 +386,7 @@ static BOOL insetsForAllSet;
     ListIndex startIndex = ([_delegate respondsToSelector:@selector(listStartIndex)] ? [_delegate listStartIndex] : 0);
     ListGroupId startGroupId = [self _groupIdForIndex:startIndex];
     
-    if (![self _getViewForIndex:startIndex location:_listStartLocation]) {
+    if (![_delegate hasViewForIndex:startIndex]) {
         [self _renderEmpty];
         return; // Empty list
     }
@@ -391,8 +400,8 @@ static BOOL insetsForAllSet;
         {
             ListIndex previousIndex = _topListIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
-            ListContentView* previousView = [self _getViewForIndex:previousIndex location:TOP];
-            if (!previousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
+            BOOL hasPreviousView = [_delegate hasViewForIndex:previousIndex];
+            if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
                 [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
             }
         }
@@ -408,8 +417,8 @@ static BOOL insetsForAllSet;
         {
             ListIndex nextIndex = _bottomItemIndex + 1;
             ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
-            ListContentView* nextView = [self _getViewForIndex:nextIndex location:BOTTOM];
-            if (!nextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
+            BOOL hasNextView = [_delegate hasViewForIndex:nextIndex];
+            if (!hasNextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
                 [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
             }
         }
@@ -452,7 +461,11 @@ static BOOL insetsForAllSet;
         return;
     }
     
+    CGFloat offsetChange = scrollView.contentOffset.y - _previousContentOffsetY;
     _previousContentOffsetY = scrollView.contentOffset.y;
+    if ([_delegate respondsToSelector:@selector(listDidScroll:)]) {
+        [_delegate listDidScroll:offsetChange];
+    }
 }
 
 - (void)extendBottom {
@@ -481,9 +494,9 @@ static BOOL insetsForAllSet;
 
 - (BOOL)_listAddNextViewDown {
     NSInteger index = _bottomItemIndex + 1;
-    ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
+    BOOL hasView = [_delegate hasViewForIndex:index];
     
-    if (!view) {
+    if (!hasView) {
         // There are no more items to display at the bottom.
         // Last thing: add a group view at the bottom.
         if ([self _bottomView].isGroupView) {
@@ -519,6 +532,7 @@ static BOOL insetsForAllSet;
         }
     }
     
+    ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
     [self _addView:view at:BOTTOM];
     _bottomItemIndex = index;
     return YES;
@@ -539,10 +553,8 @@ static BOOL insetsForAllSet;
     }
     
     NSInteger index = _topListIndex - 1;
-    
-    ListContentView* view = [self _getViewForIndex:index location:TOP];
-    if (!view) {
-        [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
+    if (![_delegate hasViewForIndex:index]) {
+        [NSException raise:@"Error" format:@"hasViewForIndex returned NO for index %d", index];
     }
     
     ListGroupId groupId = [self _groupIdForIndex:index];
@@ -567,6 +579,10 @@ static BOOL insetsForAllSet;
         }
     }
     
+    ListContentView* view = [self _getViewForIndex:index location:TOP];
+    if (!view) {
+        [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
+    }
     [self _addView:view at:TOP];
     _topListIndex = index;
     return YES;
@@ -580,6 +596,9 @@ static BOOL insetsForAllSet;
         [view removeFromSuperview];
         _topY += view.height;
         if (view.isItemView) {
+            if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
+                [_delegate listViewWasRemoved:view location:TOP index:_topListIndex];
+            }
             _topListIndex += 1;
         } else if (view.isGroupFoot) {
             [self _setTopGroupId:[self _groupIdForIndex:_topListIndex] index:_topListIndex];
@@ -595,6 +614,9 @@ static BOOL insetsForAllSet;
         [view removeFromSuperview];
         _bottomY -= view.height;
         if (view.isItemView) {
+            if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
+                [_delegate listViewWasRemoved:view location:BOTTOM index:_bottomItemIndex];
+            }
             _bottomItemIndex -= 1;
         } else if (view.isGroupHead) {
             [self _setBottomGroupId:[self _groupIdForIndex:_bottomItemIndex] index:_bottomItemIndex];
@@ -728,6 +750,7 @@ static BOOL insetsForAllSet;
 - (void)_fixContentTopByAdding:(CGFloat)changeInHeight {
     _topY += changeInHeight;
     _bottomY += changeInHeight;
+    _previousContentOffsetY += changeInHeight;
     [self _withoutScrollEvents:^{
         [_scrollView addContentOffset:changeInHeight];
         [_scrollView addContentHeight:changeInHeight];
@@ -793,14 +816,16 @@ static BOOL insetsForAllSet;
     CGFloat _y1;
     CGFloat _y2;
     CGFloat _height;
+    CGFloat _viewOffset;
     FunListViewController* __weak _vc;
 }
 
-- (id)initWithViewController:(FunListViewController *)vc point:(CGFloat)y height:(CGFloat)height {
+- (id)initWithViewController:(FunListViewController *)vc point:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset {
     _vc = vc;
     _y1 = y;
     _y2 = y + height;
     _height = height;
+    _viewOffset = viewOffset;
     _stickiesAddedForView = [NSMutableArray array];
     _stickiesContainerNonInteractive = [UIView.appendTo(_vc.listView) render];
     _isEmpty = YES;
@@ -822,7 +847,7 @@ static BOOL insetsForAllSet;
     for (UIView* view in _stickiesAddedForView) {
         [stickyView addSubview:view];
     }
-    stickyView.naturalOffset = view.y;
+    stickyView.naturalOffset = view.y + _viewOffset;
     stickyView.y = stickyView.naturalOffset - _vc.scrollView.contentOffset.y;
     [_stickiesAddedForView removeAllObjects];
     
@@ -873,30 +898,37 @@ static BOOL insetsForAllSet;
 
     ListStickyView* enroaching;
     
-    // TODO There may be multiple enroaching per loop
     // From below
     enroaching = _current.viewBelow;
-    if (enroaching && enroaching.y < _y2) {
-        if (enroaching.y <= _y1) {
+    while (enroaching && enroaching.y < _y2) {
+        // a view from below is overlapping with the current
+        if (enroaching.y > _y1) {
+            // the enroaching view is partially overlapping the current
+            _current.y2 = enroaching.y;
+        } else {
+            // the enroaching view is completely pushing out the current
             _current.naturalOffset = offset + _y1 - _height;
             _current.y = _current.naturalOffset - offset;
             _current = enroaching;
             _current.y = _y1;
-        } else {
-            _current.y2 = enroaching.y;
         }
+        enroaching = enroaching.viewBelow;
     }
     // From above
     enroaching = _current.viewAbove;
-    if (enroaching && enroaching.y2 > _y1) {
-        if (enroaching.y2 >= _y2) {
+    while (enroaching && enroaching.y2 > _y1) {
+        // a view from above is overlapping with the current
+        if (enroaching.y2 < _y2) {
+            // the enroaching view is partially overlapping the current
+            _current.y = enroaching.y2;
+        } else {
+            // the enroaching view is completely pushing out the current
             _current.naturalOffset = offset + _y2;
             _current.y = _current.naturalOffset - offset;
             _current = enroaching;
             _current.y = _y1;
-        } else {
-            _current.y = enroaching.y2;
         }
+        enroaching = enroaching.viewAbove;
     }
 
     if (contentMoved == UP) {

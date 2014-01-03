@@ -26,6 +26,7 @@ typedef enum ListViewDirection ListViewDirection;
 //////////////
 @protocol FunListViewDelegate <NSObject>
 @required
+- (BOOL) hasViewForIndex:(ListIndex)index;
 - (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width location:(ListViewLocation)location;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 @optional
@@ -39,6 +40,8 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
 - (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListIndex)index;
 - (BOOL) listShouldMoveWithKeyboard;
+- (void) listDidScroll:(CGFloat)offsetChange;
+- (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListIndex)index;
 @end
 
 ////////////////////////
@@ -73,5 +76,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) selectVisibleIndex:(ListIndex)index;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;
-- (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height;
+- (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
 @end
