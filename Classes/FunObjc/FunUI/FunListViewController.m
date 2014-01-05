@@ -92,6 +92,7 @@
     NSMutableArray* _stickyGroups;
     UIView* _emptyView;
     BOOL _hasContent;
+    BOOL _hasCalledEmpty;
 }
 
 static CGFloat MAX_Y = 9999999.0f;
@@ -364,13 +365,17 @@ static BOOL insetsForAllSet;
 }
 
 - (void)_renderEmpty {
+    if (_emptyView) {
+        [_emptyView removeAndClean];
+    }
     _emptyView = [UIView.appendTo(_listView).fill render];
     _hasContent = NO;
-    if ([_delegate respondsToSelector:@selector(listRenderEmptyInView:)]) {
-        [_delegate listRenderEmptyInView:_emptyView];
+    if ([_delegate respondsToSelector:@selector(listRenderEmptyInView:isFirst:)]) {
+        [_delegate listRenderEmptyInView:_emptyView isFirst:!_hasCalledEmpty];
     } else {
-        [UILabel.appendTo(_emptyView).text(@"Nothing here").size.center render];
+        [UILabel.appendTo(_emptyView).text(_hasCalledEmpty ? @"Nothing here" : @"Loading").size.center render];
     }
+    _hasCalledEmpty = YES;
 }
 
 - (void)_renderInitialContent {

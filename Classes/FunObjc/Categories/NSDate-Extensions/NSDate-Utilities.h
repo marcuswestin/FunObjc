@@ -91,4 +91,5 @@
 @property (readonly) NSString* nameOfDayVeryShort;
 @property (readonly) NSString* nameOfDayNumeric;
 @property (readonly) NSString* nameOfDayNumericSuffix;
+@property (readonly) NSString* timeOfDayAmPm;
 @end

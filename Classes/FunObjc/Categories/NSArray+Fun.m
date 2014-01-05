@@ -76,10 +76,14 @@
 }
 
 - (id)item:(NSInteger)index {
-    if (index < 0 || index >= self.count) {
+    if (![self hasIndex:index]) {
         return nil;
     }
     return self[index];
+}
+
+- (BOOL)hasIndex:(NSInteger)index {
+    return (index >= 0 && index < self.count);
 }
 
 - (id)reverseItem:(NSInteger)index {
@@ -122,10 +126,13 @@
 
 @implementation NSOrderedSet (Fun)
 - (id)item:(NSInteger)index {
-    if (index < 0 || index >= self.count) {
+    if (![self hasIndex:index]) {
         return nil;
     }
     return self[index];
+}
+- (BOOL)hasIndex:(NSInteger)index {
+    return (index >= 0 && index < self.count);
 }
 @end
 @implementation NSMutableOrderedSet (Fun)

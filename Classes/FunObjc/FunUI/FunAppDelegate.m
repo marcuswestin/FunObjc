@@ -41,7 +41,11 @@ static FunAppDelegate* instance;
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad:)]) {
         [_funApp interfaceDidLoad:self.window];
     }
+    
+#if TARGET_IPHONE_SIMULATOR
     [self _setupDevMenu];
+#endif
+    
     return YES;
 }
 

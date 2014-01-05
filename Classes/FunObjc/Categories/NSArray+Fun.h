@@ -25,6 +25,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (id) pickOne:(Filter)pickFn;
 - (id) item:(NSInteger)index;
 - (id) reverseItem:(NSInteger)index;
+- (BOOL) hasIndex:(NSInteger)index;
 
 - (NSString*)joinBy:(NSString*)joiner;
 - (NSString*)joinBy:(NSString*)joiner last:(NSString*)lastJoiner;
@@ -36,6 +37,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 
 @interface NSOrderedSet (Fun)
 - (id) item:(NSInteger)index;
+- (BOOL) hasIndex:(NSInteger)index;
 @end
 @interface NSMutableOrderedSet (Fun)
 - (BOOL) toggleContainsObject:(id)object;

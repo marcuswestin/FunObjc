@@ -405,18 +405,25 @@
     return [[NSDateFormatter new] veryShortMonthSymbols][self.month - 1];
 }
 - (NSString *)nameOfDay {
-    return [[NSDateFormatter new] weekdaySymbols][self.weekday];
+    return [[NSDateFormatter new] weekdaySymbols][self.weekday - 1];
 }
 - (NSString *)nameOfDayShort {
-    return [[NSDateFormatter new] shortWeekdaySymbols][self.weekday];
+    return [[NSDateFormatter new] shortWeekdaySymbols][self.weekday - 1];
 }
 - (NSString *)nameOfDayVeryShort {
-    return [[NSDateFormatter new] veryShortWeekdaySymbols][self.weekday];
+    return [[NSDateFormatter new] veryShortWeekdaySymbols][self.weekday - 1];
 }
 - (NSString *)nameOfDayNumeric {
     return [NSString stringWithFormat:@"%d", self.day];
 }
 - (NSString*)nameOfDayNumericSuffix {
     return [NSNumber suffix:self.day+1];
+}
+- (NSString *)timeOfDayAmPm {
+    NSDateFormatter* formatter = [NSDateFormatter new];
+    [formatter setDateFormat:@"h:mm a"]; // "3:19 PM"
+    [formatter setLocale:[NSLocale currentLocale]];
+    return [formatter stringFromDate:self];
+//    return [NSString stringWithFormat:@"%.2d:%.2d%@", (date.hour+1)%13, date.minute]
 }
 @end

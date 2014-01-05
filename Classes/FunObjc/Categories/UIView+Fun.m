@@ -248,6 +248,7 @@
             frame.origin.y -= offset.y;
         }
     }
+    frame.origin.y -= 64;
     return frame;
 }
 
@@ -392,7 +393,7 @@ static CGFloat STATIC = 0.5f;
 }
 - (UIView*)ghost {
     UIImage* ghostImage = [self captureToImage];
-    UIImageView* ghostView = [UIImageView.appendTo(self.window).frame([self frameInWindow]) render];
+    UIImageView* ghostView = [UIImageView.appendTo(self.window).frame([self frameOnScreen]) render];
     ghostView.image = ghostImage;
     return ghostView;
 }

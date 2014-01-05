@@ -119,7 +119,7 @@ static Camera* camera;
     camera.picker.sourceType = sourceType;
     camera.picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
     camera.picker.allowsEditing = allowEditing;
-    if ([UIImagePickerController isCameraDeviceAvailable:cameraDevice]) {
+    if (cameraDevice && [UIImagePickerController isCameraDeviceAvailable:cameraDevice]) {
         camera.picker.cameraDevice = cameraDevice;
     }
     
