@@ -7,7 +7,6 @@
 //
 
 #import "NSURLConnection+Fun.h"
-#import <objc/runtime.h>
 #import "FunBase.h"
 
 @interface Net ()
