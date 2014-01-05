@@ -41,6 +41,10 @@ static FunAppDelegate* instance;
     if ([_funApp respondsToSelector:@selector(interfaceDidLoad:)]) {
         [_funApp interfaceDidLoad:self.window];
     }
+    async(^{
+        NSNumber* current = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
+        [Files writeNumber:current name:@"LastLaunchTime"];
+    });
     
 #if TARGET_IPHONE_SIMULATOR
     [self _setupDevMenu];
