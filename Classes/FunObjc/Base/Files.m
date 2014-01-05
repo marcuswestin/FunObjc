@@ -117,10 +117,15 @@ static NSCharacterSet* illegalFileNameCharacters;
 }
 
 + (void)writeNumber:(NSNumber *)number name:(NSString *)name {
-    [Files writeJsonDocument:name data:number];
+    if (!number) {
+        [Files removeDocument:name];
+        return;
+    }
+    [Files writeJsonDocument:name data:@{ @"Number":number }];
 }
 + (NSNumber *)readNumber:(NSString *)name {
-    return (NSNumber*)[Files readJsonDocument:name];
+    NSDictionary* dict = [Files readJsonDocument:name];
+    return (dict ? dict[@"Number"] : nil);
 }
 + (void)writeStringDocument:(NSString *)string name:(NSString *)name {
     [Files writeJsonDocument:name data:string];
