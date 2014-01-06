@@ -69,7 +69,7 @@
 - (void)setX2:(CGFloat)x2;
 - (void)setY2:(CGFloat)y2;
 - (CGRect)frameInWindow;
-- (CGRect)frameOnScreen;
+- (CGRect)frameInView:(UIView*)view;
 
 /* Borders, Shadows, Insets & Blurs
  **********************************/

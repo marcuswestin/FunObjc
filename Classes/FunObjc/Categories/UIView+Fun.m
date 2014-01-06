@@ -234,22 +234,10 @@
     self.center = center;
 }
 - (CGRect)frameInWindow {
-    return [self.superview convertRect:self.frame toView:self.window];
+    return [self frameInView:self.window];
 }
-- (CGRect)frameOnScreen {
-    CGRect frame = self.frame;
-    UIView* view = self;
-    while ((view = view.superview) != nil) {
-        frame.origin.x += view.x;
-        frame.origin.y += view.y;
-        if ([view isKindOfClass:UIScrollView.class]) {
-            CGPoint offset = ((UIScrollView*)view).contentOffset;
-            frame.origin.x -= offset.x;
-            frame.origin.y -= offset.y;
-        }
-    }
-    frame.origin.y -= 64;
-    return frame;
+- (CGRect)frameInView:(UIView*)view {
+    return [self.superview convertRect:self.frame toView:view];
 }
 
 /* Borders, Shadows & Insets
@@ -393,7 +381,7 @@ static CGFloat STATIC = 0.5f;
 }
 - (UIView*)ghost {
     UIImage* ghostImage = [self captureToImage];
-    UIImageView* ghostView = [UIImageView.appendTo(self.window).frame([self frameOnScreen]) render];
+    UIImageView* ghostView = [UIImageView.appendTo(self.window).frame([self frameInWindow]) render];
     ghostView.image = ghostImage;
     return ghostView;
 }
