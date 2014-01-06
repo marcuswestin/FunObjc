@@ -206,7 +206,7 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView addContentInsetBottom:keyboardHeight];
 }
 
-- (void)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
+- (CGFloat)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
     CGFloat __block dHeight = 0;
     for (ListContentView* view in self._views) {
         if (view.isGroupView) {
@@ -222,6 +222,7 @@ static CGFloat START_Y = 99999.0f;
     }
     _bottomY += dHeight;
     [_scrollView addContentHeight:dHeight];
+    return dHeight;
 }
 
 - (FunListViewStickyGroup*)stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset {
