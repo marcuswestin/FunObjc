@@ -368,7 +368,7 @@ static BOOL insetsForAllSet;
     if (_emptyView) {
         [_emptyView removeAndClean];
     }
-    _emptyView = [UIView.appendTo(_listView).fill render];
+    _emptyView = [UIView.appendAfter(_listView, _scrollView).fill render];
     _hasContent = NO;
     if ([_delegate respondsToSelector:@selector(listRenderEmptyInView:isFirst:)]) {
         [_delegate listRenderEmptyInView:_emptyView isFirst:!_hasCalledEmpty];

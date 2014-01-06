@@ -444,6 +444,14 @@ DeclareImageStyler(imageFill, image,
         return styler;
     };
 }
++ (StylerView2)appendAfter {
+    return ^(UIView* superview, UIView* siblingView) {
+        ViewStyler* styler = self.styler;
+        [superview insertSubview:styler.view aboveSubview:siblingView];
+        styler.view.width = superview.width;
+        return styler;
+    };
+}
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];
 }
