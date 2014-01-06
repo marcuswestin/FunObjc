@@ -138,6 +138,11 @@ static Camera* camera;
     camera = nil;
 }
 
++ (void)setFlashMode:(UIImagePickerControllerCameraFlashMode)flashMode {
+    if (!camera) { return; }
+    camera.picker.cameraFlashMode = flashMode;
+}
+
 + (void)toggleCameraDirection {
     if (!camera) { return; }
     UIImagePickerControllerCameraDevice currentDevice = camera.picker.cameraDevice;

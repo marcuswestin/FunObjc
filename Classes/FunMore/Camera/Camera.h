@@ -80,6 +80,7 @@ typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
 + (void)hide;
 + (void)toggleCameraDirection;
++ (void)setFlashMode:(UIImagePickerControllerCameraFlashMode)flashMode;
 
 + (UIImage*)thumbnailForVideoResult:(CameraVideo*)videoResult atTime:(double)time;
 
