@@ -326,7 +326,7 @@ AudioComponentDescription audioGetComponentDescription(OSType type, OSType subTy
 AVAudioSession* audioCreateSession(NSString* category) {
     NSError* err;
     AVAudioSession* session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:&err];
+    [session setCategory:category error:&err];
     if (err) { NSLog(@"ERROR setCategory:withOptions: %@", err); return nil; }
     [session setActive:YES error:&err];
     if (err) { NSLog(@"ERROR setActive: %@", err); return nil; }
