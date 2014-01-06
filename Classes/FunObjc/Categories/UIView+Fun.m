@@ -234,7 +234,7 @@
     self.center = center;
 }
 - (CGRect)frameInWindow {
-    return [self convertRect:self.bounds toView:self.window];
+    return [self.superview convertRect:self.frame toView:self.window];
 }
 - (CGRect)frameOnScreen {
     CGRect frame = self.frame;
