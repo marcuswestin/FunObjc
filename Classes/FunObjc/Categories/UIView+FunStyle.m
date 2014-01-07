@@ -436,17 +436,19 @@ DeclareImageStyler(imageFill, image,
         return styler;
     };
 }
-+ (StylerView2)prependBefore {
-    return ^(UIView* superview, UIView* siblingView) {
++ (StylerView)prependBefore {
+    return ^(UIView* siblingView) {
         ViewStyler* styler = self.styler;
+        UIView* superview = siblingView.superview;
         [superview insertSubview:styler.view belowSubview:siblingView];
         styler.view.width = superview.width;
         return styler;
     };
 }
-+ (StylerView2)appendAfter {
-    return ^(UIView* superview, UIView* siblingView) {
++ (StylerView)appendAfter {
+    return ^(UIView* siblingView) {
         ViewStyler* styler = self.styler;
+        UIView* superview = siblingView.superview;
         [superview insertSubview:styler.view aboveSubview:siblingView];
         styler.view.width = superview.width;
         return styler;

@@ -159,8 +159,8 @@ typedef Styler (^StylerDate)(NSDate* date);
 @interface UIView (FunStyler)
 + (StylerView) appendTo;
 + (StylerView) prependTo;
-+ (StylerView2) prependBefore;
-+ (StylerView2) appendAfter;
++ (StylerView) prependBefore;
++ (StylerView) appendAfter;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
