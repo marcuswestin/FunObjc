@@ -11,6 +11,25 @@
 #import <AVFoundation/AVFoundation.h>
 
 @implementation CameraVideo
+- (UIImage *)imageAtTime:(double)atTime {
+    AVAsset* videoAsset = self.asset;
+    CMTime cmTime = CMTimeMakeWithSeconds(atTime, videoAsset.duration.timescale);
+    
+    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:videoAsset];
+    imageGenerator.appliesPreferredTrackTransform = YES;
+    
+    NSError *error = nil;
+    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&error];
+    if (error) {
+        NSLog(@"Error generating thumbnail for video result: %@", error);
+        return nil;
+    }
+    
+    UIImage *thumbImage = [[UIImage alloc] initWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    
+    return thumbImage;
+}
 @end
 @implementation CameraPicture
 @end
@@ -45,39 +64,64 @@ static Camera* camera;
     return camera.picker;
 }
 
-+ (void)showCameraForPhotoInView:(UIView *)inView
-                  device:(UIImagePickerControllerCameraDevice)device
-               flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
-      showCameraControls:(BOOL)showCameraControls
-             saveToAlbum:(BOOL)saveToAlbum
-                callback:(CameraCaptureCallback)callback
-{
-    [self _showCameraInView:inView device:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto];
+// Modal Library Selection
+//////////////////////////
++ (void)showForPhotoSelectionInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing animated:(BOOL)animated callback:(CameraCaptureCallback)callback {
+    [self _setupSelectionWithMediaType:kUTTypeImage viewController:viewController allowsEditing:allowEditing animated:animated callback:callback];
 }
 
-+ (void)showCameraForVideoInView:(UIView *)inView
-                          device:(UIImagePickerControllerCameraDevice)device
-                       flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
-                         quality:(UIImagePickerControllerQualityType)quality
-                     maxDuration:(NSTimeInterval)maxDuration
-              showCameraControls:(BOOL)showCameraControls
-                     saveToAlbum:(BOOL)saveToAlbum
-                        callback:(CameraCaptureCallback)callback
-{
-    [self _showCameraInView:inView device:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo];
++ (void)showForVideoSelectionInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing animated:(BOOL)animated callback:(CameraCaptureCallback)callback {
+    [self _setupSelectionWithMediaType:kUTTypeMovie viewController:viewController allowsEditing:allowEditing animated:animated callback:callback];
 }
 
-+ (void)_showCameraInView:(UIView *)inView
-                  device:(UIImagePickerControllerCameraDevice)device
-               flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
-                 quality:(UIImagePickerControllerQualityType)quality
-             maxDuration:(NSTimeInterval)maxDuration
-      showCameraControls:(BOOL)showCameraControls
-             saveToAlbum:(BOOL)saveToAlbum
-                callback:(CameraCaptureCallback)callback
-             captureMode:(UIImagePickerControllerCameraCaptureMode)captureMode
++ (void)_setupSelectionWithMediaType:(CFStringRef)mediaType viewController:(UIViewController*)viewController allowsEditing:(BOOL)allowsEditing animated:(BOOL)animated callback:(CameraCaptureCallback)callback {
+    [self _reset:callback modalViewController:viewController];
+    camera.picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    camera.picker.mediaTypes = @[(__bridge NSString *) mediaType];
+    camera.picker.allowsEditing = allowsEditing;
+    [viewController presentViewController:camera.picker animated:animated completion:nil];
+}
+
+// Modal Capture
+////////////////
++ (void)showForPhotoCaptureInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum animated:(BOOL)animated callback:(CameraCaptureCallback)callback
 {
-    [Camera _reset:callback modalViewController:nil];
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:viewController];
+    [self _showInViewController:viewController animated:animated];
+}
+
++ (void)showForVideoCaptureInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum quality:(UIImagePickerControllerQualityType)quality maxDuration:(NSTimeInterval)maxDuration animated:(BOOL)animated callback:(CameraCaptureCallback)callback
+{
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:viewController];
+    [self _showInViewController:viewController animated:animated];
+}
+
+
+// In-View Capture
+//////////////////
++ (void)showForPhotoCaptureInView:(UIView *)inView device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum callback:(CameraCaptureCallback)callback
+{
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:nil];
+    [self _showInView:inView];
+}
+
++ (void)showForVideoCaptureInView:(UIView *)inView device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum quality:(UIImagePickerControllerQualityType)quality maxDuration:(NSTimeInterval)maxDuration callback:(CameraCaptureCallback)callback
+{
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:nil];
+    [self _showInView:inView];
+}
+
++ (void)_setupCaptureWithDevice:(UIImagePickerControllerCameraDevice)device
+                      flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
+                        quality:(UIImagePickerControllerQualityType)quality
+                    maxDuration:(NSTimeInterval)maxDuration
+             showCameraControls:(BOOL)showCameraControls
+                    saveToAlbum:(BOOL)saveToAlbum
+                       callback:(CameraCaptureCallback)callback
+                    captureMode:(UIImagePickerControllerCameraCaptureMode)captureMode
+                 viewController:(UIViewController*)viewController
+{
+    [Camera _reset:callback modalViewController:viewController];
     camera.saveToAlbum = saveToAlbum;
     
     camera.picker.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -90,40 +134,32 @@ static Camera* camera;
         camera.picker.mediaTypes = @[(NSString*)kUTTypeMovie];
         camera.picker.videoMaximumDuration = maxDuration;
     }
-    
     camera.picker.cameraCaptureMode = captureMode;
+    
     camera.picker.cameraFlashMode = flashMode;
     camera.picker.showsCameraControls = showCameraControls;
-    
+}
+
++ (void)_showInViewController:(UIViewController*)viewController animated:(BOOL)animated {
+    [viewController presentViewController:camera.picker animated:animated completion:nil];
+}
+
++ (void)_showInView:(UIView*)inView {
     camera.picker.view.frame = CGRectMake(0, 0, inView.frame.size.width, inView.frame.size.height);
     [inView addSubview:camera.picker.view];
 }
 
+// API Misc
+///////////
 
-+ (void)showModalPickerInViewController:(UIViewController*)viewController
-                             sourceType:(UIImagePickerControllerSourceType)sourceType
-                           allowEditing:(BOOL)allowEditing
-                               animated:(BOOL)animated
-                               callback:(CameraCaptureCallback)callback
-{
-    return [Camera showModalPickerInViewController:viewController sourceType:sourceType cameraDevice:0 allowEditing:allowEditing animated:animated callback:callback];
++ (BOOL)isAvailable {
+    return [self isAvailableInFront] || [self isAvailableInRear];
 }
-+ (void)showModalPickerInViewController:(UIViewController *)viewController
-                             sourceType:(UIImagePickerControllerSourceType)sourceType
-                           cameraDevice:(UIImagePickerControllerCameraDevice)cameraDevice
-                           allowEditing:(BOOL)allowEditing
-                               animated:(BOOL)animated
-                               callback:(CameraCaptureCallback)callback {
-    [Camera _reset:callback modalViewController:viewController];
-    
-    camera.picker.sourceType = sourceType;
-    camera.picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
-    camera.picker.allowsEditing = allowEditing;
-    if (cameraDevice && [UIImagePickerController isCameraDeviceAvailable:cameraDevice]) {
-        camera.picker.cameraDevice = cameraDevice;
-    }
-    
-    [viewController presentViewController:camera.picker animated:animated completion:nil];
++ (BOOL)isAvailableInRear {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
++ (BOOL)isAvailableInFront {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
 }
 
 + (void)hide {
@@ -197,37 +233,9 @@ static Camera* camera;
 }
 
 - (void)_finishWith:(CameraResult*)result {
-    _callback(nil, result);
+    asyncMain(^{
+        _callback(nil, result);
+    });
     [Camera hide];
-}
-
-+ (UIImage*)thumbnailForVideoResult:(CameraVideo*)videoResult atTime:(double)atTime {
-    AVAsset* videoAsset = videoResult.asset;
-    CMTime cmTime = CMTimeMakeWithSeconds(atTime, videoAsset.duration.timescale);
-    
-    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:videoAsset];
-    imageGenerator.appliesPreferredTrackTransform = YES;
-
-    NSError *error = nil;
-    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&error];
-    if (error) {
-        NSLog(@"Error generating thumbnail for video result: %@", error);
-        return nil;
-    }
-    
-    UIImage *thumbImage = [[UIImage alloc] initWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-    
-    return thumbImage;
-}
-
-+ (BOOL)isAvailable {
-    return [self isAvailableInFront] || [self isAvailableInRear];
-}
-+ (BOOL)isAvailableInRear {
-    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
-}
-+ (BOOL)isAvailableInFront {
-    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
 }
 @end

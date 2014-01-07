@@ -16,6 +16,7 @@
 @property CGSize size;
 @property AVAsset* asset;
 @property AVPlayerItem* playerItem;
+- (UIImage*)imageAtTime:(double)time;
 @end
 
 @interface CameraPicture : State
@@ -36,53 +37,74 @@ typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 @property BOOL saveToAlbum;
 @property BOOL allowsEditing;
 
-//+ (void)showModalVideoCaptureAnimated:(BOOL)animated
-//                              quality:(UIImagePickerControllerQualityType)quality
-//                             callback:(CameraCaptureCallback)callback;
+//+ (void)showModalPickerInViewController:(UIViewController*)viewController
+//                             sourceType:(UIImagePickerControllerSourceType)sourceType
+//                           allowEditing:(BOOL)allowEditing
+//                               animated:(BOOL)animated
+//                               callback:(CameraCaptureCallback)callback
+//;
 //
-//+ (void)showModalPictureCaptureAnimated:(BOOL)animated
-//                               callback:(CameraCaptureCallback)callback;
-//
+//+ (void)showModalPickerInViewController:(UIViewController*)viewController
+//                             sourceType:(UIImagePickerControllerSourceType)sourceType
+//                             cameraDevice:(UIImagePickerControllerCameraDevice)cameraDevice
+//                           allowEditing:(BOOL)allowEditing
+//                               animated:(BOOL)animated
+//                               callback:(CameraCaptureCallback)callback
+//;
 
-+ (void)showModalPickerInViewController:(UIViewController*)viewController
-                             sourceType:(UIImagePickerControllerSourceType)sourceType
-                           allowEditing:(BOOL)allowEditing
-                               animated:(BOOL)animated
-                               callback:(CameraCaptureCallback)callback
++ (void)showForPhotoSelectionInViewController:(UIViewController*)viewController
+                                 allowEditing:(BOOL)allowEditing
+                                     animated:(BOOL)animated
+                                     callback:(CameraCaptureCallback)callback;
+
++ (void)showForVideoSelectionInViewController:(UIViewController*)viewController
+                                 allowEditing:(BOOL)allowEditing
+                                     animated:(BOOL)animated
+                                     callback:(CameraCaptureCallback)callback;
+
++ (void)showForPhotoCaptureInViewController:(UIViewController*)viewController
+                        allowEditing:(BOOL)allowEditing
+                              device:(UIImagePickerControllerCameraDevice)device
+                           flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
+                  showCameraControls:(BOOL)showCameraControls
+                         saveToAlbum:(BOOL)saveToAlbum
+                            animated:(BOOL)animated
+                            callback:(CameraCaptureCallback)callback
 ;
 
-+ (void)showModalPickerInViewController:(UIViewController*)viewController
-                             sourceType:(UIImagePickerControllerSourceType)sourceType
-                             cameraDevice:(UIImagePickerControllerCameraDevice)cameraDevice
-                           allowEditing:(BOOL)allowEditing
-                               animated:(BOOL)animated
-                               callback:(CameraCaptureCallback)callback
++ (void)showForVideoCaptureInViewController:(UIViewController*)viewController
+                        allowEditing:(BOOL)allowEditing
+                              device:(UIImagePickerControllerCameraDevice)device
+                           flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
+                  showCameraControls:(BOOL)showCameraControls
+                         saveToAlbum:(BOOL)saveToAlbum
+                             quality:(UIImagePickerControllerQualityType)quality
+                         maxDuration:(NSTimeInterval)maxDuration
+                            animated:(BOOL)animated
+                            callback:(CameraCaptureCallback)callback
 ;
 
-
-+ (void)showCameraForPhotoInView:(UIView *)inView
-                         device:(UIImagePickerControllerCameraDevice)device
-                      flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
-             showCameraControls:(BOOL)showCameraControls
-                    saveToAlbum:(BOOL)saveToAlbum
-                       callback:(CameraCaptureCallback)callback
++ (void)showForPhotoCaptureInView:(UIView *)inView
+                    device:(UIImagePickerControllerCameraDevice)device
+                 flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
+        showCameraControls:(BOOL)showCameraControls
+               saveToAlbum:(BOOL)saveToAlbum
+                  callback:(CameraCaptureCallback)callback
 ;
 
-+ (void)showCameraForVideoInView:(UIView *)inView
-                          device:(UIImagePickerControllerCameraDevice)device
-                       flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
-                         quality:(UIImagePickerControllerQualityType)quality
-                     maxDuration:(NSTimeInterval)maxDuration
-              showCameraControls:(BOOL)showCameraControls
-                     saveToAlbum:(BOOL)saveToAlbum
-                        callback:(CameraCaptureCallback)callback
++ (void)showForVideoCaptureInView:(UIView *)inView
+                    device:(UIImagePickerControllerCameraDevice)device
+                 flashMode:(UIImagePickerControllerCameraFlashMode)flashMode
+        showCameraControls:(BOOL)showCameraControls
+               saveToAlbum:(BOOL)saveToAlbum
+                   quality:(UIImagePickerControllerQualityType)quality
+               maxDuration:(NSTimeInterval)maxDuration
+                  callback:(CameraCaptureCallback)callback
 ;
 
 + (void)hide;
 + (void)toggleCameraDirection;
 + (void)setFlashMode:(UIImagePickerControllerCameraFlashMode)flashMode;
-
-+ (UIImage*)thumbnailForVideoResult:(CameraVideo*)videoResult atTime:(double)time;
 
 + (UIImagePickerController*)picker;
 
