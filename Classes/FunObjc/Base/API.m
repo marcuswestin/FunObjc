@@ -45,9 +45,19 @@ static NSString* multipartAudioName = @"audio";
     return [Multipart avi:path name:multipartVideoName];
 }
 + (instancetype)avi:(NSString *)path name:(NSString *)name {
-    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.mov\"; name=\"%@\"", name, name];
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.avi\"; name=\"%@\"", name, name];
     NSData* data = [NSData dataWithContentsOfFile:path];
     return [Multipart withContent:data type:@"video/avi" disposition:disposition];
+}
+
++ (instancetype)mov:(NSString *)path {
+    return [Multipart mov:path name:multipartVideoName];
+}
+
++ (instancetype)mov:(NSString *)path name:(NSString *)name {
+    NSString* disposition = [NSString stringWithFormat:@"form-data; filename=\"%@.mov\"; name=\"%@\"", name, name];
+    NSData* data = [NSData dataWithContentsOfFile:path];
+    return [Multipart withContent:data type:@"video/quicktime" disposition:disposition];
 }
 
 + (instancetype)m4a:(NSString *)path {

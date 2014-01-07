@@ -11,15 +11,17 @@
 
 @interface Multipart : NSObject
 + (instancetype)json:(NSDictionary*)obj;
-+ (instancetype)jpg:(UIImage*)image quality:(CGFloat)quality;
-+ (instancetype)png:(UIImage*)image;
-+ (instancetype)avi:(NSString*)path;
-+ (instancetype)m4a:(NSString*)path;
 + (instancetype)json:(NSDictionary*)obj name:(NSString*)name;
++ (instancetype)jpg:(UIImage*)image quality:(CGFloat)quality;
 + (instancetype)jpg:(UIImage*)image quality:(CGFloat)quality name:(NSString*)name;
++ (instancetype)png:(UIImage*)image;
 + (instancetype)png:(UIImage*)image name:(NSString*)name;
++ (instancetype)avi:(NSString*)path;
 + (instancetype)avi:(NSString*)path name:(NSString*)name;
++ (instancetype)m4a:(NSString*)path;
 + (instancetype)m4a:(NSString*)path name:(NSString*)name;
++ (instancetype)mov:(NSString*)path;
++ (instancetype)mov:(NSString*)path name:(NSString*)name;
 + (instancetype)withContent:(NSData*)contentData type:(NSString*)contentType disposition:(NSString*)contentDisposition;
 @property NSData* contentData;
 @property NSString* contentType;
