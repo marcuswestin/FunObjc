@@ -59,6 +59,7 @@
 @implementation Camera
 
 static Camera* camera;
+static UIStatusBarStyle statusBarStyle;
 
 + (UIImagePickerController *)picker {
     return camera.picker;
@@ -79,6 +80,7 @@ static Camera* camera;
     camera.picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     camera.picker.mediaTypes = @[(__bridge NSString *) mediaType];
     camera.picker.allowsEditing = allowsEditing;
+    statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
     [viewController presentViewController:camera.picker animated:animated completion:nil];
 }
 
@@ -167,6 +169,7 @@ static Camera* camera;
     
     if (camera.modalViewController) {
         [camera.modalViewController dismissViewControllerAnimated:YES completion:nil];
+        [[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle];
     } else {
         [camera.picker.view removeAndClean];
     }
