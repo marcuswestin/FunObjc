@@ -17,18 +17,17 @@ static Video* instance;
 }
 
 - initWithUrl:(NSString*)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
-    _moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:[NSURL URLWithString:url]];
-//    _moviePlayer.controlStyle = MPMovieControlStyleFullscreen;
+    _moviePlayer = [MPMoviePlayerController new];
+    _moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
+    _moviePlayer.contentURL = [NSURL URLWithString:url];
     [_moviePlayer prepareToPlay];
-    [_moviePlayer.view setFrame:fromView.bounds];
     [fromView addSubview:_moviePlayer.view];
-    
+    _moviePlayer.view.frame = fromView.bounds;
+
     _playbackCallback = callback;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_playbackDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:_moviePlayer];
     
-//    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:YES];
     [_moviePlayer setFullscreen:YES animated:YES];
-//    [_moviePlayer play];
     return self;
 }
 
