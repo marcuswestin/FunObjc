@@ -36,7 +36,7 @@ static Video* instance;
 }
 
 - (void) _playbackDidFinish:(NSNotification*)notification {
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
+//    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     [_moviePlayer setFullscreen:NO animated:YES];
     
     int reason = [[[notification userInfo] valueForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue];
