@@ -11,10 +11,12 @@
 
 static Video* instance;
 
-@implementation Video {
-    MPMoviePlayerController* _moviePlayer;
-    StringErrorCallback _playbackCallback;
-}
+@interface Video ()
+@property MPMoviePlayerController* moviePlayer;
+@property (copy) StringErrorCallback playbackCallback;
+@end
+
+@implementation Video
 
 - initWithUrl:(NSString*)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
     _moviePlayer = [MPMoviePlayerController new];
@@ -32,16 +34,15 @@ static Video* instance;
 }
 
 + (instancetype)playVideo:(NSString *)url fromView:(UIView*)fromView callback:(StringErrorCallback)callback {
+    if (instance) {
+        [instance.moviePlayer.view removeFromSuperview];
+    }
     return instance = [[Video alloc] initWithUrl:url fromView:fromView callback:callback];
 }
 
 - (void) _playbackDidFinish:(NSNotification*)notification {
 //    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     [_moviePlayer setFullscreen:NO animated:YES];
-    after(0.35, ^{
-        [_moviePlayer.view removeFromSuperview];
-        instance = nil;
-    });
     
     int reason = [[[notification userInfo] valueForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue];
     if (reason == MPMovieFinishReasonPlaybackEnded) {
