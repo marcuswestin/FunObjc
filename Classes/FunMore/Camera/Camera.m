@@ -169,6 +169,9 @@ static UIStatusBarStyle statusBarStyle;
     
     if (camera.modalViewController) {
         [camera.modalViewController dismissViewControllerAnimated:YES completion:nil];
+        // in iOS7, I'm seeing a white (LightContent) status bar revert to black.
+        // In .plist file, "View controller-based status bar appearance" is set to NO
+        // and style is set using `[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];`
         [[UIApplication sharedApplication] setStatusBarStyle:statusBarStyle];
     } else {
         [camera.picker.view removeAndClean];
