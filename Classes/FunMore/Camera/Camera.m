@@ -80,7 +80,6 @@ static UIStatusBarStyle statusBarStyle;
     camera.picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     camera.picker.mediaTypes = @[(__bridge NSString *) mediaType];
     camera.picker.allowsEditing = allowsEditing;
-    statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
     [viewController presentViewController:camera.picker animated:animated completion:nil];
 }
 
@@ -206,6 +205,9 @@ static UIStatusBarStyle statusBarStyle;
     camera.picker.delegate = camera;
     camera.callback = callback;
     camera.modalViewController = modalViewController;
+    if (camera.modalViewController) {
+        statusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+    }
 }
 
 /* Delegate
