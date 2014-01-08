@@ -31,7 +31,7 @@ static AVAudioPlayer* _player;
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *err) {
         if (err) { return error(err); }
         
-        _session = audioCreateSession(AVAudioSessionCategoryPlayback);
+        [self setSessionToPlayback];
         _player = [[AVAudioPlayer alloc] initWithData:data error:&err];
         if (err) { return error(err); }
         
@@ -161,8 +161,12 @@ static AVAudioPlayer* _player;
     return [self playToSpeakerFromFile:path effects:NULL];
 }
 
-+ (BOOL)playToSpeakerFromFile:(NSString *)path effects:(AudioEffects*)effects {
++ (void)setSessionToPlayback {
     _session = audioCreateSession(AVAudioSessionCategoryPlayback);
+}
+
++ (BOOL)playToSpeakerFromFile:(NSString *)path effects:(AudioEffects*)effects {
+    [self setSessionToPlayback];
     
     _graph = [[AudioGraph alloc] initWithSpeaker];
     AudioGraphEnpoints* endpoints = [self addEffectChain:_graph];

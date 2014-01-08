@@ -27,4 +27,6 @@ typedef float Pitch; // pitch=[-1,1]
 + (NSTimeInterval)getDurationForFile:(NSString*)path;
 
 + (void)playToSpeakerFromUrl:(NSString*)url;
+
++ (void)setSessionToPlayback;
 @end

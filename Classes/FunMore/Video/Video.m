@@ -7,6 +7,7 @@
 //
 
 #import "Video.h"
+#import "Audio.h"
 #import <MediaPlayer/MediaPlayer.h>
 
 static Video* instance;
@@ -37,6 +38,7 @@ static Video* instance;
     if (instance) {
         [instance.moviePlayer.view removeFromSuperview];
     }
+    [Audio setSessionToPlayback];
     return instance = [[Video alloc] initWithUrl:url fromView:fromView callback:callback];
 }
 
