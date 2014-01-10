@@ -424,7 +424,7 @@ DeclareImageStyler(imageFill, image,
     return ^(UIView* superview) {
         ViewStyler* styler = self.styler;
         [styler.view appendTo:superview];
-        styler.view.width = superview.width;
+        [styler.view sizeToParent];
         return styler;
     };
 }
@@ -432,7 +432,7 @@ DeclareImageStyler(imageFill, image,
     return ^(UIView* superview) {
         ViewStyler* styler = self.styler;
         [styler.view prependTo:superview];
-        styler.view.width = superview.width;
+        [styler.view sizeToParent];
         return styler;
     };
 }
@@ -441,7 +441,7 @@ DeclareImageStyler(imageFill, image,
         ViewStyler* styler = self.styler;
         UIView* superview = siblingView.superview;
         [superview insertSubview:styler.view belowSubview:siblingView];
-        styler.view.width = superview.width;
+        [styler.view sizeToParent];
         return styler;
     };
 }
@@ -457,7 +457,9 @@ DeclareImageStyler(imageFill, image,
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];
 }
-
+- (void)sizeToParent {
+    self.width = self.superview.width;
+}
 + (StylerRect)frame {
     return self.styler.frame;
 }
