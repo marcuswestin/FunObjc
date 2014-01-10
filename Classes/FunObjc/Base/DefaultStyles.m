@@ -75,6 +75,9 @@ DeclareClassDefaultStyles(UITextField, UITextFieldStyles, uiTextFieldStyles)
     if (_borderStyle) {
         [textField setBorderStyle:_borderStyle];
     }
+    if (_keyboardAppearance) {
+        [textField setKeyboardAppearance:_keyboardAppearance];
+    }
 }
 @end
 
@@ -89,6 +92,9 @@ DeclareClassDefaultStyles(UITextView, UITextViewStyles, uiTextViewStyles)
     }
     if (_font) {
         textView.font = _font;
+    }
+    if (_keyboardAppearance) {
+        textView.keyboardAppearance = _keyboardAppearance;
     }
 }
 @end
