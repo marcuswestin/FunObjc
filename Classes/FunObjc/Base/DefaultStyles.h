@@ -47,6 +47,7 @@ static STYLES_CLASS_NAME * INSTANCE_NAME; \
 @property UIFont* font;
 @property CGFloat pad;
 @property UITextBorderStyle borderStyle;
+@property UIKeyboardAppearance keyboardAppearance;
 @end
 @interface UITextField (DefaultStyles);
 + (UITextFieldStyles*)styles;
@@ -56,6 +57,7 @@ static STYLES_CLASS_NAME * INSTANCE_NAME; \
 @interface UITextViewStyles : UIViewStyles
 @property UIColor* textColor;
 @property UIFont* font;
+@property UIKeyboardAppearance keyboardAppearance;
 @end
 @interface UITextView (DefaultStyles)
 + (UITextViewStyles*)styles;
