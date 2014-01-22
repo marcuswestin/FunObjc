@@ -10,10 +10,15 @@
 
 @interface Files : NSObject
 
-+ (id)readJsonDocument:(NSString*)filename;
-+ (id)readJsonDocument:(NSString*)filename property:(NSString*)property;
-+ (void)writeJsonDocument:(NSString*)filename data:(id)data;
-+ (void)writeJsonDocument:(NSString*)filename property:(NSString*)property data:(id)data;
++ (NSDictionary*)readDocumentJson:(NSString*)filename;
++ (id)readDocumentJson:(NSString*)filename property:(NSString*)property;
++ (void)writeDocumentJson:(NSString*)filename object:(NSDictionary*)object;
++ (void)writeDocumentJson:(NSString*)filename property:(NSString*)property data:(id)data;
++ (id)readCacheJson:(NSString*)filename;
++ (id)readCacheJson:(NSString*)filename property:(NSString*)property;
++ (void)writeCacheJson:(NSString*)filename object:(NSDictionary*)object;
++ (void)writeCacheJson:(NSString*)filename property:(NSString*)property data:(id)data;
+
 + (NSData*)readDocument:(NSString*)filename;
 + (NSData*)readCache:(NSString*)filename;
 + (BOOL)writeDocument:(NSString*)filename data:(NSData*)data;
