@@ -12,7 +12,7 @@
 ////////////////
 // Data types //
 ////////////////
-typedef NSUInteger ListIndex;
+typedef NSInteger ListIndex;
 typedef id ListGroupId;
 
 enum ListViewLocation { TOP=1, BOTTOM=2 };
