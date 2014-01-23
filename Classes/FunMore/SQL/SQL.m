@@ -66,7 +66,7 @@ static NSMutableDictionary* columnsCache;
 - (id)initWithName:(NSString*)name {
     if (self = [super init]) {
         _name = name;
-        NSDictionary* migrationInfo = [Files readJsonDocument:[self migrationDoc]];
+        NSDictionary* migrationInfo = [Files readDocumentJson:[self migrationDoc]];
         _migrationIndex = 0;
         _newMigrations = [NSMutableArray array];
         if (migrationInfo) {
@@ -114,7 +114,7 @@ static NSMutableDictionary* columnsCache;
         [_completedMigrations addObject:migration[@"name"]];
     }];
     
-    [Files writeJsonDocument:[self migrationDoc] data:@{@"completedMigrations": _completedMigrations}];
+    [Files writeDocumentJson:[self migrationDoc] object:@{@"completedMigrations": _completedMigrations}];
 }
 @end
 
