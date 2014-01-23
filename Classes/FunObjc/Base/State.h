@@ -9,6 +9,10 @@
 #import <Foundation/Foundation.h>
 #import "FunBase.h"
 
+@protocol InflateDeflateState <NSObject>
++ (NSDictionary*)inflateDeflateMap;
+@end
+
 @interface State : NSObject <NSCoding>
 + (instancetype) withDict:(NSDictionary*)dict;
 + (instancetype) fromDict:(NSDictionary*)dict;
