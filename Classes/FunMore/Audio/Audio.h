@@ -11,6 +11,14 @@
 #import "FunObjc.h"
 
 typedef float Pitch; // pitch=[-1,1]
+typedef void(^AudioPlaybackProgressCallback)(BOOL stopped, float progress);
+
+@interface AudioPlayer : AVAudioPlayer <AVAudioPlayerDelegate>
+- (void)setProgress:(float)progress;
+- (void)setPlaybackProgressCallback:(AudioPlaybackProgressCallback)progressCallback;
+- (void)setPlaybackCompleteCallback:(Block)completeCallback;
+@end
+typedef void(^AudioPlayerCallback)(AudioPlayer* player);
 
 @interface AudioEffects : NSObject
 @property Pitch pitch;
@@ -26,7 +34,7 @@ typedef float Pitch; // pitch=[-1,1]
 + (float)readFromFile:(NSString*)fromPath toFile:(NSString*)toPath effects:(AudioEffects*)effects;
 + (NSTimeInterval)getDurationForFile:(NSString*)path;
 
-+ (void)playToSpeakerFromUrl:(NSString*)url;
++ (void)loadUrl:(NSString *)url callback:(AudioPlayerCallback)callback;
 
 + (void)setSessionToPlayback;
 @end

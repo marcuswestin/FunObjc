@@ -267,6 +267,13 @@ static CGFloat START_Y = 99999.0f;
     [_scrollView appendTo:_listView];
     
     _stickyGroups = [NSMutableArray array];
+    
+    if (!self.loadingMessage) {
+        self.loadingMessage = @"Loading";
+    }
+    if (!self.emptyMessage) {
+        self.emptyMessage = @"Nothing here";
+    }
 }
 
 - (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
@@ -374,7 +381,7 @@ static BOOL insetsForAllSet;
     if ([_delegate respondsToSelector:@selector(listRenderEmptyInView:isFirst:)]) {
         [_delegate listRenderEmptyInView:_emptyView isFirst:!_hasCalledEmpty];
     } else {
-        [UILabel.appendTo(_emptyView).text(_hasCalledEmpty ? @"Nothing here" : @"Loading").size.center render];
+        [UILabel.appendTo(_emptyView).text(_hasCalledEmpty ? self.emptyMessage : self.loadingMessage).size.center render];
     }
     _hasCalledEmpty = YES;
 }

@@ -10,7 +10,7 @@
 
 static AVAudioSession* _session;
 static AudioGraph* _graph;
-static AVAudioPlayer* _player;
+static AudioPlaybackProgressCallback _progressCallback;
 
 @implementation AudioEffects
 + (instancetype)withPitch:(Pitch)pitch {
@@ -20,23 +20,74 @@ static AVAudioPlayer* _player;
 }
 @end
 
+@implementation AudioPlayer {
+    AudioPlaybackProgressCallback _progressCallback;
+    Block _completeCallback;
+}
+
+- (BOOL)play {
+    [self _loopProgressCallback];
+    return [super play];
+}
+
+- (void)setProgress:(float)progress {
+    self.currentTime = self.duration * CLIP(progress, 0.0, 1.0);
+}
+
+
+- (void)setPlaybackProgressCallback:(AudioPlaybackProgressCallback)progressCallback {
+    _progressCallback = progressCallback;
+}
+
+- (void)setPlaybackCompleteCallback:(Block)completeCallback {
+    _completeCallback = completeCallback;
+}
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    if (!_completeCallback) { return; }
+    _completeCallback();
+}
+
+- (void)_loopProgressCallback {
+    every(0.01, ^(BOOL *stop) {
+        if (!_progressCallback) { return; }
+        float progress = self.currentTime / self.duration;
+        if (self && self.playing) {
+            _progressCallback(NO, progress);
+        } else {
+            _progressCallback(YES, progress);
+            *stop = YES;
+        }
+    });
+}
+@end
+
 @implementation Audio
 
-+ (void)playToSpeakerFromUrl:(NSString *)url {
-    if (_player) {
-        [_player stop];
-        _player = nil;
++ (void)loadUrl:(NSString *)url callback:(AudioPlayerCallback)callback {
+    NSString* cacheName = [Files sanitizeName:url];
+    NSData* data = [Files readCache:cacheName];
+    if (data) {
+        [self _loadData:data callback:callback];
+    } else {
+        NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *err) {
+            if (err) { return error(err); }
+            [Files writeCache:cacheName data:data];
+            [self _loadData:data callback:callback];
+        }];
     }
-    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue new] completionHandler:^(NSURLResponse *response, NSData *data, NSError *err) {
-        if (err) { return error(err); }
-        
-        [self setSessionToPlayback];
-        _player = [[AVAudioPlayer alloc] initWithData:data error:&err];
-        if (err) { return error(err); }
-        
-        [_player play];
-    }];
+}
+
++ (void)_loadData:(NSData*)data callback:(AudioPlayerCallback)callback {
+    [self setSessionToPlayback];
+    NSError* err;
+    AudioPlayer* player = [[AudioPlayer alloc] initWithData:data error:&err];
+    if (err) {
+        return error(err);
+    }
+    player.delegate = player;
+    callback(player);
 }
 
 /*

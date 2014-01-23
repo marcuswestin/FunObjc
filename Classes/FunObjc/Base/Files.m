@@ -51,21 +51,39 @@ static BOOL isReset;
     _funDocumentsDirectory = [_appDocumentsDirectory stringByAppendingPathComponent:funRootName];
     _funCachesDirectory = [_appCachesDirectory stringByAppendingPathComponent:funRootName];
 }
-+ (id)readJsonDocument:(NSString *)filename {
+
++ (NSDictionary*)readDocumentJson:(NSString *)filename {
     return [JSON parseData:[Files readDocument:filename]];
 }
-+ (id)readJsonDocument:(NSString *)filename property:(NSString *)property {
-    return [Files readJsonDocument:filename][property];
++ (id)readDocumentJson:(NSString *)filename property:(NSString *)property {
+    return [Files readDocumentJson:filename][property];
 }
-+ (void)writeJsonDocument:(NSString *)filename data:(id)data {
-    [Files writeDocument:filename data:[JSON serialize:data]];
++ (void)writeDocumentJson:(NSString *)filename object:(NSDictionary *)object {
+    [Files writeDocument:filename data:[JSON serialize:object]];
 }
-+ (void)writeJsonDocument:(NSString *)filename property:(NSString *)property data:(id)data {
-    id readDoc = [Files readJsonDocument:filename];
-    NSMutableDictionary* doc = [(readDoc ? readDoc : @{}) mutableCopy];
-    doc[property] = data;
-    [Files writeJsonDocument:filename data:doc];
++ (void)writeDocumentJson:(NSString *)filename property:(NSString *)property data:(id)data {
+    id readObj = [Files readDocumentJson:filename];
+    NSMutableDictionary* obj = [(readObj ? readObj : @{}) mutableCopy];
+    obj[property] = data;
+    [Files writeDocumentJson:filename object:obj];
 }
+
++ (id)readCacheJson:(NSString *)filename {
+    return [JSON parseData:[Files readCache:filename]];
+}
++ (NSDictionary*)readCacheJson:(NSString *)filename property:(NSString *)property {
+    return [Files readCacheJson:filename][property];
+}
++ (void)writeCacheJson:(NSString *)filename object:(NSDictionary*)object {
+    [Files writeCache:filename data:[JSON serialize:object]];
+}
++ (void)writeCacheJson:(NSString *)filename property:(NSString *)property data:(id)data {
+    NSDictionary* readObj = [Files readCacheJson:filename];
+    NSMutableDictionary* obj = [(readObj ? readObj : @{}) mutableCopy];
+    obj[property] = data;
+    [Files writeCacheJson:filename object:obj];
+}
+
 + (NSData*)readDocument:(NSString*)name {
     return [NSData dataWithContentsOfFile:[self documentPath:name]];
 }
@@ -121,16 +139,16 @@ static NSCharacterSet* illegalFileNameCharacters;
         [Files removeDocument:name];
         return;
     }
-    [Files writeJsonDocument:name data:@{ @"Number":number }];
+    [Files writeDocumentJson:name object:@{ @"Number":number }];
 }
 + (NSNumber *)readNumber:(NSString *)name {
-    NSDictionary* dict = [Files readJsonDocument:name];
+    NSDictionary* dict = [Files readDocumentJson:name];
     return (dict ? dict[@"Number"] : nil);
 }
 + (void)writeStringDocument:(NSString *)string name:(NSString *)name {
-    [Files writeJsonDocument:name data:string];
+    [Files writeDocument:name data:string.toData];
 }
 + (NSString *)readStringDocument:(NSString *)name {
-    return (NSString*)[Files readJsonDocument:name];
+    return [Files readDocument:name].toString;
 }
 @end

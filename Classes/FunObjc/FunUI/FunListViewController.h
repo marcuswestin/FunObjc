@@ -12,7 +12,7 @@
 ////////////////
 // Data types //
 ////////////////
-typedef NSUInteger ListIndex;
+typedef NSInteger ListIndex;
 typedef id ListGroupId;
 
 enum ListViewLocation { TOP=1, BOTTOM=2 };
@@ -66,6 +66,8 @@ typedef enum ListViewDirection ListViewDirection;
 @property (readonly) ListIndex bottomListIndex;
 @property (readonly) ListGroupId topGroupId;
 @property (readonly) ListGroupId bottomGroupId;
+@property NSString* loadingMessage;
+@property NSString* emptyMessage;
 + (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
