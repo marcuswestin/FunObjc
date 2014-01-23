@@ -23,7 +23,9 @@
 - (NSError*)update:(NSString*)sql args:(NSArray*)args;
 - (NSError*)updateOne:(NSString*)sql args:(NSArray*)args;
 - (NSError*)insert:(NSString*)sql args:(NSArray*)args;
+- (NSError*)insertInto:(NSString*)table item:(NSDictionary*)item;
 - (NSError*)insertMultiple:(NSString*)sql argsList:(NSArray*)argsList;
+- (NSError*)insertOrReplaceInto:(NSString*)table item:(NSDictionary*)item;
 - (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items;
 - (NSError*)schema:(NSString*)sql;
 @end

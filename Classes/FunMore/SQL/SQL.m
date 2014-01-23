@@ -11,6 +11,47 @@
 #import "FMDatabaseAdditions.h"
 #import "Files.h"
 
+@interface TableInfo : NSObject
+@property NSString* insertOrReplaceSql;
+@property NSString* insertSql;
+- (NSArray*)values:(NSDictionary*)item;
+@end
+
+@implementation TableInfo {
+    NSArray* _columns;
+    NSMutableArray* _values;
+}
+- (id)initWithTable:(NSString*)table db:(FMDatabase*)db {
+    if (self = [super init]) {
+        NSMutableArray* columns = [NSMutableArray array];
+        FMResultSet* rs = [db getTableSchema:table];
+        if (!rs) { return nil; }
+        while ([rs next]) {
+            [columns addObject:[rs stringForColumn:@"name"]];
+        }
+        [rs close];
+        
+        NSString* questionMarks = [@"?" append:[NSString repeat:@",?" times:columns.count-1]];
+        NSString* columnNames = [columns map:^id(id name, NSUInteger i) { return name; }].joinedByCommaSpace;
+        
+        _columns = columns;
+        _insertOrReplaceSql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@)", table, columnNames, questionMarks];
+        _insertSql = [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", table, columnNames, questionMarks];
+        _values = [NSMutableArray arrayWithCapacity:columns.count];
+    }
+    return self;
+}
+
+- (NSArray *)values:(NSDictionary *)item {
+    if (!item || [item isNull]) { return nil; }
+    [_values removeAllObjects];
+    for (NSString* column in _columns) {
+        [_values addObject:item[column] ? item[column] : NSNull.null];
+    }
+    return _values;
+}
+@end
+
 @implementation SQLRes
 @end
 
@@ -190,22 +231,28 @@ static NSMutableDictionary* columns;
 
 - (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items {
     if (!items || [items isNull] || items.count == 0) { return nil; }
-    
-    NSArray* columns = [self _columns:table];
-    NSString* questionMarks = [@"?" append:[NSString repeat:@",?" times:columns.count-1]];
-    NSString* columnNames = [columns map:^id(id name, NSUInteger i) { return name; }].joinedByCommaSpace;
-    NSString* sql = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) VALUES (%@)", table, columnNames, questionMarks];
-
-    NSMutableArray* values = [NSMutableArray arrayWithCapacity:columns.count];
-    for (id item in items) {
-        [values removeAllObjects];
-        for (NSString* column in columns) {
-            [values addObject:item[column] ? item[column] : NSNull.null];
-        }
-
-        BOOL success = [_db executeUpdate:sql withArgumentsInArray:values];
+    TableInfo* tableInfo = [self tableInfo:table];
+    for (NSDictionary* item in items) {
+        BOOL success = [_db executeUpdate:tableInfo.insertOrReplaceSql withArgumentsInArray:[tableInfo values:item]];
         if (!success) { return _db.lastError; }
     }
+    return nil;
+}
+
+- (NSError*)insertOrReplaceInto:(NSString*)table item:(NSDictionary*)item {
+    TableInfo* tableInfo = [self tableInfo:table];
+    return [self _insert:table item:item sql:tableInfo.insertOrReplaceSql values:[tableInfo values:item]];
+}
+
+-(NSError *)insertInto:(NSString *)table item:(NSDictionary *)item {
+    TableInfo* tableInfo = [self tableInfo:table];
+    return [self _insert:table item:item sql:tableInfo.insertSql values:[tableInfo values:item]];
+}
+
+- (NSError*)_insert:(NSString*)table item:(NSDictionary*)item sql:(NSString*)sql values:(NSArray*)values {
+    if (!values) { return nil; }
+    BOOL success = [_db executeUpdate:sql withArgumentsInArray:values];
+    if (!success) { return _db.lastError; }
     return nil;
 }
 
@@ -234,16 +281,11 @@ static NSMutableDictionary* columns;
     return nil;
 }
 
-- (NSArray*)_columns:(NSString*)table {
-    if (columnsCache[table]) { return columnsCache[table]; }
-    NSMutableArray* columns = [NSMutableArray array];
-    FMResultSet* rs = [_db getTableSchema:table];
-    if (!rs) { return nil; }
-    while ([rs next]) {
-        [columns addObject:[rs stringForColumn:@"name"]];
+- (TableInfo*)tableInfo:(NSString*)table {
+    if (columnsCache[table]) {
+        return columnsCache[table];
     }
-    [rs close];
-    return columnsCache[table] = columns;
+    return columnsCache[table] = [[TableInfo alloc] initWithTable:table db:_db];
 }
 
 @end
