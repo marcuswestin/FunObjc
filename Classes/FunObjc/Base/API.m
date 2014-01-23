@@ -95,7 +95,7 @@ static NSString* uuidHeader;
     multipartAudioName = audioName;
 }
 
-+ (void)load {
++ (void)initialize {
     baseHeaders = [NSMutableDictionary dictionary];
     errorChecks = [NSMutableArray array];
     multipartBoundary = @"_____FUNOBJ_BNDRY__";
