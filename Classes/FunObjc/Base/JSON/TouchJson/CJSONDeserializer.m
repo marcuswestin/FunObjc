@@ -401,7 +401,7 @@ typedef struct
             break;
             }
 
-        if ([self _scanJSONStringConstant:&theKey key:YES error:outError] == NO)
+        if ([self _scanJSONKeyConstant:&theKey key:YES error:outError] == NO)
             {
             _current = _start + theScanLocation;
             if (outError)
@@ -602,6 +602,43 @@ typedef struct
     return (YES);
     }
 
+- (BOOL)_scanJSONKeyConstant:(NSString **)outStringConstant key:(BOOL)inKey error:(NSError **)outError
+{
+#pragma unused (inKey)
+    
+    char curr = *self->_current;
+    if (curr == '"') {
+        return [self _scanJSONStringConstant:outStringConstant key:inKey error:outError];
+    }
+    
+    if (!isalpha(curr)) {
+        if (outError) {
+            *outError = [self _error:kJSONDeserializerErrorCode_DictionaryKeyScanFailed description:@"Non-string object key did not start with an alpha character"];
+        }
+    }
+    
+    if (_scratchData == NULL)
+    {
+        _scratchData = [NSMutableData dataWithCapacity:8 * 1024];
+    }
+    else
+    {
+        [_scratchData setLength:0];
+    }
+    
+    PtrRange thePtrRange;
+    thePtrRange.location = _current;
+    thePtrRange.length = 0;
+    while (isalnum(curr)) {
+        thePtrRange.length += 1;
+        ++self->_current;
+        curr = *self->_current;
+    }
+    [_scratchData appendBytes:thePtrRange.location length:thePtrRange.length];
+    
+    return [self _stringFromScratchData:outStringConstant error:outError];
+}
+
 - (BOOL)_scanJSONStringConstant:(NSString **)outStringConstant key:(BOOL)inKey error:(NSError **)outError
     {
     #pragma unused (inKey)
@@ -703,6 +740,10 @@ typedef struct
             }
         }
 
+    return [self _stringFromScratchData:outStringConstant error:outError];
+    }
+
+- (BOOL)_stringFromScratchData:(NSString **)outStringConstant error:(NSError **)outError {
     NSString *theString = NULL;
     if ([_scratchData length] < 80)
         {
