@@ -10,10 +10,10 @@
 #import "NSObject+Fun.h"
 #import "NSString+Fun.h"
 #import "State.h"
+#import "CJSONSerializer.h"
+#import "CJSONDeserializer.h"
 
 @implementation JSON
-
-static NSJSONWritingOptions jsonOpts = 0;
 
 + (NSData*)serialize:(id)obj {
     NSError* err;
@@ -25,9 +25,10 @@ static NSJSONWritingOptions jsonOpts = 0;
         [exception raise];
         return nil;
     }
+    
     NSData* data = ([obj isNull]
                     ? [NSData data]
-                    : [NSJSONSerialization dataWithJSONObject:obj options:jsonOpts error:&err]);
+                    : [[CJSONSerializer serializer] serializeObject:obj error:&err]);
     if (err) {
         NSLog(@"Error: %@", err);
         return nil;
@@ -40,15 +41,18 @@ static NSJSONWritingOptions jsonOpts = 0;
 }
 
 + (id)parseData:(NSData *)data {
-    if (!data) { return nil; }
     NSError* err;
-    id result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&err];
+    id result = [JSON parseData:data error:&err];
     if (err) {
-        NSLog(@"Error: %@", err);
-        return nil;
+        NSLog(@"JSON parseData: %@", err);
     }
     return result;
+}
 
++ (id)parseData:(NSData *)data error:(NSError *__autoreleasing *)error {
+    CJSONDeserializer* deserializer = [CJSONDeserializer deserializer];
+//    deserializer.nullObject = NULL; // "If the JSON has null values they get represented as NSNull. This line lets you avoids NSNull values.
+    return [deserializer deserialize:data error:error];
 }
 
 + (id)parseString:(NSString *)string {
