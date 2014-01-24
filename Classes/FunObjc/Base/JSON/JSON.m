@@ -15,6 +15,11 @@
 
 @implementation JSON
 
+static BOOL useUnquotedKeys = NO;
++ (void)useUnquotedKeys {
+    useUnquotedKeys = YES;
+}
+
 + (NSData*)serialize:(id)obj {
     NSError* err;
     @try {
@@ -26,9 +31,17 @@
         return nil;
     }
     
-    NSData* data = ([obj isNull]
-                    ? [NSData data]
-                    : [[CJSONSerializer serializer] serializeObject:obj error:&err]);
+    NSData* data;
+    if ([obj isNull]) {
+        data = [NSData data];
+    } else {
+        CJSONSerializer* serializer = [CJSONSerializer serializer];
+        if (useUnquotedKeys) {
+            serializer.options = kJSONSerializationOptions_UnquotedKeys;
+        }
+        data = [serializer serializeObject:obj error:&err];
+    }
+
     if (err) {
         NSLog(@"Error: %@", err);
         return nil;
