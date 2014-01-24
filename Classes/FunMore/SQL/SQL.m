@@ -42,11 +42,14 @@
     return self;
 }
 
-- (NSArray *)values:(NSDictionary *)item {
+- (NSArray *)values:(id)item {
     if (!item || [item isNull]) { return nil; }
     [_values removeAllObjects];
+    BOOL useObjectForKey = ([item isKindOfClass:[NSDictionary class]]);
     for (NSString* column in _columns) {
-        [_values addObject:item[column] ? item[column] : NSNull.null];
+        id obj = (useObjectForKey ? [item objectForKey:column] : [item valueForKey:column]);
+        if (!obj) { obj = NSNull.null; }
+        [_values addObject:obj];
     }
     return _values;
 }
@@ -232,19 +235,19 @@ static NSMutableDictionary* columns;
 - (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items {
     if (!items || [items isNull] || items.count == 0) { return nil; }
     TableInfo* tableInfo = [self tableInfo:table];
-    for (NSDictionary* item in items) {
+    for (id item in items) {
         BOOL success = [_db executeUpdate:tableInfo.insertOrReplaceSql withArgumentsInArray:[tableInfo values:item]];
         if (!success) { return _db.lastError; }
     }
     return nil;
 }
 
-- (NSError*)insertOrReplaceInto:(NSString*)table item:(NSDictionary*)item {
+- (NSError*)insertOrReplaceInto:(NSString*)table item:(id)item {
     TableInfo* tableInfo = [self tableInfo:table];
     return [self _insert:table item:item sql:tableInfo.insertOrReplaceSql values:[tableInfo values:item]];
 }
 
--(NSError *)insertInto:(NSString *)table item:(NSDictionary *)item {
+-(NSError *)insertInto:(NSString *)table item:(id)item {
     TableInfo* tableInfo = [self tableInfo:table];
     return [self _insert:table item:item sql:tableInfo.insertSql values:[tableInfo values:item]];
 }
