@@ -9,13 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "FunBase.h"
 
-@protocol InflateDeflateState <NSObject>
+@protocol StateInflateDeflate <NSObject>
 + (NSDictionary*)inflateDeflateMap;
 @end
 
 @interface State : NSObject <NSCoding>
 + (instancetype) withDict:(NSDictionary*)dict;
 + (instancetype) fromDict:(NSDictionary*)dict;
++ (instancetype) fromJson:(NSString*)json;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
 - (NSDictionary*)toDictionary;
 - (void)mergeDict:(NSDictionary*)dict;

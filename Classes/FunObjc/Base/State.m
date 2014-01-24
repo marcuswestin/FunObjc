@@ -21,6 +21,9 @@
         return instance;
     }
 }
++ (instancetype)fromJson:(NSString *)json {
+    return [[self class] fromDict:[JSON parseString:json]];
+}
 
 + (instancetype)withDict:(NSDictionary *)dict {
     return [[self class] fromDict:dict];
@@ -148,7 +151,7 @@ static NSMutableDictionary* inflateMaps;
     inflateMaps = [NSMutableDictionary dictionary];
 }
 - (NSDictionary*)serializeMap {
-    if (![self conformsToProtocol:@protocol(InflateDeflateState)]) {
+    if (![self conformsToProtocol:@protocol(StateInflateDeflate)]) {
         return nil;
     }
     if (![builtMaps containsObject:[self class]]) {
@@ -157,7 +160,7 @@ static NSMutableDictionary* inflateMaps;
     return deflateMaps[[self class]];
 }
 - (NSDictionary*)deserializeMap {
-    if (![self conformsToProtocol:@protocol(InflateDeflateState)]) {
+    if (![self conformsToProtocol:@protocol(StateInflateDeflate)]) {
         return nil;
     }
     if (![builtMaps containsObject:[self class]]) {
