@@ -210,6 +210,30 @@ static NSData *kTrue = NULL;
     return(theResult);
     }
 
+- (NSData *)serializeKey:(NSString *)inString error:(NSError **)outError {
+    if (!(self.options & kJSONSerializationOptions_UnquotedKeys)) {
+        return [self serializeString:inString error:outError];
+    }
+    
+    const char *str = [inString UTF8String];
+    if (!isalpha(*str)) {
+        NSDictionary *theUserInfo = @{ NSLocalizedDescriptionKey:@"Keys must start with an alpha character when using kJSONSerializationOptions_UnquotedKeys" };
+        *outError = [NSError errorWithDomain:kJSONSerializerErrorDomain code:CJSONSerializerErrorCouldNotSerializeObject userInfo:theUserInfo];
+        return nil;
+    }
+    
+    while (str && *str != '\0') {
+        if (!isalnum(*str)) {
+            NSDictionary *theUserInfo = @{ NSLocalizedDescriptionKey:@"Keys must be alpha-numeric when using kJSONSerializationOptions_UnquotedKeys" };
+            *outError = [NSError errorWithDomain:kJSONSerializerErrorDomain code:CJSONSerializerErrorCouldNotSerializeObject userInfo:theUserInfo];
+            return nil;
+        }
+        ++str;
+    }
+    
+    return [inString dataUsingEncoding:NSUTF8StringEncoding];
+}
+
 - (NSData *)serializeString:(NSString *)inString error:(NSError **)outError
     {
     #pragma unused (outError)
@@ -335,7 +359,7 @@ static NSData *kTrue = NULL;
         {
         id theValue = [inDictionary objectForKey:theKey];
         
-        NSData *theKeyData = [self serializeString:theKey error:outError];
+        NSData *theKeyData = [self serializeKey:theKey error:outError];
         if (theKeyData == NULL)
             {
             return(NULL);

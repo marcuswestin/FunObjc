@@ -31,6 +31,7 @@
 
 enum {
     kJSONSerializationOptions_EncodeSlashes = 0x01,
+    kJSONSerializationOptions_UnquotedKeys = 0x02,
 };
 typedef NSUInteger EJSONSerializationOptions;
 
