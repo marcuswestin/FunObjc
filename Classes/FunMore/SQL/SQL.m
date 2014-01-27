@@ -55,9 +55,6 @@
 }
 @end
 
-@implementation SQLRes
-@end
-
 static NSMutableDictionary* columnsCache;
 
 @implementation SQLMigrations {
@@ -151,18 +148,18 @@ static FMDatabaseQueue* queue;
     }];
 }
 
-+ (SQLRes *)select:(NSString *)sql args:(NSArray *)args {
-    __block SQLRes* result;
++ (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    __block NSArray* result;
     [SQL autocommit:^(SQLConn *conn) {
-        result = [conn select:sql args:args];
+        result = [conn select:sql args:args error:outError];
     }];
     return result;
 }
 
-+ (SQLRes *)selectOne:(NSString *)sql args:(NSArray *)args {
-    __block SQLRes* result;
++ (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
-        result = [conn selectOne:sql args:args];
+        result = [conn selectOne:sql args:args error:outError];
     }];
     return result;
 }
@@ -183,13 +180,11 @@ static NSMutableDictionary* columns;
 
 @implementation SQLConn
 
-- (SQLRes*)select:(NSString *)sql args:(NSArray *)args {
-    SQLRes* result = [[SQLRes alloc] init];
-
+- (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args];
     if (!resultSet) {
-        result.error = _db.lastError;
-        return result;
+        if (error) { *outError = _db.lastError; }
+        return nil;
     }
     
     NSMutableArray* rows = [NSMutableArray array];
@@ -197,91 +192,102 @@ static NSMutableDictionary* columns;
         [rows addObject:[resultSet resultDictionary]];
     }
     
-    result.rows = rows;
-    if (rows.count == 1) {
-        result.row = rows[0];
+    return rows;
+}
+
+- (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    NSArray* rows = [self select:sql args:args error:outError];
+    
+    if (*outError) {
+        return nil;
     }
     
-    return result;
-}
-
-- (SQLRes*)selectOne:(NSString *)sql args:(NSArray *)args {
-    SQLRes* result = [self select:sql args:args];
-    
-    if (result.error) { return result; }
-    
-    if (result.rows.count > 1) {
-        result.error = makeError(@"Bad number of rows");
-        return result;
+    if (rows.count > 1) {
+        *outError = makeError(@"Bad number of rows");
+        return nil;
     }
     
-    return result;
+    return (rows.count == 1 ? rows[0] : nil);
 }
 
-- (NSError *)insert:(NSString *)sql args:(NSArray *)args {
-    BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
-    if (!success) { return _db.lastError; }
-    return nil;
-}
-
-- (NSError *)insertMultiple:(NSString *)sql argsList:(NSArray *)argsList {
+- (void)insertMultiple:(NSString *)sql argsList:(NSArray *)argsList error:(NSError *__autoreleasing *)outError {
     for (NSArray* args in argsList) {
         BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
-        if (!success) { return _db.lastError; }
+        if (!success) {
+            *outError = _db.lastError;
+            return;
+        }
     }
-    return nil;
 }
 
-- (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items {
-    if (!items || [items isNull] || items.count == 0) { return nil; }
+- (void)insertOrReplaceMultipleInto:(NSString *)table items:(NSArray *)items error:(NSError *__autoreleasing *)outError {
+    if (!items || [items isNull] || items.count == 0) {
+        return;
+    }
     TableInfo* tableInfo = [self tableInfo:table];
     for (id item in items) {
         BOOL success = [_db executeUpdate:tableInfo.insertOrReplaceSql withArgumentsInArray:[tableInfo values:item]];
-        if (!success) { return _db.lastError; }
+        if (!success) {
+            *outError = _db.lastError;
+            return;
+        }
     }
-    return nil;
 }
 
-- (NSError*)insertOrReplaceInto:(NSString*)table item:(id)item {
+- (void)insertOrReplaceInto:(NSString *)table item:(id)item error:(NSError *__autoreleasing *)outError {
     TableInfo* tableInfo = [self tableInfo:table];
-    return [self _insert:table item:item sql:tableInfo.insertOrReplaceSql values:[tableInfo values:item]];
+    [self _insert:table item:item sql:tableInfo.insertOrReplaceSql values:[tableInfo values:item] error:outError];
 }
 
--(NSError *)insertInto:(NSString *)table item:(id)item {
+-(void)insertInto:(NSString *)table item:(id)item error:(NSError *__autoreleasing *)outError {
     TableInfo* tableInfo = [self tableInfo:table];
-    return [self _insert:table item:item sql:tableInfo.insertSql values:[tableInfo values:item]];
+    [self _insert:table item:item sql:tableInfo.insertSql values:[tableInfo values:item] error:outError];
 }
 
-- (NSError*)_insert:(NSString*)table item:(NSDictionary*)item sql:(NSString*)sql values:(NSArray*)values {
-    if (!values) { return nil; }
+- (void)_insert:(NSString*)table item:(NSDictionary*)item sql:(NSString*)sql values:(NSArray*)values error:(NSError *__autoreleasing *)outError {
+    if (!values) {
+        return;
+    }
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:values];
-    if (!success) { return _db.lastError; }
-    return nil;
+    if (!success) {
+        *outError = _db.lastError;
+        return;
+    }
 }
 
-- (NSError *)schema:(NSString *)sql {
+- (void)updateSchema:(NSString *)sql error:(NSError *__autoreleasing *)outError {
     NSArray* statements = [sql split:@";"];
     if (!statements.count) {
-        return makeError(@"Empty schema");
+        *outError = makeError(@"Empty schema");
+        return;
     }
     for (NSString* statement in statements) {
         if (statement.trim.isEmpty) { continue; }
-        NSError* err = [self update:statement args:nil];
-        if (err) { return err; }
+        [self execute:statement args:nil error:outError];
+        if (*outError) {
+            return;
+        }
     }
-    return nil;
 }
 
-- (NSError *)update:(NSString *)sql args:(NSArray *)args {
+- (void)execute:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
-    return (success ? nil : _db.lastError);
+    if (!success) {
+        *outError = _db.lastError;
+        return;
+    }
 }
 
-- (NSError *)updateOne:(NSString *)sql args:(NSArray *)args {
+- (void)updateOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
-    if (!success) { return _db.lastError; }
-    if (_db.changes > 1) { return makeError(@"updateOne affected multipe rows"); }
-    return nil;
+    if (!success) {
+        *outError = _db.lastError;
+        return;
+    }
+    if (_db.changes > 1) {
+        *outError = makeError(@"updateOne affected multipe rows");
+        return;
+    }
 }
 
 - (TableInfo*)tableInfo:(NSString*)table {

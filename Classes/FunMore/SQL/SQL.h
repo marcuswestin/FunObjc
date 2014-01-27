@@ -10,24 +10,17 @@
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 
-@interface SQLRes : NSObject
-@property NSError* error;
-@property NSArray* rows;
-@property NSDictionary* row;
-@end
-
 @interface SQLConn : NSObject
 @property FMDatabase* db;
-- (SQLRes*)select:(NSString *)sql args:(NSArray *)args;
-- (SQLRes*)selectOne:(NSString *)sql args:(NSArray *)args;
-- (NSError*)update:(NSString*)sql args:(NSArray*)args;
-- (NSError*)updateOne:(NSString*)sql args:(NSArray*)args;
-- (NSError*)insert:(NSString*)sql args:(NSArray*)args;
-- (NSError*)insertInto:(NSString*)table item:(id)item;
-- (NSError*)insertMultiple:(NSString*)sql argsList:(NSArray*)argsList;
-- (NSError*)insertOrReplaceInto:(NSString*)table item:(id)item;
-- (NSError*)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items;
-- (NSError*)schema:(NSString*)sql;
+- (NSArray*)select:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
+- (NSDictionary*)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
+- (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
+- (void)updateOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
+- (void)insertInto:(NSString*)table item:(id)item error:(NSError**)outError;
+- (void)insertMultiple:(NSString*)sql argsList:(NSArray*)argsList error:(NSError**)outError;
+- (void)insertOrReplaceInto:(NSString*)table item:(id)item error:(NSError**)outError;
+- (void)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items error:(NSError**)outError;
+- (void)updateSchema:(NSString*)sql error:(NSError**)outError;
 @end
 
 typedef NSError* (^MigrationBlock)(SQLConn* conn);
@@ -46,8 +39,8 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 @interface SQL : NSObject
 + (void)autocommit:(SQLAutocommitBlock)block;
 + (void)transact:(SQLTransactionBlock)block;
-+ (SQLRes*)select:(NSString*)sql args:(NSArray*)args;
-+ (SQLRes*)selectOne:(NSString*)sql args:(NSArray*)args;
++ (NSArray*)select:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
++ (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)openDocument:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (NSString*) joinSelect:(NSDictionary*)tableColumns;
 @end
