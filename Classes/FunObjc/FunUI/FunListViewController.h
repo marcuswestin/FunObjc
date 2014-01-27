@@ -79,4 +79,5 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;
 - (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
+- (UIView*) makeTopViewWithHeight:(CGFloat)height;
 @end

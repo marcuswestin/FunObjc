@@ -24,6 +24,7 @@
 @property ListIndex index;
 @property BOOL isGroupHead;
 @property BOOL isGroupFoot;
+@property BOOL isEndView;
 - (BOOL)isGroupView;
 - (BOOL)isItemView;
 - (UIView*)content;
@@ -49,11 +50,16 @@
     view.isGroupFoot = YES;
     return view;
 }
++ (ListContentView *)endViewWithFrame:(CGRect)frame {
+    ListContentView* view = [[ListContentView alloc] initWithFrame:frame];
+    view.isEndView = YES;
+    return view;
+}
 - (BOOL)isGroupView {
     return _isGroupFoot || _isGroupHead;
 }
 - (BOOL)isItemView {
-    return !_isGroupFoot && !_isGroupHead;
+    return !_isGroupFoot && !_isGroupHead && !_isEndView;
 }
 - (UIView *)content {
     return self.subviews.firstObject;
@@ -91,6 +97,7 @@
     BOOL _scrollViewPurged;
     NSMutableArray* _stickyGroups;
     UIView* _emptyView;
+    UIView* _endViewTop;
     BOOL _hasContent;
     BOOL _hasCalledEmpty;
 }
@@ -101,6 +108,11 @@ static CGFloat START_Y = 99999.0f;
 /////////////////
 // API methods //
 /////////////////
+
+- (UIView *)makeTopViewWithHeight:(CGFloat)height {
+    _endViewTop = [ListContentView endViewWithFrame:CGRectMake(0, 0, self.scrollView.width, height)];
+    return _endViewTop;
+}
 
 - (UIView *)visibleViewWithIndex:(ListIndex)index {
     for (ListContentView* view in [self _views]) {
@@ -117,7 +129,7 @@ static CGFloat START_Y = 99999.0f;
     
     // Top should start scrolled down below the navigation bar
     if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
-        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
+//        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
     } else if (_listStartLocation == BOTTOM) {
         // TODO Check if there is a visible status bar
         // TODO Check if there is a visible navigation bar
@@ -546,7 +558,7 @@ static BOOL insetsForAllSet;
     }
     
     ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
-    [self _addView:view at:BOTTOM];
+    [self _addContentView:view at:BOTTOM];
     _bottomItemIndex = index;
     return YES;
 }
@@ -557,8 +569,15 @@ static BOOL insetsForAllSet;
         // There are no more items to display at the top.
         // Last thing: add a group head view at the top.
         if (topView.isGroupHead) {
-            return NO; // All done!
-            
+            if (!_endViewTop) {
+                return NO; // all done
+            } else if (_endViewTop.superview) {
+                return NO; // all done
+            } else {
+                [self _addView:_endViewTop at:TOP];
+                return YES;
+            }
+
         } else {
             [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:TOP];
             return YES;
@@ -596,7 +615,7 @@ static BOOL insetsForAllSet;
     if (!view) {
         [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
     }
-    [self _addView:view at:TOP];
+    [self _addContentView:view at:TOP];
     _topListIndex = index;
     return YES;
 }
@@ -675,7 +694,7 @@ static BOOL insetsForAllSet;
     ListContentView* groupView = [ListContentView withFrame:frame footGroupId:groupId];
     [groupView addSubview:view];
     
-    [self _addView:groupView at:location];
+    [self _addContentView:groupView at:location];
     if (location == TOP) {
         [self _setTopGroupId:groupId index:index];
     } else {
@@ -697,7 +716,7 @@ static BOOL insetsForAllSet;
     ListContentView* groupView = [ListContentView withFrame:frame headGroupId:groupId];
     [groupView addSubview:view];
     
-    [self _addView:groupView at:location];
+    [self _addContentView:groupView at:location];
     if (location == TOP) {
         [self _setTopGroupId:groupId index:index];
     } else {
@@ -705,7 +724,14 @@ static BOOL insetsForAllSet;
     }
 }
 
-- (void)_addView:(ListContentView*)view at:(ListViewLocation)location {
+- (void)_addContentView:(ListContentView*)view at:(ListViewLocation)location {
+    [self _addView:view at:location];
+    for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
+        [stickyGroup onDidAddView:view location:location];
+    }
+}
+
+- (void)_addView:(UIView*)view at:(ListViewLocation)location {
     if (location == TOP) {
         _topY -= view.height;
         view.y = _topY;
@@ -714,9 +740,6 @@ static BOOL insetsForAllSet;
         view.y = _bottomY;
         _bottomY += view.height;
         [_scrollView addSubview:view];
-    }
-    for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
-        [stickyGroup onDidAddView:view location:location];
     }
 }
 
