@@ -214,6 +214,7 @@ static NSString* uuidHeader;
     }
     
     if (err) {
+        NSLog(@"API error %@ %@: %@", method, path, err);
         return callback(err, nil);
     }
     
