@@ -58,14 +58,14 @@ static BOOL isReset;
 + (id)readDocumentJson:(NSString *)filename property:(NSString *)property {
     return [Files readDocumentJson:filename][property];
 }
-+ (void)writeDocumentJson:(NSString *)filename object:(NSDictionary *)object {
-    [Files writeDocument:filename data:[JSON serialize:object]];
++ (BOOL)writeDocumentJson:(NSString *)filename object:(NSDictionary *)object {
+    return [Files writeDocument:filename data:[JSON serialize:object]];
 }
-+ (void)writeDocumentJson:(NSString *)filename property:(NSString *)property data:(id)data {
++ (BOOL)writeDocumentJson:(NSString *)filename property:(NSString *)property data:(id)data {
     id readObj = [Files readDocumentJson:filename];
     NSMutableDictionary* obj = [(readObj ? readObj : @{}) mutableCopy];
     obj[property] = data;
-    [Files writeDocumentJson:filename object:obj];
+    return [Files writeDocumentJson:filename object:obj];
 }
 
 + (id)readCacheJson:(NSString *)filename {

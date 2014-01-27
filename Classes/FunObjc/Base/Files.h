@@ -12,8 +12,8 @@
 
 + (NSDictionary*)readDocumentJson:(NSString*)filename;
 + (id)readDocumentJson:(NSString*)filename property:(NSString*)property;
-+ (void)writeDocumentJson:(NSString*)filename object:(NSDictionary*)object;
-+ (void)writeDocumentJson:(NSString*)filename property:(NSString*)property data:(id)data;
++ (BOOL)writeDocumentJson:(NSString*)filename object:(NSDictionary*)object;
++ (BOOL)writeDocumentJson:(NSString*)filename property:(NSString*)property data:(id)data;
 + (id)readCacheJson:(NSString*)filename;
 + (id)readCacheJson:(NSString*)filename property:(NSString*)property;
 + (void)writeCacheJson:(NSString*)filename object:(NSDictionary*)object;
