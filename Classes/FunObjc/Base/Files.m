@@ -18,6 +18,8 @@ static NSString* _funDocumentsDirectory;
 static NSString* _funCachesDirectory;
 static NSString* _funPersistPath;
 
+static BOOL didReset = NO;
+
 + (void)initialize {
     _appDocumentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     _appCachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
@@ -31,6 +33,10 @@ static NSString* _funPersistPath;
     }
 }
 
++ (BOOL)didReset {
+    return didReset;
+}
+
 + (void)resetFileRoot {
     NSFileManager* fileMgr = [NSFileManager defaultManager];
     [fileMgr removeItemAtPath:_funDocumentsDirectory error:nil];
@@ -42,6 +48,7 @@ static NSString* _funPersistPath;
     [self setFileRootTo:funRootName];
     [fileMgr createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
     [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
+    didReset = YES;
 }
 + (void)setFileRootTo:(NSString*)funRootName {
     _funDocumentsDirectory = [_appDocumentsDirectory stringByAppendingPathComponent:funRootName];

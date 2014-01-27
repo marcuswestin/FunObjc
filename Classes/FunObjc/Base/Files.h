@@ -33,6 +33,7 @@
 + (NSData*)readResource:(NSString*)resourceName ofType:(NSString*)type;
 
 + (void)resetFileRoot;
++ (BOOL)didReset;
 
 + (void)writeNumber:(NSNumber*)number name:(NSString*)name;
 + (NSNumber*)readNumber:(NSString*)name;

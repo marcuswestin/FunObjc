@@ -97,7 +97,7 @@ void _forceCrash() {
 }
 // View state restoration
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-    return ![Files isReset];
+    return ![Files didReset];
 }
 - (void)application:(UIApplication*)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
     id root = [coder decodeObjectForKey:@"FunRootViewController"]; // TODO Versioning
