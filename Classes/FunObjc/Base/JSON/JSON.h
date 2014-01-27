@@ -10,9 +10,11 @@
 
 @interface JSON : NSObject
 
++ (void)useUnquotedKeys;
 + (NSString*)stringify:(id)obj;
 + (NSData*)serialize:(id)obj;
 + (id)parseString:(NSString*)string;
 + (id)parseData:(NSData*)data;
++ (id)parseData:(NSData*)data error:(NSError**)error;
 
 @end

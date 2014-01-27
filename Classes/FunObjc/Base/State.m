@@ -21,6 +21,9 @@
         return instance;
     }
 }
++ (instancetype)fromJson:(NSString *)json {
+    return [[self class] fromDict:[JSON parseString:json]];
+}
 
 + (instancetype)withDict:(NSDictionary *)dict {
     return [[self class] fromDict:dict];
@@ -47,30 +50,43 @@
 
 - (void)_setPropertiesFromDict:(NSDictionary*)dict {
     NSDictionary* props = [self classProperties];
+    NSDictionary* deserializeMap = [self deserializeMap];
     for (NSString* key in dict) {
-        NSString* className = props[key];
-        if (!className) {
-            NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
-            continue;
-        }
-        
-        id val = dict[key];
-
-        if (![val isNull]) {
-            if (className.length != 1) {
-                Class class = NSClassFromString(props[key]);
-                if (!class) {
-                    NSLog(@"WARNING Saw unknown class %@ for key %@. Did you forget '@implementation %@'?", props[key], key, props[key]);
-                }
-                if ([class isSubclassOfClass:[State class]]) {
-                    val = [class fromDict:val];
-                }
+        if (deserializeMap) {
+            NSString* deserializedKey = deserializeMap[key];
+            if (!deserializeMap) {
+                NSLog(@"WARNING Saw unknown deserialize key %@ for class %@", key, self.className);
+                continue;
             }
-            
-            [self setValue:val forKey:key];
+            [self _setPropertyKey:deserializedKey dict:dict props:props];
+        } else {
+            [self _setPropertyKey:key dict:dict props:props];
         }
     }
 }
+
+- (void)_setPropertyKey:(NSString*)key dict:(NSDictionary*)dict props:(NSDictionary*)props {
+    NSString* propertyClassName = props[key];
+    if (!propertyClassName) {
+        NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
+        return;
+    }
+    
+    id val = dict[key];
+    if (![val isNull]) {
+        if (propertyClassName.length != 1) {
+            Class class = NSClassFromString(props[key]);
+            if (!class) {
+                NSLog(@"WARNING Saw unknown class %@ for key %@. (Did you forget '@implementation %@'?)", props[key], key, props[key]);
+            }
+            if ([class isSubclassOfClass:[State class]]) {
+                val = [class fromDict:val];
+            }
+        }
+        [self setValue:val forKey:key];
+    }
+}
+
 
 - (id)copy {
     return [[self class] fromDict:[self toDictionary]];
@@ -122,6 +138,41 @@
     id copy = [self copy];
     [copy setValuesForKeysWithDictionary:dict];
     return copy;
+}
+
+// Inflate/Deflate
+//////////////////
+static NSMutableSet* builtMaps;
+static NSMutableDictionary* deflateMaps;
+static NSMutableDictionary* inflateMaps;
++ (void)initialize {
+    builtMaps = [NSMutableSet set];
+    deflateMaps = [NSMutableDictionary dictionary];
+    inflateMaps = [NSMutableDictionary dictionary];
+}
+- (NSDictionary*)serializeMap {
+    if (![self conformsToProtocol:@protocol(StateInflateDeflate)]) {
+        return nil;
+    }
+    if (![builtMaps containsObject:[self class]]) {
+        [self buildSerializeMaps];
+    }
+    return deflateMaps[[self class]];
+}
+- (NSDictionary*)deserializeMap {
+    if (![self conformsToProtocol:@protocol(StateInflateDeflate)]) {
+        return nil;
+    }
+    if (![builtMaps containsObject:[self class]]) {
+        [self buildSerializeMaps];
+    }
+    return inflateMaps[[self class]];
+}
+- (void)buildSerializeMaps {
+    [builtMaps addObject:[self class]];
+    NSDictionary* map = [[self class] inflateDeflateMap];
+    deflateMaps[(id <NSCopying>)[self class]] = map;
+    inflateMaps[(id <NSCopying>)[self class]] = [map reverse];
 }
 
 @end

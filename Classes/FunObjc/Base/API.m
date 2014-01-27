@@ -8,6 +8,7 @@
 
 #import "API.h"
 #import "FunBase.h"
+#import "JSON.h"
 
 #define log NSLog
 
@@ -95,7 +96,7 @@ static NSString* uuidHeader;
     multipartAudioName = audioName;
 }
 
-+ (void)load {
++ (void)initialize {
     baseHeaders = [NSMutableDictionary dictionary];
     errorChecks = [NSMutableArray array];
     multipartBoundary = @"_____FUNOBJ_BNDRY__";
@@ -205,8 +206,7 @@ static NSString* uuidHeader;
     if (!contentType) {
         err = makeError(@"Missing Content-Type header");
     } else if ([contentType hasPrefix:@"application/json"] || [contentType hasPrefix:@"application/javascript"]) {
-        
-        res = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+        res = [JSON parseData:data error:&err];
     } else if ([contentType hasPrefix:@"text/"]) {
         res = @{ @"text":[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] };
     } else {
