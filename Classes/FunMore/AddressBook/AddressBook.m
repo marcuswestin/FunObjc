@@ -61,6 +61,9 @@
 }
 
 + (void)preloadAllContacts {
+    static BOOL preloaded;
+    if (preloaded) { return; }
+    preloaded = YES;
     NSLog(@"AddressBook: preloading all contacts into memory");
     [self loadAllContacts:^(NSArray *contacts) {
         NSLog(@"AddressBook: all contacts preloaded into memory");
@@ -92,7 +95,6 @@ static NSArray* allContacts;
             if (allContacts) {
                 return callback(allContacts);
             }
-            NSLog(@"Loading all contacts");
             
             ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
             if (!addressBook) {
@@ -150,7 +152,6 @@ static NSArray* allContacts;
             CFRelease(addressBook);
             CFRelease(allPeople);
             
-            NSLog(@"Done loading all contacts");
             allContacts = entries;
             return callback(allContacts);
         }
