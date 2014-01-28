@@ -117,7 +117,7 @@ return ret;
     return returnBool;
 }
 
-#if SQLITE_VERSION_NUMBER >= 3007017
+#if !TARGET_OS_IPHONE && SQLITE_VERSION_NUMBER >= 3007017
 - (uint32_t)applicationID {
     
     uint32_t r = 0;

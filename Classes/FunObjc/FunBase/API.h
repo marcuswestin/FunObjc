@@ -35,7 +35,7 @@ typedef NSError* (^APIErrorCheck)(NSHTTPURLResponse* httpRes, NSDictionary* res)
 
 + (void)setMultipartNamesJson:(NSString*)jsonName image:(NSString*)imageName video:(NSString*)videoName audio:(NSString*)audioName;
 + (void)setup:(NSString*)serverUrl;
-+ (void)setHeaders:(NSDictionary*)headers;
++ (void)setHeader:(NSString*)name value:(NSString*)value;
 + (void)setUUIDHeaderName:(NSString*)uuidHeaderName;
 + (void)post:(NSString*)path json:(NSDictionary*)json callback:(APICallback)callback;
 + (void)get:(NSString*)path queries:(NSDictionary*)queries callback:(APICallback)callback;

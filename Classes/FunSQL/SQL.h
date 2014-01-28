@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
-#import "FunObjc.h"
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
 

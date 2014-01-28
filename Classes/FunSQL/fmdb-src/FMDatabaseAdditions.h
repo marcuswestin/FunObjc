@@ -193,7 +193,7 @@
 - (BOOL)validateSQL:(NSString*)sql error:(NSError**)error;
 
 
-#if SQLITE_VERSION_NUMBER >= 3007017
+#if !TARGET_OS_IPHONE && SQLITE_VERSION_NUMBER >= 3007017
 
 ///-----------------------------------
 /// @name Application identifier tasks

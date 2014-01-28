@@ -58,32 +58,31 @@
                 NSLog(@"WARNING Saw unknown deserialize key %@ for class %@", key, self.className);
                 continue;
             }
-            [self _setPropertyKey:deserializedKey dict:dict props:props];
+            [self _setPropertyKey:deserializedKey value:dict[key] props:props];
         } else {
-            [self _setPropertyKey:key dict:dict props:props];
+            [self _setPropertyKey:key value:dict[key] props:props];
         }
     }
 }
 
-- (void)_setPropertyKey:(NSString*)key dict:(NSDictionary*)dict props:(NSDictionary*)props {
+- (void)_setPropertyKey:(NSString*)key value:(id)value props:(NSDictionary*)props {
     NSString* propertyClassName = props[key];
     if (!propertyClassName) {
         NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
         return;
     }
     
-    id val = dict[key];
-    if (![val isNull]) {
+    if (![value isNull]) {
         if (propertyClassName.length != 1) {
             Class class = NSClassFromString(props[key]);
             if (!class) {
                 NSLog(@"WARNING Saw unknown class %@ for key %@. (Did you forget '@implementation %@'?)", props[key], key, props[key]);
             }
             if ([class isSubclassOfClass:[State class]]) {
-                val = [class fromDict:val];
+                value = [class fromDict:value];
             }
         }
-        [self setValue:val forKey:key];
+        [self setValue:value forKey:key];
     }
 }
 

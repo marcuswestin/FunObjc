@@ -102,7 +102,6 @@ static NSString* uuidHeader;
     multipartBoundary = @"_____FUNOBJ_BNDRY__";
     queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 10;
-    errorChecks = [NSMutableArray array];
 }
 
 + (void)addErrorCheck:(APIErrorCheck)errorCheck {
@@ -113,10 +112,8 @@ static NSString* uuidHeader;
     server = serverUrl;
 }
 
-+ (void)setHeaders:(NSDictionary *)headers {
-    for (NSString* name in headers) {
-        baseHeaders[name] = headers[name];
-    }
++ (void)setHeader:(NSString *)name value:(NSString*)value {
+    baseHeaders[name] = value;
 }
 
 + (void)setUUIDHeaderName:(NSString *)uuidHeaderName {
