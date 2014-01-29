@@ -95,19 +95,16 @@ static CGFloat START_Y = 99999.0f;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-//        [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
-//            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-//                [self _handleKeyboardEvent:info];
-//            }];
-//        }];
-//        [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
-//            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-//                [self _handleKeyboardEvent:info];
-//            }];
-//        }];
-//
-//        [Keyboard offWillShow:self];
-//        [Keyboard offWillHide:self];
+        [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
+            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+                [self _handleKeyboardEvent:info];
+            }];
+        }];
+        [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
+            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+                [self _handleKeyboardEvent:info];
+            }];
+        }];
     }
     return self;
 }
@@ -278,6 +275,8 @@ static CGFloat START_Y = 99999.0f;
 - (void)didMoveToWindow {
     if (!self.window) {
         _scrollView.delegate = nil;
+        [Keyboard offWillShow:self];
+        [Keyboard offWillHide:self];
     }
 }
 
@@ -319,7 +318,7 @@ static CGFloat START_Y = 99999.0f;
     if ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)]) {
         return [_delegate listShouldMoveWithKeyboard];
     } else {
-        return YES;
+        return NO;
     }
 }
 
