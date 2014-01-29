@@ -21,4 +21,6 @@
 - (UIImage*)image;
 - (UIImage*)imageWithAddressBook:(ABAddressBookRef)addressBook;
 - (NSString*)displayName;
+- (NSString*)displayAddress;
+- (NSString*)initials;
 @end

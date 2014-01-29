@@ -7,17 +7,22 @@
 //
 
 #import "AddressBookContact.h"
+#import "PhoneNumbers.h"
 
-@implementation AddressBookContact
+@implementation AddressBookContact {
+    UIImage* _image;
+}
 - (UIImage *)image {
-    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
-    if (!addressBook) {
-        NSLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
-        return nil;
+    if (!_image) {
+        ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
+        if (!addressBook) {
+            NSLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
+            return nil;
+        }
+        _image = [self imageWithAddressBook:addressBook];
+        CFRelease(addressBook);
     }
-    UIImage* image = [self imageWithAddressBook:addressBook];
-    CFRelease(addressBook);
-    return image;
+    return _image;
 }
 - (UIImage *)imageWithAddressBook:(ABAddressBookRef)addressBook {
     ABRecordRef person = ABAddressBookGetPersonWithRecordID(addressBook, _recordId);
@@ -41,5 +46,21 @@
         return _emailAddresses.firstObject;
     }
     return @"(no name)";
+}
+- (NSString *)displayAddress {
+    NSLog(@"TODO Figure out AddressBookContact displayAddress");
+    if (_phoneNumbers.count) {
+        return [PhoneNumbers format:_phoneNumbers.firstObject];
+    } else {
+        return _emailAddresses.firstObject;
+    }
+}
+
+- (NSString *)initials {
+    if (_firstName.isEmpty || _lastName.isEmpty) {
+        return @"?";
+    } else {
+        return [NSString stringWithFormat:@"%@%@", [_firstName substringToIndex:1], [_lastName substringToIndex:1]];
+    }
 }
 @end
