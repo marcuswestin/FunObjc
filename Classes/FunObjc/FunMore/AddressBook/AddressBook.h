@@ -19,7 +19,8 @@ typedef void(^AddressBookRecordIdCallback)(ABRecordID recordId, NSError* error);
 + (void)preloadAllContacts;
 + (void)loadAllContacts:(ContactsCallback)callback;
 + (void)authorize:(AuthorizeCallback)callback;
-+ (NSString*)authorizationStatus;
++ (ABAuthorizationStatus)authorizationStatus;
++ (NSString*)authorizationStatusString;
 
 + (void)findContactsMatchingPredicate:(NSPredicate*)predicate callback:(ContactsCallback)callback;
 + (void)findContactsWithPhoneNumber:(NSString*)phoneNumber callback:(ContactsCallback)callback;

@@ -26,7 +26,11 @@
     });
 }
 
-+ (NSString *)authorizationStatus {
++ (ABAuthorizationStatus)authorizationStatus {
+    return ABAddressBookGetAuthorizationStatus();
+}
+
++ (NSString *)authorizationStatusString {
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     switch (status) {
         case kABAuthorizationStatusNotDetermined: return @"Not determined";
@@ -87,8 +91,8 @@ static NSArray* allContacts;
     callback = [self _wrapContacts:callback];
     
     asyncDefault(^{
-        if (![AddressBook.authorizationStatus is:@"Authorized"]) {
-            NSLog(@"WARNING [AddressBook loadContacts]: non-authorized status %@", AddressBook.authorizationStatus);
+        if (AddressBook.authorizationStatus != kABAuthorizationStatusAuthorized) {
+            NSLog(@"WARNING [AddressBook loadContacts]: non-authorized status %@", AddressBook.authorizationStatusString);
             return callback(nil);
         }
         @synchronized(self) {
