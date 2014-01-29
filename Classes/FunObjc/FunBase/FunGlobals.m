@@ -33,6 +33,7 @@ static UIView* errorView;
 
 void error(NSError* err) {
     if (!err) { return; }
+    NSLog(@"ERROR %@ %@", err.localizedDescription, err);
     asyncMain(^{
         Class cameraClass = NSClassFromString(@"Camera");
         if (cameraClass) {
@@ -69,8 +70,6 @@ void error(NSError* err) {
             });
         }];
         [view onTap:hide];
-        
-        NSLog(@"ERROR %@ %@", message, err);
     });
 }
 
