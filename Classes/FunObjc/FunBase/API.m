@@ -156,12 +156,14 @@ static NSString* uuidHeader;
 
 
 + (void) send:(NSString*)method path:(NSString*)path contentType:(NSString*)contentType data:(NSData*)data callback:(APICallback)callback {
+    if (!server) { [NSException raise:@"MissingServer" format:@"You must do [API setup:@\"https://your.server.com\""]; }
+
     NSString* url = [server stringByAppendingString:path];
 
     if ([contentType isEqualToString:@"application/json"]) {
         NSLog(@"API %@ %@ SEND:\n%@", method, url, data.toString);
     } else {
-        NSLog(@"API %@ %@ %d SEND", method, url, data.length);
+        NSLog(@"API %@ %@ SEND: %d bytes", method, url, data.length);
     }
     NSDictionary* devInterceptRes = [API _devIntercept:path];
     if (devInterceptRes) {
@@ -170,7 +172,6 @@ static NSString* uuidHeader;
         });
     }
     
-    if (!server) { [NSException raise:@"MissingServer" format:@"You must do [API setup:@\"https://your.server.com\""]; }
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     request.HTTPMethod = method;
     request.HTTPBody = data;
@@ -201,7 +202,7 @@ static NSString* uuidHeader;
     NSError* err;
     
     if (!contentType) {
-        err = makeError(@"Missing Content-Type header");
+        err = makeError([NSString stringWithFormat:@"Missing Content-Type header (%@)", httpRes.allHeaderFields]);
     } else if ([contentType hasPrefix:@"application/json"] || [contentType hasPrefix:@"application/javascript"]) {
         res = [JSON parseData:data error:&err];
     } else if ([contentType hasPrefix:@"text/"]) {
