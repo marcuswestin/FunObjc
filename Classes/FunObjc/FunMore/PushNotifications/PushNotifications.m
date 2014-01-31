@@ -21,7 +21,7 @@
 #if defined DEBUG
 #define PUSH_MODE @"_sandbox"
 #else
-#define PUSH_MODE @""
+#define PUSH_MODE @"_prod"
 #endif
 
 @implementation NotificationInfo
@@ -80,7 +80,7 @@ static PushAuthorizationCallback authorizationCallback;
     [Events on:@"Application.didRegisterForRemoteNotificationsWithDeviceToken" subscriber:self callback:^(NSData* deviceToken) {
         NSLog(@"PushNotifications: Authorized");
         PushAuthorization* auth = [PushAuthorization new];
-        auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios, ios-sandbox, osx, osx-sandbox
+        auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios_prod, ios_sandbox, osx_prod, osx_sandbox
         auth.token = [PushNotifications tokenString:deviceToken];
         authorizationCallback(nil, auth);
     }];
