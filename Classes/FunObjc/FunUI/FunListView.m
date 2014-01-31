@@ -95,15 +95,8 @@ static CGFloat START_Y = 99999.0f;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        [Keyboard onWillShow:self callback:^(KeyboardEventInfo *info) {
-            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-                [self _handleKeyboardEvent:info];
-            }];
-        }];
-        [Keyboard onWillHide:self callback:^(KeyboardEventInfo *info) {
-            [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-                [self _handleKeyboardEvent:info];
-            }];
+        [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
+            [self _handleKeyboardEvent:info];
         }];
     }
     return self;
@@ -239,10 +232,6 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
-- (void)makeRoomForKeyboard:(CGFloat)keyboardHeight {
-    [_scrollView addContentInsetBottom:keyboardHeight];
-}
-
 - (CGFloat)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
     CGFloat __block dHeight = 0;
     for (ListContentView* view in self._views) {
@@ -275,8 +264,7 @@ static CGFloat START_Y = 99999.0f;
 - (void)didMoveToWindow {
     if (!self.window) {
         _scrollView.delegate = nil;
-        [Keyboard offWillShow:self];
-        [Keyboard offWillHide:self];
+        [Keyboard offWillChange:self];
     }
 }
 
@@ -308,9 +296,11 @@ static CGFloat START_Y = 99999.0f;
 
 - (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
     if ([self _shouldMoveWithKeyboard]) {
-        [self moveListWithKeyboard:info.heightChange];
+        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+            [self moveListWithKeyboard:info.heightChange];
+        }];
     } else {
-        [self makeRoomForKeyboard:info.heightChange];
+        [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
     }
 }
 
