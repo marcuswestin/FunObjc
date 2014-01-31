@@ -87,13 +87,13 @@ static UIStatusBarStyle statusBarStyle;
 ////////////////
 + (void)showForPhotoCaptureInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum animated:(BOOL)animated callback:(CameraCaptureCallback)callback
 {
-    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:viewController];
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum allowsEditing:allowEditing callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:viewController];
     [self _showInViewController:viewController animated:animated];
 }
 
 + (void)showForVideoCaptureInViewController:(UIViewController *)viewController allowEditing:(BOOL)allowEditing device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum quality:(UIImagePickerControllerQualityType)quality maxDuration:(NSTimeInterval)maxDuration animated:(BOOL)animated callback:(CameraCaptureCallback)callback
 {
-    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:viewController];
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum allowsEditing:allowEditing callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:viewController];
     [self _showInViewController:viewController animated:animated];
 }
 
@@ -102,13 +102,13 @@ static UIStatusBarStyle statusBarStyle;
 //////////////////
 + (void)showForPhotoCaptureInView:(UIView *)inView device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum callback:(CameraCaptureCallback)callback
 {
-    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:nil];
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:0 maxDuration:0 showCameraControls:showCameraControls saveToAlbum:saveToAlbum allowsEditing:NO callback:callback captureMode:UIImagePickerControllerCameraCaptureModePhoto viewController:nil];
     [self _showInView:inView];
 }
 
 + (void)showForVideoCaptureInView:(UIView *)inView device:(UIImagePickerControllerCameraDevice)device flashMode:(UIImagePickerControllerCameraFlashMode)flashMode showCameraControls:(BOOL)showCameraControls saveToAlbum:(BOOL)saveToAlbum quality:(UIImagePickerControllerQualityType)quality maxDuration:(NSTimeInterval)maxDuration callback:(CameraCaptureCallback)callback
 {
-    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:nil];
+    [self _setupCaptureWithDevice:device flashMode:flashMode quality:quality maxDuration:maxDuration showCameraControls:showCameraControls saveToAlbum:saveToAlbum allowsEditing:NO callback:callback captureMode:UIImagePickerControllerCameraCaptureModeVideo viewController:nil];
     [self _showInView:inView];
 }
 
@@ -118,6 +118,7 @@ static UIStatusBarStyle statusBarStyle;
                     maxDuration:(NSTimeInterval)maxDuration
              showCameraControls:(BOOL)showCameraControls
                     saveToAlbum:(BOOL)saveToAlbum
+                  allowsEditing:(BOOL)allowsEditing
                        callback:(CameraCaptureCallback)callback
                     captureMode:(UIImagePickerControllerCameraCaptureMode)captureMode
                  viewController:(UIViewController*)viewController
@@ -137,6 +138,7 @@ static UIStatusBarStyle statusBarStyle;
     }
     camera.picker.cameraCaptureMode = captureMode;
     
+    camera.picker.allowsEditing = allowsEditing;
     camera.picker.cameraFlashMode = flashMode;
     camera.picker.showsCameraControls = showCameraControls;
 }
