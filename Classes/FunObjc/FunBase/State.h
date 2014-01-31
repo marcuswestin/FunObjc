@@ -14,8 +14,9 @@
 @end
 
 @interface State : NSObject <NSCoding>
-+ (instancetype) withDict:(NSDictionary*)dict;
 + (instancetype) fromDict:(NSDictionary*)dict;
++ (instancetype) fromDeflatedDict:(NSDictionary*)deflatedDict;
++ (instancetype) fromDeflatedJson:(NSString*)json;
 + (instancetype) fromJson:(NSString*)json;
 - (BOOL)archiveToDocument:(NSString*)archiveDocName;
 - (NSDictionary*)toDictionary;
@@ -23,5 +24,6 @@
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName;
 - (instancetype) copyWithDictionary:(NSDictionary*)dict;
 - (void)setDefaults;
+- (NSDictionary*)deflatedDict;
 @end
 

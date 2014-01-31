@@ -13,20 +13,26 @@
 
 @implementation State
 
-+ (instancetype)fromDict:(NSDictionary*)dict {
++ (instancetype)fromDict:(NSDictionary*)dict inflate:(BOOL)inflate {
     if ([dict isKindOfClass:State.class]) {
         return (State*)dict;
     } else {
-        id instance = [[[self class] alloc] initWithDict:dict];
+        id instance = [[[self class] alloc] initWithDict:dict inflate:inflate];
         return instance;
     }
 }
-+ (instancetype)fromJson:(NSString *)json {
-    return [[self class] fromDict:[JSON parseString:json]];
-}
 
-+ (instancetype)withDict:(NSDictionary *)dict {
-    return [[self class] fromDict:dict];
++ (instancetype)fromDict:(NSDictionary*)dict {
+    return [self fromDict:dict inflate:NO];
+}
++ (instancetype)fromDeflatedDict:(NSDictionary *)deflatedDict {
+    return [self fromDict:deflatedDict inflate:YES];
+}
++ (instancetype)fromJson:(NSString *)json {
+    return [self fromDict:[JSON parseString:json]];
+}
++ (instancetype)fromDeflatedJson:(NSString *)json {
+    return [self fromDeflatedDict:[JSON parseString:json]];
 }
 
 - (instancetype)init {
@@ -38,19 +44,19 @@
 
 - (void)setDefaults{}
 
-- (instancetype)initWithDict:(NSDictionary*)dict {
-    [self _setPropertiesFromDict:dict];
+- (instancetype)initWithDict:(NSDictionary*)dict inflate:(BOOL)inflate {
+    [self _setPropertiesFromDict:dict inflate:inflate];
     [self setDefaults];
     return self;
 }
 
 - (void)mergeDict:(NSDictionary *)dict {
-    [self _setPropertiesFromDict:dict];
+    [self _setPropertiesFromDict:dict inflate:NO];
 }
 
-- (void)_setPropertiesFromDict:(NSDictionary*)dict {
+- (void)_setPropertiesFromDict:(NSDictionary*)dict inflate:(BOOL)inflate {
     NSDictionary* props = [self classProperties];
-    NSDictionary* deserializeMap = [self deserializeMap];
+    NSDictionary* deserializeMap = (inflate ? [self deserializeMap] : nil);
     for (NSString* key in dict) {
         if (deserializeMap) {
             NSString* deserializedKey = deserializeMap[key];
@@ -104,7 +110,7 @@
     NSString* className = [aDecoder decodeObjectForKey:@"FunStateClass"];
     Class class = NSClassFromString(className);
     NSDictionary* dict = [aDecoder decodeObjectForKey:@"FunStateDict"];
-    return [[class alloc] initWithDict:dict];
+    return [[class alloc] initWithDict:dict inflate:NO];
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
@@ -120,17 +126,16 @@
 }
 
 - (BOOL)archiveToDocument:(NSString *)archiveDocName {
-    return [NSKeyedArchiver archiveRootObject:self toFile:[Files documentPath:archiveDocName]];
+    return [Files writeDocumentJson:archiveDocName object:self.toDictionary];
 }
 
 + (instancetype)fromArchiveDocument:(NSString*)archiveDocName {
-    id instance = [NSKeyedUnarchiver unarchiveObjectWithFile:[Files documentPath:archiveDocName]];
-    if (instance) {
-        [instance setDefaults];
+    NSDictionary* dict = [Files readDocumentJson:archiveDocName];
+    if (dict) {
+        return [[self class] fromDict:dict];
     } else {
-        instance = [[self class] new];
+        return [[self class] new];
     }
-    return instance;
 }
 
 - (instancetype)copyWithDictionary:(NSDictionary *)dict {
@@ -172,6 +177,17 @@ static NSMutableDictionary* inflateMaps;
     NSDictionary* map = [[self class] inflateDeflateMap];
     deflateMaps[(id <NSCopying>)[self class]] = map;
     inflateMaps[(id <NSCopying>)[self class]] = [map reverse];
+}
+- (NSDictionary *)deflatedDict {
+    NSDictionary* deflateMap = [self serializeMap];
+    NSMutableDictionary* deflatedDict = [NSMutableDictionary dictionaryWithCapacity:deflateMap.count];
+    for (NSString* key in deflateMap) {
+        id value = [self valueForKey:key];
+        if (value) {
+            deflatedDict[deflateMap[key]] = value;
+        }
+    }
+    return deflatedDict;
 }
 
 @end
