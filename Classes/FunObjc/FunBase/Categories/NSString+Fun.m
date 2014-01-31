@@ -31,6 +31,10 @@
     return [self split:@","];
 }
 
+- (NSArray *)splitByWhitespace {
+    return [self componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
 - (NSArray *)split:(NSString *)splitter {
     return [self componentsSeparatedByString:splitter];
 }

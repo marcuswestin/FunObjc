@@ -14,6 +14,7 @@
 + (NSString*)repeat:(NSString*)string times:(NSInteger)times;
 - (NSString*)repeatTimes:(NSInteger)times;
 - (NSArray*)splitByComma;
+- (NSArray*)splitByWhitespace;
 - (NSArray*)split:(NSString*)splitter;
 - (NSData*)toData;
 - (NSString*)stringByRemovingString:(NSString*)needle;
