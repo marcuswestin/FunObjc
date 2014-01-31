@@ -127,6 +127,7 @@ DeclareFloatStyler(y2, y2,
                    frame.origin.y = y2 - frame.size.height;
                    _view.frame = frame)
 DeclareFloatStyler(fromRight, offset, self.x2(offset))
+DeclareFloatSideStyler(fromSide, offset, side, (side == Right ? self.x2(offset) : self.x(offset)))
 DeclareFloatStyler(x2, offset,
                    CGRect frame = _view.frame;
                    frame.origin.x = _view.superview.frame.size.width - frame.size.width - offset;
@@ -201,6 +202,8 @@ DeclareViewFloatStyler(fillLeftOf, view, offset,
                        _view.width = view.x - offset)
 DeclareFloatStyler(fillLeftOfLast, offset,
                    self.fillLeftOf(self.last, offset))
+DeclareViewFloatSideStyler(fillSideOf, view, offset, side,
+                           (side == Left ? self.fillLeftOf(view, offset) : self.fillRightOf(view, offset)))
 
 /* Size
  ******/

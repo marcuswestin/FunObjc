@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "UIControl+Fun.h"
 
+typedef enum Side Side;
+enum Side {
+    Left = 1,
+    Right = 2,
+};
+
 @class ViewStyler;
 
 typedef ViewStyler* Styler;
@@ -19,6 +25,8 @@ typedef Styler (^StylerFloat1)(CGFloat num);
 typedef Styler (^StylerFloat2)(CGFloat f1, CGFloat f2);
 typedef Styler (^StylerFloat3)(CGFloat f1, CGFloat f2, CGFloat f3);
 typedef Styler (^StylerFloat4)(CGFloat f1, CGFloat f2, CGFloat f3, CGFloat f4);
+typedef Styler (^StylerFloatSide)(CGFloat f, Side b);
+typedef Styler (^StylerViewFloatSide)(UIView* view, CGFloat f, Side b);
 typedef Styler (^StylerColor1)(UIColor* color);
 typedef Styler (^StylerPoint)(CGPoint point);
 typedef Styler (^StylerRect)(CGRect rect);
@@ -65,6 +73,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat1)centerY;
 - (StylerFloat2)centerXY;
 - (StylerFloat1)fromRight;
+- (StylerFloatSide)fromSide;
 - (StylerFloat1)x2;
 - (StylerFloat1)fromBottom;
 - (StylerFloat1)y2;
@@ -98,6 +107,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat1)fillRightOfLast;
 - (StylerViewFloat)fillLeftOf;
 - (StylerFloat1)fillLeftOfLast;
+- (StylerViewFloatSide)fillSideOf;
 
 /* Size
  ******/
@@ -272,6 +282,12 @@ return ^(CGFloat F1ARG_NAME, CGFloat F2ARG_NAME) {\
 STYLER_CODE; return self;\
 };\
 }
+#define DeclareFloatSideStyler(STYLER_NAME, F1ARG_NAME, S1ARG_NAME, STYLER_CODE)\
+-(StylerFloatSide) STYLER_NAME {\
+return ^(CGFloat F1ARG_NAME, Side S1ARG_NAME) {\
+STYLER_CODE; return self;\
+};\
+}
 #define DeclareViewFloatStyler(STYLER_NAME, VIEW_ARG_NAME, FLOAT_ARG_NAME, STYLER_CODE)\
 -(StylerViewFloat) STYLER_NAME {\
 return ^(UIView* VIEW_ARG_NAME, CGFloat FLOAT_ARG_NAME) {\
@@ -286,6 +302,13 @@ STYLER_CODE; return self;\
 }
 // Arity 3
 //////////
+#define DeclareViewFloatSideStyler(STYLER_NAME, VIEW_ARGNAME, F_ARGNAME, S_ARGNAME, STYLER_CODE)\
+-(StylerViewFloatSide) STYLER_NAME {\
+return ^(UIView* VIEW_ARGNAME, CGFloat F_ARGNAME, Side S_ARGNAME) {\
+STYLER_CODE; return self;\
+};\
+}
+
 #define DeclareFloat3Styler(STYLER_NAME, f1NAME, f2NAME, f3NAME, STYLER_CODE)\
 -(StylerFloat3)STYLER_NAME { \
 return ^(CGFloat f1NAME, CGFloat f2NAME, CGFloat f3NAME) {\
