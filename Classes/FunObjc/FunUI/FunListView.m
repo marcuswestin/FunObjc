@@ -106,7 +106,12 @@ static CGFloat START_Y = 99999.0f;
 - (void)setDelegate:(id<FunListViewDelegate>)delegate {
     _delegate = delegate;
     [self _beforeRender];
-    [self _setupScrollview];
+
+    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    _scrollView.showsVerticalScrollIndicator = NO;
+    _scrollView.alwaysBounceVertical = YES;
+    [_scrollView appendTo:self];
+
     if (insetsForAllSet) {
         UIEdgeInsets insets = self.scrollView.contentInset;
         insets.top += insetsForAll.top;
@@ -115,6 +120,7 @@ static CGFloat START_Y = 99999.0f;
         insets.left += insetsForAll.left;
         self.scrollView.contentInset = insets;
     }
+    [self _setupScrollview];
     [self reloadDataForList];
 }
 - (id<FunListViewDelegate>)delegate {
@@ -278,11 +284,6 @@ static CGFloat START_Y = 99999.0f;
     } else {
         _listStartLocation = TOP;
     }
-    
-    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-    _scrollView.showsVerticalScrollIndicator = NO;
-    _scrollView.alwaysBounceVertical = YES;
-    [_scrollView appendTo:self];
     
     _stickyGroups = [NSMutableArray array];
     
