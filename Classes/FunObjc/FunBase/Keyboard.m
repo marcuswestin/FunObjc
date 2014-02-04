@@ -105,22 +105,16 @@ static Keyboard* instance;
 
 static NSNotification* nextNotification;
 - (void)_scheduleFireChange:(NSNotification*)notification {
-    @synchronized(nextNotification) {
-        if (nextNotification) {
-            nextNotification = notification;
-            return;
-        }
-    }
+    if (nextNotification) { return; }
+    nextNotification = notification;
+
     // A visible keyboard issues a "willHide" then a "willShow" (along with two "willChange")
     // "willHide" reports a -216 height change (because it would change by -216).
     // "willShow" reports a 0 height change (because the keyboard is already visible).
     // So we wait a brief moment. In case of two "willChange", we report only the second (with 0 height change).
     async(^{
-        KeyboardEventInfo* info;
-        @synchronized(nextNotification) {
-            info = [self _keyboardInfo:nextNotification isShowing:instance.isVisible];
-            nextNotification = nil;
-        }
+        KeyboardEventInfo* info = [self _keyboardInfo:nextNotification isShowing:instance.isVisible];
+        nextNotification = nil;
         [Events syncFire:@"KeyboardWillChange" info:info];
     });
 }
