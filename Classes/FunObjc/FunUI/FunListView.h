@@ -24,13 +24,13 @@ typedef enum ListViewDirection ListViewDirection;
 @protocol FunListViewDelegate <NSObject>
 @required
 - (BOOL) hasViewForIndex:(ListIndex)index;
-- (UIView*) listViewForIndex:(ListIndex)index width:(CGFloat)width location:(ListViewLocation)location;
+- (void) populateView:(UIView*)view forIndex:(ListIndex)index location:(ListViewLocation)location;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
 - (id) listGroupIdForIndex:(ListIndex)index;
-- (UIView*) listViewForGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
-- (UIView*) listViewForGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
+- (void) populateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index;
+- (void) populateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index;
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
 - (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListIndex)index;
@@ -49,7 +49,6 @@ typedef enum ListViewDirection ListViewDirection;
 // List View
 ////////////
 @interface FunListView : UIView <UIScrollViewDelegate>
-//@property UIView* listView;
 @property UIScrollView* scrollView;
 @property UIEdgeInsets listGroupMargins;
 @property UIEdgeInsets listItemMargins;

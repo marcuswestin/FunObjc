@@ -17,17 +17,12 @@
 @property BOOL isGroupHead;
 @property BOOL isGroupFoot;
 @property BOOL isEndView;
-- (BOOL)isGroupView;
-- (BOOL)isItemView;
-- (UIView*)content;
-+ (ListContentView*)withFrame:(CGRect)frame index:(ListIndex)index;
-+ (ListContentView*)withFrame:(CGRect)frame footGroupId:(ListGroupId)groupId;
-+ (ListContentView*)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId;
 @end
 @implementation ListContentView
-+ (ListContentView *)withFrame:(CGRect)frame index:(ListIndex)index {
++ (ListContentView *)withFrame:(CGRect)frame index:(ListIndex)index content:(UIView*)content {
     ListContentView* view = [[ListContentView alloc] initWithFrame:frame];
     view.index = index;
+    [view addSubview:content];
     return view;
 }
 + (ListContentView *)withFrame:(CGRect)frame headGroupId:(ListGroupId)groupId {
@@ -620,35 +615,32 @@ static BOOL insetsForAllSet;
 //////////////////////////////////
 // Item & Group Head/Foot Views //
 //////////////////////////////////
-- (CGFloat)_widthForItemView {
-    return self.width - (_listGroupMargins.left + _listGroupMargins.right + _listItemMargins.left + _listItemMargins.right);
-}
-
 - (ListContentView*)_getViewForIndex:(ListIndex)index location:(ListViewLocation)location {
-    UIView* content = [_delegate listViewForIndex:index width:[self _widthForItemView] location:location];
-    if (!content) { return nil; }
+    UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
+    [_delegate populateView:content forIndex:index location:location];
     CGRect frame = content.bounds;
     frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
     frame.size.width = self.width;
-    content.y = _listItemMargins.top;
-    content.x = _listItemMargins.left + _listGroupMargins.left;
-    ListContentView* view = [ListContentView withFrame:frame index:index];
-    [view addSubview:content];
-    return view;
+    return [ListContentView withFrame:frame index:index content:content];
 }
 
-- (CGFloat)_widthForGroupView {
-    return self.width - (_listGroupMargins.left + _listGroupMargins.right);
+- (CGRect)_frameForItemView {
+    CGFloat left = _listItemMargins.left + _listGroupMargins.left;
+    CGFloat right = _listItemMargins.left + _listItemMargins.right;
+    CGFloat width = self.width - (left + right);
+    return CGRectMake(left, _listItemMargins.top, width, 0);
+}
+
+- (CGRect)_frameForGroupHeadOrFootView:(CGFloat)y {
+    CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
+    return CGRectMake(0, y, width, 0);
 }
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
-    CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupFoot:withIndex:width:)]
-                    ? [_delegate listViewForGroupFoot:groupId withIndex:index width:width]
-                    : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
-    
-    view.x = _listGroupMargins.left;
-    view.y = 0;
+    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHeadOrFootView:0]];
+    if ([_delegate respondsToSelector:@selector(populateView:forGroupFoot:withIndex:)]) {
+        [_delegate populateView:view forGroupFoot:groupId withIndex:index];
+    }
     
     CGRect frame = view.bounds;
     frame.size.height += _listGroupMargins.bottom;
@@ -664,13 +656,10 @@ static BOOL insetsForAllSet;
 }
 
 - (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
-    CGFloat width = [self _widthForGroupView];
-    UIView* view = ([_delegate respondsToSelector:@selector(listViewForGroupHead:withIndex:width:)]
-                    ? [_delegate listViewForGroupHead:groupId withIndex:index width:width]
-                    : [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 0)]);
-    
-    view.x = _listGroupMargins.left;
-    view.y = _listGroupMargins.top;
+    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHeadOrFootView:_listGroupMargins.top]];
+    if ([_delegate respondsToSelector:@selector(populateView:forGroupHead:withIndex:)]) {
+        [_delegate populateView:view forGroupHead:groupId withIndex:index];
+    }
     
     CGRect frame = view.bounds;
     frame.size.height += _listGroupMargins.top;
