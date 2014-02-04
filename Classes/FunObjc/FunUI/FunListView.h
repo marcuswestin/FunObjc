@@ -13,11 +13,27 @@
 typedef NSInteger ListIndex;
 typedef id ListGroupId;
 
-enum ListViewLocation { TOP=1, BOTTOM=2 };
-typedef enum ListViewLocation ListViewLocation;
+typedef enum ListViewOrientation ListViewOrientation;
+enum ListViewOrientation {
+    ListViewOrientationVertical=1,
+    ListViewOrientationHorizontal=2,
+};
 
-enum ListViewDirection { UP=-1, DOWN=1 };
+typedef enum ListViewLocation ListViewLocation;
+enum ListViewLocation {
+    ListViewLocationTop=1,
+    ListViewLocationBottom=2,
+    ListViewLocationLeft=ListViewLocationTop,
+    ListViewLocationRight=ListViewLocationBottom,
+};
+
 typedef enum ListViewDirection ListViewDirection;
+enum ListViewDirection {
+    ListViewDirectionUp=-1,
+    ListViewDirectionDown=1,
+    ListViewDirectionLeft=ListViewDirectionUp,
+    ListViewDirectionRight=ListViewDirectionDown,
+};
 
 // Delegate
 ///////////
@@ -62,6 +78,7 @@ typedef enum ListViewDirection ListViewDirection;
 @property BOOL shouldMoveWithKeyboard;
 @property ListIndex startIndex;
 @property ListViewLocation startLocation;
+@property ListViewOrientation orientation;
 
 + (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;

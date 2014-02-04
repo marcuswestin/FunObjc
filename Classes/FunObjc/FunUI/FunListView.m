@@ -144,9 +144,9 @@ static CGFloat START_Y = 99999.0f;
     [self _renderInitialContent];
     
     // Top should start scrolled down below the navigation bar
-    if (_startLocation == TOP && !_hasReachedTheVeryBottom) {
+    if (_startLocation == ListViewLocationTop && !_hasReachedTheVeryBottom) {
         //        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
-    } else if (_startLocation == BOTTOM) {
+    } else if (_startLocation == ListViewLocationBottom) {
         // TODO Check if there is a visible status bar
         // TODO Check if there is a visible navigation bar
         [_scrollView addContentOffset:20 animated:NO];
@@ -211,7 +211,7 @@ static CGFloat START_Y = 99999.0f;
     
     for (NSUInteger i=0; i<numItems; i++) {
         ListIndex index = firstIndex + i;
-        ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
+        ListContentView* view = [self _getViewForIndex:index location:ListViewLocationBottom];
         changeInHeight += view.height;
     }
     
@@ -274,9 +274,12 @@ static CGFloat START_Y = 99999.0f;
     }
     
     if (!_startLocation) {
-        _startLocation = TOP;
+        _startLocation = ListViewLocationTop;
     }
-
+    if (!_orientation) {
+        _orientation = ListViewOrientationVertical;
+    }
+    
     _stickyGroups = [NSMutableArray array];
     
     if (!self.loadingMessage) {
@@ -372,7 +375,7 @@ static BOOL insetsForAllSet;
         return; // Empty list
     }
     
-    if (_startLocation == TOP) {
+    if (_startLocation == ListViewLocationTop) {
         // Starting at the top, render items downwards
         _topY = _bottomY = START_Y;
         _topListIndex = _startIndex;
@@ -383,13 +386,13 @@ static BOOL insetsForAllSet;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
             BOOL hasPreviousView = [_delegate hasViewForIndex:previousIndex];
             if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
-                [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:TOP];
+                [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationTop];
             }
         }
         [self extendBottom];
         [self _extendTop];
         
-    } else if (_startLocation == BOTTOM) {
+    } else if (_startLocation == ListViewLocationBottom) {
         // Starting at the bottom, render items upwards
         _topY = _bottomY = START_Y + self.height;
         _bottomItemIndex = _startIndex;
@@ -400,7 +403,7 @@ static BOOL insetsForAllSet;
             ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
             BOOL hasNextView = [_delegate hasViewForIndex:nextIndex];
             if (!hasNextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
-                [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:BOTTOM];
+                [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationBottom];
             }
         }
         [self _extendTop];
@@ -427,14 +430,14 @@ static BOOL insetsForAllSet;
         // scrolled down
         [self extendBottom];
         for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
-            [stickyGroup onContentMoved:UP];
+            [stickyGroup onContentMoved:ListViewDirectionUp];
         }
         
     } else if (contentOffsetY < _previousContentOffsetY) {
         // scrolled up
         [self _extendTop];
         for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
-            [stickyGroup onContentMoved:DOWN];
+            [stickyGroup onContentMoved:ListViewDirectionDown];
         }
         
     } else {
@@ -484,7 +487,7 @@ static BOOL insetsForAllSet;
             return NO; // All done!
             
         } else {
-            [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:BOTTOM];
+            [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:ListViewLocationBottom];
             return YES;
         }
     }
@@ -499,11 +502,11 @@ static BOOL insetsForAllSet;
         
         ListContentView* bottomView = [self _bottomView];
         if (bottomView.isItemView) {
-            [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:BOTTOM];
+            [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:ListViewLocationBottom];
             return YES;
             
         } else if (!_hasContent || bottomView.isGroupFoot) {
-            [self _addGroupHeadViewForIndex:index withGroupId:groupId atLocation:BOTTOM];
+            [self _addGroupHeadViewForIndex:index withGroupId:groupId atLocation:ListViewLocationBottom];
             return YES;
             
         } else if (bottomView.isGroupHead) {
@@ -513,8 +516,8 @@ static BOOL insetsForAllSet;
         }
     }
     
-    ListContentView* view = [self _getViewForIndex:index location:BOTTOM];
-    [self _addContentView:view at:BOTTOM];
+    ListContentView* view = [self _getViewForIndex:index location:ListViewLocationBottom];
+    [self _addContentView:view at:ListViewLocationBottom];
     _bottomItemIndex = index;
     return YES;
 }
@@ -530,12 +533,12 @@ static BOOL insetsForAllSet;
             } else if (_endViewTop.superview) {
                 return NO; // all done
             } else {
-                [self _addView:_endViewTop at:TOP];
+                [self _addView:_endViewTop at:ListViewLocationTop];
                 return YES;
             }
             
         } else {
-            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:TOP];
+            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:ListViewLocationTop];
             return YES;
         }
     }
@@ -553,11 +556,11 @@ static BOOL insetsForAllSet;
         // 3) The item view
         
         if (topView.isItemView) {
-            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:TOP];
+            [self _addGroupHeadViewForIndex:_topListIndex withGroupId:_topGroupId atLocation:ListViewLocationTop];
             return YES;
             
         } else if (topView.isGroupHead) {
-            [self _addGroupFootViewForIndex:index withGroupId:groupId atLocation:TOP];
+            [self _addGroupFootViewForIndex:index withGroupId:groupId atLocation:ListViewLocationTop];
             return YES;
             
         } else if (topView.isGroupFoot) {
@@ -567,11 +570,11 @@ static BOOL insetsForAllSet;
         }
     }
     
-    ListContentView* view = [self _getViewForIndex:index location:TOP];
+    ListContentView* view = [self _getViewForIndex:index location:ListViewLocationTop];
     if (!view) {
         [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
     }
-    [self _addContentView:view at:TOP];
+    [self _addContentView:view at:ListViewLocationTop];
     _topListIndex = index;
     return YES;
 }
@@ -585,7 +588,7 @@ static BOOL insetsForAllSet;
         _topY += view.height;
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
-                [_delegate listViewWasRemoved:view location:TOP index:_topListIndex];
+                [_delegate listViewWasRemoved:view location:ListViewLocationTop index:_topListIndex];
             }
             _topListIndex += 1;
         } else if (view.isGroupFoot) {
@@ -603,7 +606,7 @@ static BOOL insetsForAllSet;
         _bottomY -= view.height;
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
-                [_delegate listViewWasRemoved:view location:BOTTOM index:_bottomItemIndex];
+                [_delegate listViewWasRemoved:view location:ListViewLocationBottom index:_bottomItemIndex];
             }
             _bottomItemIndex -= 1;
         } else if (view.isGroupHead) {
@@ -648,7 +651,7 @@ static BOOL insetsForAllSet;
     [groupView addSubview:view];
     
     [self _addContentView:groupView at:location];
-    if (location == TOP) {
+    if (location == ListViewLocationTop) {
         [self _setTopGroupId:groupId index:index];
     } else {
         [self _setBottomGroupId:groupId index:index];
@@ -667,7 +670,7 @@ static BOOL insetsForAllSet;
     [groupView addSubview:view];
     
     [self _addContentView:groupView at:location];
-    if (location == TOP) {
+    if (location == ListViewLocationTop) {
         [self _setTopGroupId:groupId index:index];
     } else {
         [self _setBottomGroupId:groupId index:index];
@@ -682,7 +685,7 @@ static BOOL insetsForAllSet;
 }
 
 - (void)_addView:(UIView*)view at:(ListViewLocation)location {
-    if (location == TOP) {
+    if (location == ListViewLocationTop) {
         _topY -= view.height;
         view.y = _topY;
         [_scrollView insertSubview:view atIndex:0];
@@ -841,9 +844,9 @@ static BOOL insetsForAllSet;
         [self _stickyMakeTopmost:stickyView];
         [self _stickyMakeBottommost:stickyView];
         _hasContent = YES;
-    } else if (location == TOP) {
+    } else if (location == ListViewLocationTop) {
         [self _stickyMakeTopmost:stickyView];
-    } else if (location == BOTTOM) {
+    } else if (location == ListViewLocationBottom) {
         [self _stickyMakeBottommost:stickyView];
     }
 }
@@ -916,10 +919,10 @@ static BOOL insetsForAllSet;
         enroaching = enroaching.viewAbove;
     }
     
-    if (contentMoved == UP) {
+    if (contentMoved == ListViewDirectionUp) {
         [self _stickiesCleanupTop];
         
-    } else if (contentMoved == DOWN) {
+    } else if (contentMoved == ListViewDirectionDown) {
         [self _stickiesCleanupBottom];
     }
 }
