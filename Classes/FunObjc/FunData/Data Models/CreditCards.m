@@ -49,12 +49,12 @@
              && [_yearInput.text is:self.obscuredYear]);
 }
 
-- (BOOL)isEmpty {
-    return ([_numberInput.text isEmpty]
-            && [_cvvInput.text isEmpty]
-            && [_zipInput.text isEmpty]
-            && [_monthInput.text isEmpty]
-            && [_yearInput.text isEmpty]);
+- (BOOL)hasContent {
+    return (![_numberInput.text hasContent]
+            && ![_cvvInput.text hasContent]
+            && ![_zipInput.text hasContent]
+            && ![_monthInput.text hasContent]
+            && ![_yearInput.text hasContent]);
 }
 
 - (BOOL)hasPrefill {
@@ -107,7 +107,7 @@
         yearInput.placeholder = @"YYYY";
     }
     
-    if (_number && [numberInput.text isEmpty]) {
+    if (_number && ![numberInput.text hasContent]) {
         numberInput.text = [self obscuredNumber];
         cvvInput.text = [self obscuredCvv];
         zipInput.text = [self obscuredZip];
@@ -154,10 +154,10 @@
         _yearInput.text = @"";
         input.text = replacementString; // The keyboard input that triggered the check should receive the new input entry
         return NO;
-    } else if ([potentialNewString isEmpty]) {
+    } else if (![potentialNewString hasContent]) {
         input.text = @"";
         // If all inputs are empty, refill with obscured strings
-        if ([self isEmpty]) {
+        if (![self hasContent]) {
             _numberInput.text = self.obscuredNumber;
             _cvvInput.text = self.obscuredCvv;
             _zipInput.text = self.obscuredZip;

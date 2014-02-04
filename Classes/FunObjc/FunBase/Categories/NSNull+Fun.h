@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface NSNull (Fun)
-- (BOOL)isEmpty;
+- (BOOL)hasContent;
 @end

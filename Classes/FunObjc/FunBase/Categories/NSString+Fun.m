@@ -60,8 +60,8 @@
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \n\t\r"]];
 }
 
-- (BOOL)isEmpty {
-    return self.length == 0;
+- (BOOL)hasContent {
+    return self.length != 0;
 }
 
 - (BOOL)is:(NSString *)string {

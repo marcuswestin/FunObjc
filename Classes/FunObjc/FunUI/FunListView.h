@@ -46,7 +46,7 @@ typedef enum ListViewDirection ListViewDirection;
 @interface FunListViewStickyGroup : NSObject
 - (UIView*)newView;
 @property (readonly) CGFloat height;
-@property (readonly) BOOL isEmpty;
+@property (readonly) BOOL hasContent;
 @end
 
 // List View

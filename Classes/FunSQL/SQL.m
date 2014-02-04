@@ -262,7 +262,7 @@ static NSMutableDictionary* columns;
         return;
     }
     for (NSString* statement in statements) {
-        if (statement.trim.isEmpty) { continue; }
+        if (!statement.trim.hasContent) { continue; }
         [self execute:statement args:nil error:outError];
         if (*outError) {
             return;

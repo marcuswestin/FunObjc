@@ -837,7 +837,6 @@ static BOOL insetsForAllSet;
     _viewOffset = viewOffset;
     _stickiesAddedForView = [NSMutableArray array];
     _stickiesContainerNonInteractive = [UIView.appendTo(_listView) render];
-    _isEmpty = YES;
     return self;
 }
 
@@ -860,11 +859,11 @@ static BOOL insetsForAllSet;
     stickyView.y = stickyView.naturalOffset - _listView.scrollView.contentOffset.y;
     [_stickiesAddedForView removeAllObjects];
     
-    if (_isEmpty) {
+    if (!_hasContent) {
         // First sticky
         [self _stickyMakeTopmost:stickyView];
         [self _stickyMakeBottommost:stickyView];
-        _isEmpty = NO;
+        _hasContent = YES;
     } else if (location == TOP) {
         [self _stickyMakeTopmost:stickyView];
     } else if (location == BOTTOM) {
@@ -873,7 +872,7 @@ static BOOL insetsForAllSet;
 }
 
 - (void)onInitialContentRendered {
-    if (_isEmpty) {
+    if (!_hasContent) {
         if (_y1 || _y2) {
             [NSException raise:@"Error" format:@"Expected at least one sticky to be rendered in list view"];
         }

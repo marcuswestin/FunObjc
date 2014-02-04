@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FunGlobals.h"
 
 @interface Files : NSObject
 

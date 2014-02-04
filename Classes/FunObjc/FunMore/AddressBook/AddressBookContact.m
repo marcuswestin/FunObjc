@@ -30,13 +30,13 @@
     return [UIImage imageWithData:data];
 }
 - (NSString *)displayName {
-    if (!_firstName.isEmpty && !_lastName.isEmpty) {
+    if (_firstName.hasContent && _lastName.hasContent) {
         return [NSString stringWithFormat:@"%@ %@", _firstName, _lastName];
     }
-    if (!_firstName.isEmpty) {
+    if (_firstName.hasContent) {
         return _firstName;
     }
-    if (!_lastName.isEmpty) {
+    if (_lastName.hasContent) {
         return _lastName;
     }
     if (_phoneNumbers.count) {
@@ -57,7 +57,7 @@
 }
 
 - (NSString *)initials {
-    if (_firstName.isEmpty || _lastName.isEmpty) {
+    if (!_firstName.hasContent || !_lastName.hasContent) {
         return @"?";
     } else {
         return [NSString stringWithFormat:@"%@%@", [_firstName substringToIndex:1], [_lastName substringToIndex:1]];

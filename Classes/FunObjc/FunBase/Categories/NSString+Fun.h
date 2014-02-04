@@ -22,7 +22,7 @@
 - (NSString*)encodedURIComponent;
 - (NSString*)stringByTrimmingWhitespace;
 - (NSString*)trim;
-- (BOOL)isEmpty;
+- (BOOL)hasContent;
 - (BOOL)is:(NSString*)string;
 - (NSString*)append:(NSString*)string;
 - (NSString*)stringByReplacingPattern:(NSString*)regexPattern withTemplate:(NSString*)replaceTemplate;
