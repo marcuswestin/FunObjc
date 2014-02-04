@@ -54,6 +54,7 @@ static BOOL useUnquotedKeys = NO;
 }
 
 + (id)parseData:(NSData *)data {
+    if (!data) { return nil; }
     NSError* err;
     id result = [JSON parseData:data error:&err];
     if (err) {
