@@ -31,11 +31,6 @@
 typedef void (^CameraCaptureCallback)(NSError* err, CameraResult* result);
 
 @interface Camera : NSObject <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-@property UIImagePickerController* picker;
-@property (strong) CameraCaptureCallback callback;
-@property UIViewController* modalViewController;
-@property BOOL saveToAlbum;
-@property BOOL allowsEditing;
 
 //+ (void)showModalPickerInViewController:(UIViewController*)viewController
 //                             sourceType:(UIImagePickerControllerSourceType)sourceType

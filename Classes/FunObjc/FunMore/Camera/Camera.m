@@ -18,9 +18,9 @@
     AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:videoAsset];
     imageGenerator.appliesPreferredTrackTransform = YES;
     
-    NSError *error = nil;
-    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&error];
-    if (error) {
+    NSError *err;
+    CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&err];
+    if (err) {
         NSLog(@"Error generating thumbnail for video result: %@", error);
         return nil;
     }
@@ -30,6 +30,35 @@
     
     return thumbImage;
 }
+
+- (void)convertToMp4:(StringErrorCallback)callback {
+    AVAsset* avAsset = self.asset;
+    NSString* mp4Path = [self.path stringByAppendingPathExtension:@"mp4"];
+    NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:avAsset];
+    if ([compatiblePresets containsObject:AVAssetExportPresetPassthrough]) {
+        AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset:avAsset presetName:AVAssetExportPresetPassthrough];
+        exportSession.outputURL = [NSURL fileURLWithPath:mp4Path];
+        exportSession.outputFileType = AVFileTypeMPEG4;
+//        exportSession.timeRange = CMTimeRangeMake(CMTimeMakeWithSeconds(2.0, 600), CMTimeMakeWithSeconds(4.0, 600)); // from 2s for 4s
+        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+            switch (exportSession.status) {
+                case AVAssetExportSessionStatusFailed:
+                case AVAssetExportSessionStatusCancelled:
+                    callback(exportSession.error, nil);
+                    break;
+                case AVAssetExportSessionStatusExporting:
+                case AVAssetExportSessionStatusWaiting:
+                case AVAssetExportSessionStatusUnknown:
+                    callback(makeError(@"Expected export to be done"), nil);
+                    break;
+                case AVAssetExportSessionStatusCompleted:
+                    callback(nil, mp4Path);
+                    break;
+            }
+        }];
+    }
+}
+
 @end
 @implementation CameraPicture
 @end
@@ -54,6 +83,14 @@
     picture.image = image;
     return instance;
 }
+@end
+
+@interface Camera ()
+@property UIImagePickerController* picker;
+@property (strong) CameraCaptureCallback callback;
+@property UIViewController* modalViewController;
+@property BOOL saveToAlbum;
+@property BOOL allowsEditing;
 @end
 
 @implementation Camera
@@ -243,9 +280,10 @@ static UIStatusBarStyle statusBarStyle;
 }
 
 - (void)_finishWith:(CameraResult*)result {
-    asyncMain(^{
-        _callback(nil, result);
-    });
+    CameraCaptureCallback callback = _callback;
     [Camera hide];
+    asyncMain(^{
+        callback(nil, result);
+    });
 }
 @end
