@@ -29,7 +29,9 @@
     if (![self conformsToProtocol:@protocol(FunListViewDelegate)]) {
         [NSException raise:@"Error" format:@"Make sure that %@ conforms to the FunListViewDelegate protocol", [self className]];
     }
-    _listView = [[FunListView alloc] initWithFrame:self.view.bounds];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    CGSize size = self.view.size;
+    _listView = [[FunListView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
     [_listView prependTo:self.view];
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;

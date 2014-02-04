@@ -87,6 +87,7 @@ enum ListViewDirection {
 - (void) prependToListCount:(NSUInteger)numItems;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeightChange;
 - (CGFloat) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
+- (CGFloat) setWidth:(CGFloat)width forVisibleViewWithIndex:(ListIndex)index;
 - (void) selectVisibleIndex:(ListIndex)index;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListIndex)index;

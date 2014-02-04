@@ -74,14 +74,14 @@
 - (void)setSize:(CGSize)size {
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height);
 }
-- (void)resizeByAddingWidth:(CGFloat)width height:(CGFloat)height {
+- (void)addSize:(CGSize)size {
+    [self addWidth:size.width height:size.height];
+}
+- (void)addWidth:(CGFloat)width height:(CGFloat)height {
     CGRect frame = self.frame;
     frame.size.height += height;
     frame.size.width += width;
     self.frame = frame;
-}
-- (void)resizeBySubtractingWidth:(CGFloat)width height:(CGFloat)height {
-    [self resizeByAddingWidth:-width height:-height];
 }
 - (void)containSubviews {
     [self containSubviewsHorizontally:YES vertically:YES];

@@ -11,6 +11,9 @@
 
 // Custom subviews - differentiate head/foot/item views //
 //////////////////////////////////////////////////////////
+
+static ListViewOrientation Vertical = ListViewOrientationVertical;
+
 @interface ListContentView : UIView
 @property ListGroupId groupId;
 @property ListIndex index;
@@ -73,9 +76,9 @@
     ListIndex _bottomItemIndex;
     ListGroupId _bottomGroupId;
     ListGroupId _topGroupId;
-    CGFloat _previousContentOffsetY;
-    CGFloat _topY;
-    CGFloat _bottomY;
+    CGFloat _previousContentOffset;
+    CGFloat _topEdge;
+    CGFloat _bottomEdge;
     BOOL _scrollViewPurged;
     NSMutableArray* _stickyGroups;
     UIView* _emptyView;
@@ -84,13 +87,20 @@
     BOOL _hasCalledEmpty;
 }
 
-static CGFloat MAX_Y = 9999999.0f;
-static CGFloat START_Y = 99999.0f;
+static CGFloat MAX_EDGE = 9999999.0f;
+static CGFloat START_EDGE = 99999.0f;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
-            [self _handleKeyboardEvent:info];
+            if (_shouldMoveWithKeyboard) {
+                [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+                    [self moveListWithKeyboard:info.heightChange];
+                }];
+            } else {
+                [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
+            }
         }];
     }
     return self;
@@ -100,12 +110,7 @@ static CGFloat START_Y = 99999.0f;
 - (void)setDelegate:(id<FunListViewDelegate>)delegate {
     _delegate = delegate;
     [self _beforeRender];
-
-    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-    _scrollView.showsVerticalScrollIndicator = NO;
-    _scrollView.alwaysBounceVertical = YES;
-    [_scrollView appendTo:self];
-
+    
     if (insetsForAllSet) {
         UIEdgeInsets insets = self.scrollView.contentInset;
         insets.top += insetsForAll.top;
@@ -131,13 +136,12 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (UIView *)visibleViewWithIndex:(ListIndex)index {
-    for (ListContentView* view in [self _views]) {
-        if (view.isGroupView) { continue; }
-        if (view.index == index) {
-            return view.content;
-        }
-    }
-    return nil;
+    return [self visibleContentViewWithIndex:index].content;
+}
+- (ListContentView*)visibleContentViewWithIndex:(ListIndex)index {
+    return [self._views pickOne:^BOOL(ListContentView* view, NSUInteger i) {
+        return view.isItemView && view.index == index;
+    }];
 }
 
 - (void)reloadDataForList {
@@ -149,7 +153,7 @@ static CGFloat START_Y = 99999.0f;
     } else if (_startLocation == ListViewLocationBottom) {
         // TODO Check if there is a visible status bar
         // TODO Check if there is a visible navigation bar
-        [_scrollView addContentOffset:20 animated:NO];
+//        [_scrollView addContentOffset:20 animated:NO];
     }
 }
 
@@ -174,7 +178,7 @@ static CGFloat START_Y = 99999.0f;
     }
     
     if (_hasReachedTheVeryTop) {
-        [self _fixContentTopByAdding:START_Y];
+        [self _fixTopEdgeByAdding:START_EDGE];
         _hasReachedTheVeryTop = NO;
     }
     
@@ -183,10 +187,34 @@ static CGFloat START_Y = 99999.0f;
     ListContentView* topView = [self _topView];
     if (topView.isGroupHead) {
         [topView removeFromSuperview];
-        _topY += topView.height;
+        _topEdge += [self _orientedSizeOfView:topView];
     }
     
-    [self _extendTop];
+    [self extendTop];
+}
+
+- (CGFloat)_orientedContentOffset {
+    return (_orientation == Vertical ? _scrollView.contentOffset.y : _scrollView.contentOffset.x);
+}
+- (CGFloat)_orientedSize {
+    return (_orientation == Vertical ? self.height : self.width);
+}
+- (CGFloat)_orientedSizeOfView:(UIView*)view {
+    return (_orientation == Vertical ? view.height : view.width);
+}
+- (void)_addOrientedContentOffset:(CGFloat)scrollAmount animated:(BOOL)animated {
+    if (_orientation == Vertical) {
+        [_scrollView addContentOffsetY:scrollAmount animated:animated];
+    } else {
+        [_scrollView addContentOffsetX:scrollAmount animated:animated];
+    }
+}
+- (void)_addOrientedContentSize:(CGFloat)change {
+    if (_orientation == Vertical) {
+        [_scrollView addContentHeight:change];
+    } else {
+        [_scrollView addContentWidth:change];
+    }
 }
 
 - (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex {
@@ -204,22 +232,23 @@ static CGFloat START_Y = 99999.0f;
         return;
     }
     
-    CGFloat changeInHeight = 0;
+    CGFloat changeInSize = 0;
     
-    CGFloat screenVisibleFold = (_scrollView.height - _scrollView.contentInset.bottom);
-    CGFloat offsetVisibleFold = (_scrollView.contentOffset.y + screenVisibleFold);
+    CGFloat inset = (_orientation == Vertical ? _scrollView.contentInset.bottom : _scrollView.contentInset.right);
+    CGFloat screenVisibleFold = ([self _orientedSize] - inset);
+    CGFloat offsetVisibleFold = (self._orientedContentOffset + screenVisibleFold);
     
     for (NSUInteger i=0; i<numItems; i++) {
         ListIndex index = firstIndex + i;
         ListContentView* view = [self _getViewForIndex:index location:ListViewLocationBottom];
-        changeInHeight += view.height;
+        changeInSize += [self _orientedSizeOfView:view];
     }
     
-    [_scrollView addContentHeight:changeInHeight];
+    [self _addOrientedContentSize:changeInSize];
     
-    CGFloat scrollAmount = (_bottomY + changeInHeight) - offsetVisibleFold;
+    CGFloat scrollAmount = (_bottomEdge + changeInSize) - offsetVisibleFold;
     if (scrollAmount > 0) {
-        [_scrollView addContentOffset:scrollAmount animated:YES];
+        [self _addOrientedContentOffset:scrollAmount animated:YES];
     } else {
         [self extendBottom];
     }
@@ -233,23 +262,26 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (CGFloat)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index {
-    CGFloat __block dHeight = 0;
+    ListContentView* view = [self visibleContentViewWithIndex:index];
+    return (view ? [self addSize:(CGSizeMake(0, height - view.height)) toVisibleView:view].height : 0);
+}
+- (CGFloat)setWidth:(CGFloat)width forVisibleViewWithIndex:(ListIndex)index {
+    ListContentView* view = [self visibleContentViewWithIndex:index];
+    return (view ? [self addSize:(CGSizeMake(width - view.width, 0)) toVisibleView:view].width : 0);
+}
+- (CGSize)addSize:(CGSize)addSize toVisibleView:(ListContentView*)targetView {
     for (ListContentView* view in self._views) {
-        if (view.isGroupView) {
-            view.y += dHeight;
-        } else {
-            if (view.index == index) {
-                dHeight = (height - view.height) + _listItemMargins.bottom + _listItemMargins.top;
-                view.height += dHeight;
-            } else {
-                view.y += dHeight;
-            }
+        if (view == targetView) {
+            [view addSize:addSize];
+        } else if (view.index > targetView.index) {
+            [view moveByX:addSize.width y:addSize.height];
         }
     }
-    _bottomY += dHeight;
-    [_scrollView addContentHeight:dHeight];
-    return dHeight;
+    _bottomEdge += (_orientation == Vertical ? addSize.height : addSize.width);
+    [_scrollView addContentSize:addSize];
+    return addSize;
 }
+
 
 - (FunListViewStickyGroup*)stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset {
     id group = [[FunListViewStickyGroup alloc] initWithListView:self point:y height:height viewOffset:viewOffset];
@@ -290,16 +322,6 @@ static CGFloat START_Y = 99999.0f;
     }
 }
 
-- (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
-    if (_shouldMoveWithKeyboard) {
-        [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-            [self moveListWithKeyboard:info.heightChange];
-        }];
-    } else {
-        [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
-    }
-}
-
 static UIEdgeInsets insetsForAll;
 static BOOL insetsForAllSet;
 + (void)insetAll:(UIEdgeInsets)insets {
@@ -311,7 +333,15 @@ static BOOL insetsForAllSet;
 }
 
 - (void)_setupScrollview {
+    [_scrollView appendTo:self];
     [_scrollView setDelegate:self];
+    if (_orientation == Vertical) {
+        _scrollView.alwaysBounceVertical = YES;
+        _scrollView.showsVerticalScrollIndicator = NO;
+    } else {
+        _scrollView.alwaysBounceHorizontal = YES;
+        _scrollView.showsHorizontalScrollIndicator = NO;
+    }
     [_scrollView onTap:^(UITapGestureRecognizer *sender) {
         CGPoint tapPoint = [sender locationInView:_scrollView];
         NSInteger index = _topListIndex;
@@ -362,9 +392,9 @@ static BOOL insetsForAllSet;
     [self.scrollView empty];
     
     [self _withoutScrollEvents:^{
-        _scrollView.contentSize = CGSizeMake(self.width, MAX_Y);
-        _scrollView.contentOffset = CGPointMake(0, START_Y);
-        _previousContentOffsetY = START_Y;
+        _scrollView.contentSize = (_orientation == Vertical ? CGSizeMake(self.width, MAX_EDGE) : CGSizeMake(MAX_EDGE, self.height));
+        _scrollView.contentOffset = (_orientation == Vertical ? CGPointMake(0, START_EDGE) : CGPointMake(START_EDGE, 0));
+        _previousContentOffset = START_EDGE;
     }];
     
     
@@ -377,7 +407,7 @@ static BOOL insetsForAllSet;
     
     if (_startLocation == ListViewLocationTop) {
         // Starting at the top, render items downwards
-        _topY = _bottomY = START_Y;
+        _topEdge = _bottomEdge = START_EDGE;
         _topListIndex = _startIndex;
         _bottomItemIndex = _startIndex - 1;
         _bottomGroupId = startGroupId;
@@ -390,11 +420,11 @@ static BOOL insetsForAllSet;
             }
         }
         [self extendBottom];
-        [self _extendTop];
+        [self extendTop];
         
     } else if (_startLocation == ListViewLocationBottom) {
         // Starting at the bottom, render items upwards
-        _topY = _bottomY = START_Y + self.height;
+        _topEdge = _bottomEdge = START_EDGE + [self _orientedSize];
         _bottomItemIndex = _startIndex;
         _topListIndex = _startIndex + 1;
         _topGroupId = startGroupId;
@@ -406,7 +436,7 @@ static BOOL insetsForAllSet;
                 [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationBottom];
             }
         }
-        [self _extendTop];
+        [self extendTop];
         [self extendBottom];
         
     } else {
@@ -425,17 +455,17 @@ static BOOL insetsForAllSet;
 ///////////////////////////////////////////
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGFloat contentOffsetY = scrollView.contentOffset.y;
-    if (contentOffsetY > _previousContentOffsetY) {
+    CGFloat contentOffset = [self _orientedContentOffset];
+    if (contentOffset > _previousContentOffset) {
         // scrolled down
         [self extendBottom];
         for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
             [stickyGroup onContentMoved:ListViewDirectionUp];
         }
         
-    } else if (contentOffsetY < _previousContentOffsetY) {
+    } else if (contentOffset < _previousContentOffset) {
         // scrolled up
-        [self _extendTop];
+        [self extendTop];
         for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
             [stickyGroup onContentMoved:ListViewDirectionDown];
         }
@@ -445,16 +475,16 @@ static BOOL insetsForAllSet;
         return;
     }
     
-    CGFloat offsetChange = scrollView.contentOffset.y - _previousContentOffsetY;
-    _previousContentOffsetY = scrollView.contentOffset.y;
+    CGFloat offsetChange = [self _orientedContentOffset] - _previousContentOffset;
+    _previousContentOffset = [self _orientedContentOffset];
     if ([_delegate respondsToSelector:@selector(listDidScroll:)]) {
         [_delegate listDidScroll:offsetChange];
     }
 }
 
 - (void)extendBottom {
-    CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
-    while (_bottomY < targetY) {
+    CGFloat targetEdge = [self _orientedContentOffset] + (_orientation == Vertical ? _scrollView.height : _scrollView.width);
+    while (_bottomEdge < targetEdge) {
         BOOL didAddView = [self _listAddNextViewDown];
         if (!didAddView) {
             [self _onDidReachTheVeryBottom];
@@ -464,9 +494,9 @@ static BOOL insetsForAllSet;
     [self _cleanupTop];
 }
 
-- (void)_extendTop {
-    CGFloat targetY = _scrollView.contentOffset.y;
-    while (_topY > targetY) {
+- (void)extendTop {
+    CGFloat targetEdge = [self _orientedContentOffset];
+    while (_topEdge > targetEdge) {
         BOOL didAddView = [self _listAddNextViewUp];
         if (!didAddView) {
             [self _onDidReachTheVeryTop];
@@ -581,11 +611,11 @@ static BOOL insetsForAllSet;
 
 - (void) _cleanupTop {
     // Clean up views at the top that are now out of sight
-    CGFloat targetY = _scrollView.contentOffset.y;
+    CGFloat targetEdge = [self _orientedContentOffset];
     ListContentView* view;
-    while ((view = [self _topView]) && CGRectGetMaxY(view.frame) < targetY) {
+    while ((view = [self _topView]) && (_orientation == Vertical ? view.y2 : view.x2) < targetEdge) {
         [view removeAndClean];
-        _topY += view.height;
+        _topEdge += (_orientation == Vertical ? view.height : view.width);
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
                 [_delegate listViewWasRemoved:view location:ListViewLocationTop index:_topListIndex];
@@ -599,11 +629,11 @@ static BOOL insetsForAllSet;
 
 - (void) _cleanupBottom {
     // Clean up views at the bottom that are now out of sight
-    CGFloat targetY = _scrollView.contentOffset.y + _scrollView.height;
+    CGFloat targetEdge = [self _orientedContentOffset] + [self _orientedSize];
     ListContentView* view;
-    while ((view = [self _bottomView]) && CGRectGetMinY(view.frame) > targetY) {
+    while ((view = [self _bottomView]) && (_orientation == Vertical ? view.y : view.x) > targetEdge) {
         [view removeAndClean];
-        _bottomY -= view.height;
+        _bottomEdge -= [self _orientedSizeOfView:view];
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
                 [_delegate listViewWasRemoved:view location:ListViewLocationBottom index:_bottomItemIndex];
@@ -622,31 +652,62 @@ static BOOL insetsForAllSet;
     UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
     [_delegate populateView:content forIndex:index location:location];
     CGRect frame = content.bounds;
-    frame.size.height += _listItemMargins.top + _listItemMargins.bottom;
-    frame.size.width = self.width;
+    if (_orientation == Vertical) {
+        frame.size.height += (_listItemMargins.top + _listItemMargins.bottom);
+        frame.size.width = self.width;
+    } else {
+        frame.size.height = self.height;
+        frame.size.width += (_listItemMargins.left + _listItemMargins.right);
+    }
     return [ListContentView withFrame:frame index:index content:content];
 }
 
 - (CGRect)_frameForItemView {
-    CGFloat left = _listItemMargins.left + _listGroupMargins.left;
-    CGFloat right = _listItemMargins.left + _listItemMargins.right;
-    CGFloat width = self.width - (left + right);
-    return CGRectMake(left, _listItemMargins.top, width, 0);
+    if (_orientation == Vertical) {
+        CGFloat left = _listItemMargins.left + _listGroupMargins.left;
+        CGFloat right = _listItemMargins.right + _listItemMargins.right;
+        CGFloat width = self.width - (left + right);
+        return CGRectMake(left, _listItemMargins.top, width, 0);
+    } else {
+        CGFloat top = _listItemMargins.top + _listGroupMargins.top;
+        CGFloat bottom = _listItemMargins.bottom + _listGroupMargins.bottom;
+        CGFloat height = self.height - (top + bottom);
+        return  CGRectMake(_listItemMargins.left, top, 0, height);
+    }
 }
 
-- (CGRect)_frameForGroupHeadOrFootView:(CGFloat)y {
-    CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
-    return CGRectMake(0, y, width, 0);
+- (CGRect)_frameForGroupHead {
+    if (_orientation == Vertical) {
+        CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
+        return CGRectMake(0, _listGroupMargins.top, width, 0);
+    } else {
+        CGFloat height = self.height - (_listGroupMargins.top + _listGroupMargins.bottom);
+        return CGRectMake(_listGroupMargins.left, 0, 0, height);
+    }
+}
+
+- (CGRect)_frameForGroupFoot {
+    if (_orientation == Vertical) {
+        CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
+        return CGRectMake(0, 0, width, 0);
+    } else {
+        CGFloat height = self.height - (_listGroupMargins.top + _listGroupMargins.bottom);
+        return CGRectMake(0, 0, 0, height);
+    }
 }
 
 - (void) _addGroupFootViewForIndex:(ListIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
-    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHeadOrFootView:0]];
+    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupFoot]];
     if ([_delegate respondsToSelector:@selector(populateView:forGroupFoot:withIndex:)]) {
         [_delegate populateView:view forGroupFoot:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;
-    frame.size.height += _listGroupMargins.bottom;
+    if (_orientation == Vertical) {
+        frame.size.height += _listGroupMargins.bottom;
+    } else {
+        frame.size.width += _listGroupMargins.right;
+    }
     ListContentView* groupView = [ListContentView withFrame:frame footGroupId:groupId];
     [groupView addSubview:view];
     
@@ -659,13 +720,17 @@ static BOOL insetsForAllSet;
 }
 
 - (void) _addGroupHeadViewForIndex:(ListIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
-    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHeadOrFootView:_listGroupMargins.top]];
+    UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHead]];
     if ([_delegate respondsToSelector:@selector(populateView:forGroupHead:withIndex:)]) {
         [_delegate populateView:view forGroupHead:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;
-    frame.size.height += _listGroupMargins.top;
+    if (_orientation == Vertical) {
+        frame.size.height += _listGroupMargins.top;
+    } else {
+        frame.size.width += _listGroupMargins.left;
+    }
     ListContentView* groupView = [ListContentView withFrame:frame headGroupId:groupId];
     [groupView addSubview:view];
     
@@ -686,12 +751,22 @@ static BOOL insetsForAllSet;
 
 - (void)_addView:(UIView*)view at:(ListViewLocation)location {
     if (location == ListViewLocationTop) {
-        _topY -= view.height;
-        view.y = _topY;
+        if (_orientation == Vertical) {
+            _topEdge -= view.height;
+            view.y = _topEdge;
+        } else {
+            _topEdge -= view.width;
+            view.x = _topEdge;
+        }
         [_scrollView insertSubview:view atIndex:0];
     } else {
-        view.y = _bottomY;
-        _bottomY += view.height;
+        if (_orientation == Vertical) {
+            view.y = _bottomEdge;
+            _bottomEdge += view.height;
+        } else {
+            view.x = _bottomEdge;
+            _bottomEdge += view.width;
+        }
         [_scrollView addSubview:view];
     }
 }
@@ -726,29 +801,35 @@ static BOOL insetsForAllSet;
 
 - (void)_onDidReachTheVeryBottom {
     _hasReachedTheVeryBottom = YES;
-    _scrollView.contentSize = CGSizeMake(_scrollView.width, CGRectGetMaxY([self _bottomView].frame));
+    if (_orientation == Vertical) {
+        _scrollView.contentSize = CGSizeMake(_scrollView.width, [self _bottomView].y2);
+    } else {
+        _scrollView.contentSize = CGSizeMake([self _bottomView].x2, _scrollView.height);
+    }
 }
 
 - (void)_onDidReachTheVeryTop {
     _hasReachedTheVeryTop = YES;
-    CGFloat changeInHeight = CGRectGetMinY([self _topView].frame);
-    if (changeInHeight == 0) { return; }
-    [self _fixContentTopByAdding:-changeInHeight];
+    CGFloat change = (_orientation == Vertical ? [self _topView].y : [self _topView].x);
+    if (change == 0) { return; }
+    [self _fixTopEdgeByAdding:-change];
 }
 
-- (void)_fixContentTopByAdding:(CGFloat)changeInHeight {
-    _topY += changeInHeight;
-    _bottomY += changeInHeight;
-    _previousContentOffsetY += changeInHeight;
+- (void)_fixTopEdgeByAdding:(CGFloat)change {
+    _topEdge += change;
+    _bottomEdge += change;
+    _previousContentOffset += change;
     [self _withoutScrollEvents:^{
-        [_scrollView addContentOffset:changeInHeight];
-        [_scrollView addContentHeight:changeInHeight];
+        [self _addOrientedContentOffset:change animated:NO];
+        [self _addOrientedContentSize:change];
+        CGFloat dx = (_orientation == Vertical ? 0 : change);
+        CGFloat dy = (_orientation == Vertical ? change : 0);
         for (UIView* subView in self._views) {
-            [subView moveByY:changeInHeight];
+            [subView moveByX:dx y:dy];
         }
     }];
     for (FunListViewStickyGroup* stickyGroup in _stickyGroups) {
-        [stickyGroup onListViewChangeInHeight:changeInHeight];
+        [stickyGroup onListViewChangeInHeight:change];
     }
 }
 

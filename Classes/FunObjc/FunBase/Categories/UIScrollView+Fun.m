@@ -32,14 +32,33 @@
     contentSize.height += addHeight;
     self.contentSize = contentSize;
 }
-
-- (void)addContentOffset:(CGFloat)addY {
-    return [self addContentOffset:addY animated:NO];
+- (void)addContentWidth:(CGFloat)addWidth {
+    CGSize contentSize = self.contentSize;
+    contentSize.width += addWidth;
+    self.contentSize = contentSize;
+}
+- (void)addContentSize:(CGSize)addSize {
+    CGSize contentSize = self.contentSize;
+    contentSize.width += addSize.width;
+    contentSize.height += addSize.height;
+    self.contentSize = contentSize;
 }
 
-- (void)addContentOffset:(CGFloat)addY animated:(BOOL)animated {
+- (void)addContentOffsetY:(CGFloat)addY {
+    return [self addContentOffsetY:addY animated:NO];
+}
+- (void)addContentOffsetY:(CGFloat)addY animated:(BOOL)animated {
     CGPoint offset = self.contentOffset;
     offset.y += addY;
+    [self setContentOffset:offset animated:animated];
+}
+
+- (void)addContentOffsetX:(CGFloat)addX {
+    return [self addContentOffsetX:addX animated:NO];
+}
+- (void)addContentOffsetX:(CGFloat)addX animated:(BOOL)animated {
+    CGPoint offset = self.contentOffset;
+    offset.x += addX;
     [self setContentOffset:offset animated:animated];
 }
 
