@@ -45,7 +45,15 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     if (!_data) {
-        _data = [NSMutableData dataWithCapacity:(NSUInteger)_response.expectedContentLength];
+        long long contentLength = _response.expectedContentLength;
+        if (contentLength == NSURLResponseUnknownLength) {
+            return error(makeError(@"Unknown content length"));
+        } else if (contentLength < 0) {
+            return error(makeError(@"Negative content length"));
+        } else if (contentLength > NSUIntegerMax) {
+            return error(makeError(@"Content length too big"));
+        }
+        _data = [NSMutableData dataWithCapacity:(NSUInteger)contentLength];
     }
     
     [_data appendData:data];
