@@ -15,6 +15,11 @@
 - (id)removeObjectFromTail;
 - (id)tail;
 - (id)head;
-- (BOOL)isEmpty;
+- (id)pointer;
+- (BOOL)hasContent;
 - (void)enumerateWithBlock:(void(^)(id obj))block;
+- (void)movePointerForward;
+- (void)movePointerBackward;
+- (id)peekNextPointer;
+- (id)peekPrevPointer;
 @end
