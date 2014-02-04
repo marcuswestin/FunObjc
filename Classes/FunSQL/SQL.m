@@ -181,9 +181,9 @@ static NSMutableDictionary* columns;
 @implementation SQLConn
 
 - (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
-    FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args];
+    FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args ];
     if (!resultSet) {
-        if (error) { *outError = _db.lastError; }
+        *outError = _db.lastError;
         return nil;
     }
     
