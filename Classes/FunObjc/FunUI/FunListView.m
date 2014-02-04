@@ -74,7 +74,6 @@
     NSUInteger _withoutScrollEventStack;
     BOOL _hasReachedTheVeryTop;
     BOOL _hasReachedTheVeryBottom;
-    ListViewLocation _listStartLocation;
     ListIndex _topListIndex;
     ListIndex _bottomItemIndex;
     ListGroupId _bottomGroupId;
@@ -150,9 +149,9 @@ static CGFloat START_Y = 99999.0f;
     [self _renderInitialContent];
     
     // Top should start scrolled down below the navigation bar
-    if (_listStartLocation == TOP && !_hasReachedTheVeryBottom) {
+    if (_startLocation == TOP && !_hasReachedTheVeryBottom) {
         //        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
-    } else if (_listStartLocation == BOTTOM) {
+    } else if (_startLocation == BOTTOM) {
         // TODO Check if there is a visible status bar
         // TODO Check if there is a visible navigation bar
         [_scrollView addContentOffset:20 animated:NO];
@@ -279,12 +278,10 @@ static CGFloat START_Y = 99999.0f;
         [NSException raise:@"Error" format:@"Missing FunListView delegate"];
     }
     
-    if ([_delegate respondsToSelector:@selector(listStartLocation)]) {
-        _listStartLocation = [_delegate listStartLocation];
-    } else {
-        _listStartLocation = TOP;
+    if (!_startLocation) {
+        _startLocation = TOP;
     }
-    
+
     _stickyGroups = [NSMutableArray array];
     
     if (!self.loadingMessage) {
@@ -296,20 +293,12 @@ static CGFloat START_Y = 99999.0f;
 }
 
 - (void)_handleKeyboardEvent:(KeyboardEventInfo*)info {
-    if ([self _shouldMoveWithKeyboard]) {
+    if (_shouldMoveWithKeyboard) {
         [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
             [self moveListWithKeyboard:info.heightChange];
         }];
     } else {
         [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
-    }
-}
-
-- (BOOL)_shouldMoveWithKeyboard {
-    if ([_delegate respondsToSelector:@selector(listShouldMoveWithKeyboard)]) {
-        return [_delegate listShouldMoveWithKeyboard];
-    } else {
-        return NO;
     }
 }
 
@@ -381,50 +370,49 @@ static BOOL insetsForAllSet;
     }];
     
     
-    ListIndex startIndex = ([_delegate respondsToSelector:@selector(listStartIndex)] ? [_delegate listStartIndex] : 0);
-    ListGroupId startGroupId = [self _groupIdForIndex:startIndex];
+    ListGroupId startGroupId = [self _groupIdForIndex:_startIndex];
     
-    if (![_delegate hasViewForIndex:startIndex]) {
+    if (![_delegate hasViewForIndex:_startIndex]) {
         [self _renderEmpty];
         return; // Empty list
     }
     
-    if (_listStartLocation == TOP) {
+    if (_startLocation == TOP) {
         // Starting at the top, render items downwards
         _topY = _bottomY = START_Y;
-        _topListIndex = startIndex;
-        _bottomItemIndex = startIndex - 1;
+        _topListIndex = _startIndex;
+        _bottomItemIndex = _startIndex - 1;
         _bottomGroupId = startGroupId;
         {
             ListIndex previousIndex = _topListIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
             BOOL hasPreviousView = [_delegate hasViewForIndex:previousIndex];
             if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
-                [self _addGroupHeadViewForIndex:startIndex withGroupId:startGroupId atLocation:TOP];
+                [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:TOP];
             }
         }
         [self extendBottom];
         [self _extendTop];
         
-    } else if (_listStartLocation == BOTTOM) {
+    } else if (_startLocation == BOTTOM) {
         // Starting at the bottom, render items upwards
         _topY = _bottomY = START_Y + self.height;
-        _bottomItemIndex = startIndex;
-        _topListIndex = startIndex + 1;
+        _bottomItemIndex = _startIndex;
+        _topListIndex = _startIndex + 1;
         _topGroupId = startGroupId;
         {
             ListIndex nextIndex = _bottomItemIndex + 1;
             ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
             BOOL hasNextView = [_delegate hasViewForIndex:nextIndex];
             if (!hasNextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
-                [self _addGroupFootViewForIndex:startIndex withGroupId:startGroupId atLocation:BOTTOM];
+                [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:BOTTOM];
             }
         }
         [self _extendTop];
         [self extendBottom];
         
     } else {
-        [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _listStartLocation];
+        [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _startLocation];
     }
     
     [_emptyView removeAndClean];

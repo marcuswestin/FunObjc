@@ -28,15 +28,12 @@ typedef enum ListViewDirection ListViewDirection;
 - (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
-- (ListIndex) listStartIndex;
-- (ListViewLocation) listStartLocation;
 - (id) listGroupIdForIndex:(ListIndex)index;
 - (UIView*) listViewForGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
 - (UIView*) listViewForGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index width:(CGFloat)width;
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
 - (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListIndex)index;
-- (BOOL) listShouldMoveWithKeyboard;
 - (void) listDidScroll:(CGFloat)offsetChange;
 - (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListIndex)index;
 @end
@@ -63,6 +60,10 @@ typedef enum ListViewDirection ListViewDirection;
 @property (readonly) ListGroupId bottomGroupId;
 @property NSString* loadingMessage;
 @property NSString* emptyMessage;
+@property BOOL shouldMoveWithKeyboard;
+@property ListIndex startIndex;
+@property ListViewLocation startLocation;
+
 + (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;

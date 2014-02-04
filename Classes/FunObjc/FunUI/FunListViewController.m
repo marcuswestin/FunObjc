@@ -29,11 +29,10 @@
     if (![self conformsToProtocol:@protocol(FunListViewDelegate)]) {
         [NSException raise:@"Error" format:@"Make sure that %@ conforms to the FunListViewDelegate protocol", [self className]];
     }
-    [self render:animated];
     _listView = [[FunListView alloc] initWithFrame:self.view.bounds];
-    _listView.delegate = (id<FunListViewDelegate>)self;
     [_listView prependTo:self.view];
     [super _funViewControllerRender:animated];
+    _listView.delegate = (id<FunListViewDelegate>)self;
 }
 
 @end
