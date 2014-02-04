@@ -20,10 +20,10 @@ static NSString* _funPersistPath;
 
 static BOOL didReset = NO;
 
-+ (void)initialize {
-    _appDocumentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    _appCachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    _funPersistPath = [_appDocumentsDirectory stringByAppendingPathComponent:@"FunFilesPathPersist"];
++ (void)setup {
+    _appDocumentsDirectory = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
+    _appCachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
+    _funPersistPath = [NSString stringWithFormat:@"%@/%@", _appDocumentsDirectory, @"FunFilesPathPersist"];
     
     NSString* funRootName = [NSString stringWithContentsOfFile:_funPersistPath encoding:NSUTF8StringEncoding error:nil];
     if (funRootName) {
@@ -38,21 +38,38 @@ static BOOL didReset = NO;
 }
 
 + (void)resetFileRoot {
+    NSError* __block err;
     NSFileManager* fileMgr = [NSFileManager defaultManager];
-    [fileMgr removeItemAtPath:_funDocumentsDirectory error:nil];
-    [fileMgr removeItemAtPath:_funCachesDirectory error:nil];
-    [[NSFileManager defaultManager] removeItemAtPath:_funPersistPath error:nil];
 
+    NSArray* removeDirs = (_funDocumentsDirectory ? @[_funDocumentsDirectory, _funCachesDirectory] : @[]);
     NSString* funRootName = [NSString stringWithFormat:@"FunFileRoot-%@", [NSString UUID]];
-    [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
     [self setFileRootTo:funRootName];
-    [fileMgr createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:nil];
-    [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:nil];
-    didReset = YES;
+    
+    [fileMgr createDirectoryAtPath:_funDocumentsDirectory withIntermediateDirectories:NO attributes:nil error:&err];
+    if (err) { return error(err); }
+    
+    [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:&err];
+    if (err) { return error(err); }
+    
+    async(^{
+        // If resetFileRoot is called from appWillFinishLaunchingWithOptions,
+        // it gets called again when the app is terminated. Don't ask me why.
+        // Observed in iOS7 Feb 3, 2014.
+        // While the app goes ahead and uses the new state directory right away,
+        // we make the cleanup of previous state and comitting to new state async.
+        // This prevents the app from resetting state *again* on shutdown.
+        [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:&err];
+        if (err) { return error(err); }
+        
+        [removeDirs each:^(NSString* dir, NSUInteger i) {
+            [fileMgr removeItemAtPath:dir error:&err];
+            if (err) { return error(err); }
+        }];
+    });
 }
 + (void)setFileRootTo:(NSString*)funRootName {
-    _funDocumentsDirectory = [_appDocumentsDirectory stringByAppendingPathComponent:funRootName];
-    _funCachesDirectory = [_appCachesDirectory stringByAppendingPathComponent:funRootName];
+    _funDocumentsDirectory = [NSString stringWithFormat:@"%@/%@", _appDocumentsDirectory, funRootName];
+    _funCachesDirectory = [NSString stringWithFormat:@"%@/%@", _appCachesDirectory, funRootName];
 }
 
 + (NSDictionary*)readDocumentJson:(NSString *)filename {

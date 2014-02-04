@@ -22,6 +22,7 @@ static FunAppDelegate* instance;
 // Application launch & state restoration
 /////////////////////////////////////////
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [Files setup];
     _funApp = (id<FunApp>) self;
     [_funApp styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
     [_funApp interfaceWillLoad];
