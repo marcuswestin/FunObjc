@@ -180,7 +180,7 @@ static NSString* uuidHeader;
     [API showSpinner];
     
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        
+        [API hideSpinner];
         asyncMain(^{
             [API _handleResponse:(NSHTTPURLResponse*)response forMethod:method path:path data:data error:connectionError callback:callback];
         });
@@ -188,8 +188,6 @@ static NSString* uuidHeader;
 }
 
 + (void)_handleResponse:(NSHTTPURLResponse*)httpRes forMethod:(NSString*)method path:(NSString*)path data:(NSData*)data error:(NSError*)connectionError callback:(APICallback)callback {
-    
-    [API hideSpinner];
     
     if (connectionError) {
         return callback(connectionError, nil);
@@ -245,8 +243,9 @@ static NSString* uuidHeader;
     return headers;
 }
 
+static NSString* apiSync = @"";
 + (void)showSpinner {
-    @synchronized(self) {
+    @synchronized(apiSync) {
         if (numRequests == 0) {
             UIApplication.sharedApplication.networkActivityIndicatorVisible = YES;
         }
@@ -256,7 +255,7 @@ static NSString* uuidHeader;
 
 + (void)hideSpinner {
     NSArray* callbacks;
-    @synchronized(self) {
+    @synchronized(apiSync) {
         numRequests -= 1;
         if (numRequests == 0) {
             UIApplication.sharedApplication.networkActivityIndicatorVisible = NO;
@@ -269,13 +268,9 @@ static NSString* uuidHeader;
     }
 }
 
-+ (NSDictionary*)_devIntercept:(NSString*)path {
-    return nil;
-}
-
 static NSMutableArray* waitingForCurrentRequests;
 + (void)waitForCurrentRequests:(Block)callback {
-    @synchronized(self) {
+    @synchronized(apiSync) {
         if (numRequests) {
             if (!waitingForCurrentRequests) {
                 waitingForCurrentRequests = [NSMutableArray array];
@@ -286,5 +281,10 @@ static NSMutableArray* waitingForCurrentRequests;
     }
     callback();
 }
+
++ (NSDictionary*)_devIntercept:(NSString*)path {
+    return nil;
+}
+
 
 @end
