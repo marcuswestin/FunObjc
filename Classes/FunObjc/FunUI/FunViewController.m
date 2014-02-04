@@ -36,19 +36,22 @@ static NSUInteger deallocCount;
         return;
     }
     _didCleanup = YES;
+    [FunViewController _prepCheckDeallocCount:[self className]];
     [self.view recursivelyCleanup];
     [self _funViewControllerCleanup];
-    [FunViewController _checkDeallocCount:[self className]];
 }
 
-+ (void)_checkDeallocCount:(NSString*)className {
++ (void)_prepCheckDeallocCount:(NSString*)className {
     NSUInteger before = deallocCount;
-    [API waitForCurrentRequests:^{
-        after(1, ^{
-            if (deallocCount > before) { return; }
-            [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
-        });
-    }];
+    async(^{
+        [API waitForCurrentRequests:^{
+            after(1, ^{
+                if (deallocCount > before) { return; }
+                NSLog(@"WARNING: dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className);
+//                [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
+            });
+        }];
+    });
 }
 
 + (void)load {
