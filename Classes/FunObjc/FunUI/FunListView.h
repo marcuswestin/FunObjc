@@ -10,7 +10,7 @@
 
 // Data types
 /////////////
-typedef NSInteger ListIndex;
+typedef NSInteger ListViewIndex;
 typedef id ListGroupId;
 
 typedef enum ListViewOrientation ListViewOrientation;
@@ -39,19 +39,19 @@ enum ListViewDirection {
 ///////////
 @protocol FunListViewDelegate <NSObject>
 @required
-- (BOOL) hasViewForIndex:(ListIndex)index;
-- (void) populateView:(UIView*)view forIndex:(ListIndex)index location:(ListViewLocation)location;
-- (void) listSelectIndex:(ListIndex)index view:(UIView*)view;
+- (BOOL) hasViewForIndex:(ListViewIndex)index;
+- (void) populateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
+- (void) listSelectIndex:(ListViewIndex)index view:(UIView*)view;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
-- (id) listGroupIdForIndex:(ListIndex)index;
-- (void) populateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListIndex)index;
-- (void) populateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListIndex)index;
-- (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListIndex)index from:(ListGroupId)previousTopGroupId;
-- (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListIndex)index from:(ListGroupId)previousBottomGroupId;
-- (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListIndex)index;
+- (id) listGroupIdForIndex:(ListViewIndex)index;
+- (void) populateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) populateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousTopGroupId;
+- (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousBottomGroupId;
+- (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListViewIndex)index;
 - (void) listDidScroll:(CGFloat)offsetChange;
-- (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListIndex)index;
+- (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListViewIndex)index;
 @end
 
 // Stickies
@@ -69,28 +69,28 @@ enum ListViewDirection {
 @property UIEdgeInsets groupMargins;
 @property UIEdgeInsets itemMargins;
 @property (weak) id<FunListViewDelegate> delegate;
-@property (readonly) ListIndex topListIndex;
-@property (readonly) ListIndex bottomListIndex;
+@property (readonly) ListViewIndex topListViewIndex;
+@property (readonly) ListViewIndex bottomListViewIndex;
 @property (readonly) ListGroupId topGroupId;
 @property (readonly) ListGroupId bottomGroupId;
 @property NSString* loadingMessage;
 @property NSString* emptyMessage;
 @property BOOL shouldMoveWithKeyboard;
-@property ListIndex startIndex;
+@property ListViewIndex startIndex;
 @property ListViewLocation startLocation;
 @property ListViewOrientation orientation;
 
 + (void) insetAll:(UIEdgeInsets)insets;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
-- (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListIndex)firstIndex;
+- (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListViewIndex)firstIndex;
 - (void) prependToListCount:(NSUInteger)numItems;
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeightChange;
-- (CGFloat) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListIndex)index;
-- (CGFloat) setWidth:(CGFloat)width forVisibleViewWithIndex:(ListIndex)index;
-- (void) selectVisibleIndex:(ListIndex)index;
+- (CGFloat) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListViewIndex)index;
+- (CGFloat) setWidth:(CGFloat)width forVisibleViewWithIndex:(ListViewIndex)index;
+- (void) selectVisibleIndex:(ListViewIndex)index;
 - (void) extendBottom;
-- (UIView*) visibleViewWithIndex:(ListIndex)index;
+- (UIView*) visibleViewWithIndex:(ListViewIndex)index;
 - (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
 - (UIView*) makeTopViewWithHeight:(CGFloat)height;
 @end
