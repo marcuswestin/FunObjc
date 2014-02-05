@@ -93,6 +93,7 @@ static CGFloat START_EDGE = 99999.0f;
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+//        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
         [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
             if (_shouldMoveWithKeyboard) {
                 [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
