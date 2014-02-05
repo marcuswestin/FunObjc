@@ -653,45 +653,45 @@ static BOOL insetsForAllSet;
     [_delegate populateView:content forIndex:index location:location];
     CGRect frame = content.bounds;
     if (_orientation == Vertical) {
-        frame.size.height += (_listItemMargins.top + _listItemMargins.bottom);
+        frame.size.height += (_itemMargins.top + _itemMargins.bottom);
         frame.size.width = self.width;
     } else {
         frame.size.height = self.height;
-        frame.size.width += (_listItemMargins.left + _listItemMargins.right);
+        frame.size.width += (_itemMargins.left + _itemMargins.right);
     }
     return [ListContentView withFrame:frame index:index content:content];
 }
 
 - (CGRect)_frameForItemView {
     if (_orientation == Vertical) {
-        CGFloat left = _listItemMargins.left + _listGroupMargins.left;
-        CGFloat right = _listItemMargins.right + _listItemMargins.right;
+        CGFloat left = _itemMargins.left + _groupMargins.left;
+        CGFloat right = _itemMargins.right + _itemMargins.right;
         CGFloat width = self.width - (left + right);
-        return CGRectMake(left, _listItemMargins.top, width, 0);
+        return CGRectMake(left, _itemMargins.top, width, 0);
     } else {
-        CGFloat top = _listItemMargins.top + _listGroupMargins.top;
-        CGFloat bottom = _listItemMargins.bottom + _listGroupMargins.bottom;
+        CGFloat top = _itemMargins.top + _groupMargins.top;
+        CGFloat bottom = _itemMargins.bottom + _groupMargins.bottom;
         CGFloat height = self.height - (top + bottom);
-        return  CGRectMake(_listItemMargins.left, top, 0, height);
+        return  CGRectMake(_itemMargins.left, top, 0, height);
     }
 }
 
 - (CGRect)_frameForGroupHead {
     if (_orientation == Vertical) {
-        CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
-        return CGRectMake(0, _listGroupMargins.top, width, 0);
+        CGFloat width = self.width - (_groupMargins.left + _groupMargins.right);
+        return CGRectMake(0, _groupMargins.top, width, 0);
     } else {
-        CGFloat height = self.height - (_listGroupMargins.top + _listGroupMargins.bottom);
-        return CGRectMake(_listGroupMargins.left, 0, 0, height);
+        CGFloat height = self.height - (_groupMargins.top + _groupMargins.bottom);
+        return CGRectMake(_groupMargins.left, 0, 0, height);
     }
 }
 
 - (CGRect)_frameForGroupFoot {
     if (_orientation == Vertical) {
-        CGFloat width = self.width - (_listGroupMargins.left + _listGroupMargins.right);
+        CGFloat width = self.width - (_groupMargins.left + _groupMargins.right);
         return CGRectMake(0, 0, width, 0);
     } else {
-        CGFloat height = self.height - (_listGroupMargins.top + _listGroupMargins.bottom);
+        CGFloat height = self.height - (_groupMargins.top + _groupMargins.bottom);
         return CGRectMake(0, 0, 0, height);
     }
 }
@@ -704,9 +704,9 @@ static BOOL insetsForAllSet;
     
     CGRect frame = view.bounds;
     if (_orientation == Vertical) {
-        frame.size.height += _listGroupMargins.bottom;
+        frame.size.height += _groupMargins.bottom;
     } else {
-        frame.size.width += _listGroupMargins.right;
+        frame.size.width += _groupMargins.right;
     }
     ListContentView* groupView = [ListContentView withFrame:frame footGroupId:groupId];
     [groupView addSubview:view];
@@ -727,9 +727,9 @@ static BOOL insetsForAllSet;
     
     CGRect frame = view.bounds;
     if (_orientation == Vertical) {
-        frame.size.height += _listGroupMargins.top;
+        frame.size.height += _groupMargins.top;
     } else {
-        frame.size.width += _listGroupMargins.left;
+        frame.size.width += _groupMargins.left;
     }
     ListContentView* groupView = [ListContentView withFrame:frame headGroupId:groupId];
     [groupView addSubview:view];
@@ -902,8 +902,8 @@ static BOOL insetsForAllSet;
 }
 
 - (UIView *)newView {
-    CGFloat left = _listView.listGroupMargins.left + _listView.listItemMargins.left;
-    CGFloat right = _listView.listGroupMargins.right + _listView.listItemMargins.right;
+    CGFloat left = _listView.groupMargins.left + _listView.itemMargins.left;
+    CGFloat right = _listView.groupMargins.right + _listView.itemMargins.right;
     UIView* view = [[UIView alloc] initWithFrame:CGRectMake(left, 0, _listView.width - left - right, 0)];
     [_stickiesAddedForView addObject:view];
     return view;
