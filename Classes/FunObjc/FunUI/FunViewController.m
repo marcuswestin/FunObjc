@@ -114,6 +114,7 @@ static NSUInteger deallocCount;
 }
 
 - (void)_funViewControllerRender:(BOOL)animated {
+    self.automaticallyAdjustsScrollViewInsets = NO;
     [self render:animated];
 }
 
