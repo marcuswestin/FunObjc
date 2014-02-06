@@ -345,34 +345,31 @@ static BOOL insetsForAllSet;
     }
     [_scrollView onTap:^(UITapGestureRecognizer *sender) {
         CGPoint tapPoint = [sender locationInView:_scrollView];
-        NSInteger index = _topListViewIndex;
-        for (ListContentView* view in self._views) {
-            if (CGRectContainsPoint(view.frame, tapPoint)) {
-                if (view.isGroupView) {
-                    if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
-                        ListGroupId groupId = [self _groupIdForIndex:index];
-                        [_delegate listSelectGroupWithId:groupId withIndex:index];
-                    }
-                    
-                } else {
-                    [_delegate listSelectIndex:index view:view.content];
-                }
-                break;
-            }
-            if (!view.isGroupView) {
-                index += 1; // Don't count group heads against item indices.
-            }
+        ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
+        if ([view isItemView]) {
+            [_delegate listSelectIndex:view.index];
+        } else {
+            ListGroupId groupId = [self _groupIdForIndex:view.index];
+            [_delegate listSelectGroupWithId:groupId withIndex:view.index];
         }
     }];
 }
 
-- (void)selectVisibleIndex:(ListViewIndex)index {
-    for (ListContentView* view in [self _views]) {
-        if ([view isItemView] && view.index == index) {
-            [_delegate listSelectIndex:index view:view.content];
-            return;
+- (ListContentView*)visibleContentViewAtPoint:(CGPoint)point {
+    for (ListContentView* view in self._views) {
+        if (CGRectContainsPoint(view.frame, point)) {
+            return view;
         }
     }
+    return nil;
+}
+
+- (ListViewIndex)indexForVisibleItemViewAtPoint:(CGPoint)point {
+    ListContentView* view = [self visibleContentViewAtPoint:point];
+    if (!view || !view.isItemView) {
+        return -1;
+    }
+    return view.index;
 }
 
 - (void)_renderEmpty {

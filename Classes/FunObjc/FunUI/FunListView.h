@@ -41,7 +41,7 @@ enum ListViewDirection {
 @required
 - (BOOL) hasViewForIndex:(ListViewIndex)index;
 - (void) populateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
-- (void) listSelectIndex:(ListViewIndex)index view:(UIView*)view;
+- (void) listSelectIndex:(ListViewIndex)index;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
 - (id) listGroupIdForIndex:(ListViewIndex)index;
@@ -88,9 +88,9 @@ enum ListViewDirection {
 - (void) moveListWithKeyboard:(CGFloat)keyboardHeightChange;
 - (CGFloat) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListViewIndex)index;
 - (CGFloat) setWidth:(CGFloat)width forVisibleViewWithIndex:(ListViewIndex)index;
-- (void) selectVisibleIndex:(ListViewIndex)index;
 - (void) extendBottom;
 - (UIView*) visibleViewWithIndex:(ListViewIndex)index;
 - (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
 - (UIView*) makeTopViewWithHeight:(CGFloat)height;
+- (ListViewIndex) indexForVisibleItemViewAtPoint:(CGPoint)point;
 @end
