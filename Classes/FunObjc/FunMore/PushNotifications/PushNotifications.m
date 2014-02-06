@@ -18,7 +18,7 @@
 #define PUSH_TYPE @"ios"
 #endif
 
-#if defined DEBUG
+#if defined DEBUG || defined PUSH_MODE_SANDBOX
 #define PUSH_MODE @"_sandbox"
 #else
 #define PUSH_MODE @"_prod"
