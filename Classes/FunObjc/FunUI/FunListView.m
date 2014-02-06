@@ -94,15 +94,6 @@ static CGFloat START_EDGE = 99999.0f;
     if (self = [super initWithFrame:frame]) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
 //        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
-        [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
-            if (_shouldMoveWithKeyboard) {
-                [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-                    [self moveListWithKeyboard:info.heightChange];
-                }];
-            } else {
-                [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
-            }
-        }];
     }
     return self;
 }
@@ -294,9 +285,18 @@ static CGFloat START_EDGE = 99999.0f;
 // Setup & Teardown //
 //////////////////////
 
-- (void)didMoveToWindow {
-    if (!self.window) {
-        _scrollView.delegate = nil;
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    if (newWindow) {
+        [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
+            if (_shouldMoveWithKeyboard) {
+                [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
+                    [self moveListWithKeyboard:info.heightChange];
+                }];
+            } else {
+                [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
+            }
+        }];
+    } else {
         [Keyboard offWillChange:self];
     }
 }
