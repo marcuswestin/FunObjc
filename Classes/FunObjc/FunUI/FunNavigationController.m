@@ -10,7 +10,7 @@
 #import "FunObjc.h"
 
 @interface FunNavigationController ()
-@property id<UIViewControllerAnimatedTransitioning>currentAnimator;
+@property id<FunTransitionAnimator>animator;
 @end
 
 @interface ViewControllerTransition : NSObject <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
@@ -156,23 +156,24 @@ static BOOL hasSetup;
     }
 }
 
-// Navigation Animation
-///////////////////////
-- (void)push:(UIViewController *)viewController withAnimator:(id<UIViewControllerAnimatedTransitioning>)animator {
-    _currentAnimator = animator;
-    [self pushViewController:viewController animated:YES];
+////////////////////////
+// Custom Transitions //
+////////////////////////
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    _animator = nil;
+    [super pushViewController:viewController animated:YES];
+}
+- (void)pushViewController:(UIViewController *)viewController withAnimator:(id<FunTransitionAnimator>)animator {
+    _animator = animator;
+    [super pushViewController:viewController animated:YES];
 }
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
-    return _currentAnimator;
+    return _animator;
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    if ([_currentAnimator conformsToProtocol:@protocol(UIViewControllerInteractiveTransitioning)]) {
-        return (id<UIViewControllerInteractiveTransitioning>)_currentAnimator;
-    } else {
-        return nil;
-    }
+    return [_animator shouldStartInteractiveTransition] ? _animator : nil;
 }
 
 @end
