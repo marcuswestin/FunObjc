@@ -161,7 +161,7 @@ static BOOL hasSetup;
 ////////////////////////
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
     _animator = nil;
-    [super pushViewController:viewController animated:YES];
+    [super pushViewController:viewController animated:animated];
 }
 - (void)pushViewController:(UIViewController *)viewController withAnimator:(id<FunTransitionAnimator>)animator {
     _animator = animator;
