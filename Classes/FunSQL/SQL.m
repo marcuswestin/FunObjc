@@ -105,13 +105,14 @@ static NSMutableDictionary* columnsCache;
                 err = makeError(exception.reason);
             }
             if (err) {
-                NSLog(@"Error: %@", err);
+                NSLog(@"FAILED migration: %@", err);
                 rollback();
                 fatal(err);
+            } else {
+                NSLog(@"Completed migration %@", migration[@"name"]);
+                [_completedMigrations addObject:migration[@"name"]];
             }
         }];
-        NSLog(@"Completed migration %@", migration[@"name"]);
-        [_completedMigrations addObject:migration[@"name"]];
     }];
     
     [Files writeDocumentJson:[self migrationDoc] object:@{@"completedMigrations": _completedMigrations}];
