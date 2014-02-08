@@ -47,7 +47,7 @@ static FunAppDelegate* instance;
         [Files writeNumber:current name:@"LastLaunchTime"];
     });
     
-#if TARGET_IPHONE_SIMULATOR
+#if DEBUG
     [self _setupDevMenu];
 #endif
     
