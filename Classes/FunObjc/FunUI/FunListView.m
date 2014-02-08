@@ -195,10 +195,18 @@ static CGFloat START_EDGE = 99999.0f;
     return (_orientation == Vertical ? view.height : view.width);
 }
 - (void)_addOrientedContentOffset:(CGFloat)scrollAmount animated:(BOOL)animated {
-    if (_orientation == Vertical) {
-        [_scrollView addContentOffsetY:scrollAmount animated:animated];
+    if (animated) {
+        if (_orientation == Vertical) {
+            [_scrollView addContentOffsetY:scrollAmount animated:YES];
+        } else {
+            [_scrollView addContentOffsetX:scrollAmount animated:YES];
+        }
     } else {
-        [_scrollView addContentOffsetX:scrollAmount animated:animated];
+        if (_orientation == Vertical) {
+            [_scrollView addContentOffsetY:scrollAmount];
+        } else {
+            [_scrollView addContentOffsetX:scrollAmount];
+        }
     }
 }
 - (void)_addOrientedContentSize:(CGFloat)change {
