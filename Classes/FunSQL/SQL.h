@@ -13,6 +13,7 @@
 @property FMDatabase* db;
 - (NSArray*)select:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
 - (NSDictionary*)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
+- (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)updateOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)insertInto:(NSString*)table item:(id)item error:(NSError**)outError;
@@ -40,6 +41,7 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (void)transact:(SQLTransactionBlock)block;
 + (NSArray*)select:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
++ (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)openDocument:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (NSString*) joinSelect:(NSDictionary*)tableColumns;
 @end

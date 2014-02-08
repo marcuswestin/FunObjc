@@ -156,6 +156,14 @@ static FMDatabaseQueue* queue;
     return result;
 }
 
++ (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    __block NSDictionary* result;
+    [SQL autocommit:^(SQLConn *conn) {
+        result = [conn selectMaybe:sql args:args error:outError];
+    }];
+    return result;
+}
+
 + (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -196,6 +204,20 @@ static NSMutableDictionary* columns;
 }
 
 - (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    NSDictionary* row = [self selectMaybe:sql args:args error:outError];
+    if (*outError) {
+        return nil;
+    }
+    
+    if (!row) {
+        *outError = makeError([NSString stringWithFormat:@"SelectOne returned no rows.\nQuery: %@", sql]);
+        return nil;
+    }
+    
+    return row;
+}
+
+- (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     NSArray* rows = [self select:sql args:args error:outError];
     
     if (*outError) {
@@ -203,11 +225,11 @@ static NSMutableDictionary* columns;
     }
     
     if (rows.count > 1) {
-        *outError = makeError(@"Bad number of rows");
+        *outError = makeError([NSString stringWithFormat:@"SelectOne/SelectMaybe got more than 1 rows.\nQuery: %@", sql]);
         return nil;
     }
     
-    return (rows.count == 1 ? rows[0] : nil);
+    return rows.firstObject;
 }
 
 - (void)insertMultiple:(NSString *)sql argsList:(NSArray *)argsList error:(NSError *__autoreleasing *)outError {
