@@ -10,8 +10,6 @@
 #import "FunBase.h"
 #import "JSON.h"
 
-#define log NSLog
-
 static NSString* multipartJsonName = @"json";
 static NSString* multipartImageName = @"image";
 static NSString* multipartVideoName = @"video";
