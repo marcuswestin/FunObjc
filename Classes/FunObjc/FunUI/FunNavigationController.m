@@ -173,7 +173,11 @@ static BOOL hasSetup;
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    return [_animator shouldStartInteractiveTransition] ? _animator : nil;
+    if ([_animator shouldStartInteractiveTransition]) {
+        return _animator;
+    } else {
+        return nil;
+    }
 }
 
 @end
