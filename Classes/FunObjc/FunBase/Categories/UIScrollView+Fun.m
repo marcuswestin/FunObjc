@@ -56,7 +56,9 @@
 }
 
 - (void)addContentOffsetX:(CGFloat)addX {
-    return [self addContentOffsetX:addX animated:NO];
+    CGPoint offset = self.contentOffset;
+    offset.x += addX;
+    self.contentOffset = offset;
 }
 - (void)addContentOffsetX:(CGFloat)addX animated:(BOOL)animated {
     CGPoint offset = self.contentOffset;
