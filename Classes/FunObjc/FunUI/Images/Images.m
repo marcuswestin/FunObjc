@@ -8,6 +8,24 @@
 
 #import "Images.h"
 
+static NSMutableSet* imageLoadObservers;
+
+@interface ImagesLoadObserver ()
+@property (copy) Block callback;
+@property NSMutableSet* urls;
+@end
+@implementation ImagesLoadObserver
+- (void)onLoaded:(Block)callback {
+    if ([_urls count] == 0) {
+        asyncMain(callback);
+    } else {
+        _callback = callback;
+        _urls = [NSMutableSet set];
+        [imageLoadObservers addObject:self];
+    }
+}
+@end
+
 @implementation Images
 
 static NSOperationQueue* queue;
@@ -21,11 +39,16 @@ static NSString* cacheKeyBase;
     loading = [NSMutableDictionary dictionary];
     processing = [NSMutableDictionary dictionary];
     queue = [[NSOperationQueue alloc] init];
+    imageLoadObservers = [NSMutableSet set];
     queue.maxConcurrentOperationCount = 10;
     noResize = CGSizeMake(0,0);
     noRadius = 0;
     
     cacheKeyBase = @"FunImgs";
+}
+
++ (ImagesLoadObserver *)observeLoadRequests {
+    return [ImagesLoadObserver new];
 }
 
 + (UIImage *)getLocal:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
@@ -41,9 +64,26 @@ static NSString* cacheKeyBase;
     [Images load:url resize:size radius:0 callback:callback];
 }
 
-+ (void)load:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius callback:(ImageCallback)callback {
++ (void)load:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius callback:(ImageCallback)_callback {
     // Processed cached
-    callback = [self _mainThreadCallback:callback];
+    ImageCallback callback = ^(NSError *err, UIImage *image) {
+        asyncMain(^{
+            _callback(err, image);
+            NSMutableArray* clean = [NSMutableArray array];
+            for (ImagesLoadObserver* observer in imageLoadObservers) {
+                if ([observer.urls containsObject:url]) {
+                    [observer.urls removeObject:url];
+                    if ([observer.urls count] == 0) {
+                        observer.callback();
+                        [clean addObject:observer];
+                    }
+                }
+            }
+            for (ImagesLoadObserver* observer in clean) {
+                [imageLoadObservers removeObject:observer];
+            }
+        });
+    };
     asyncHigh(^{
         NSData* processedData = [Files readCache:[self _cacheKeyFor:url resize:resize radius:radius]];
         if (processedData) {
@@ -69,19 +109,12 @@ static NSString* cacheKeyBase;
             NSData* processedData = [Files readCache:[self _cacheKeyFor:url resize:resize radius:radius]];
             if (processedData) {
                 callback(nil, [UIImage imageWithData:processedData]);
+                return;
             }
             
             return [self _processAndCache:url data:data resize:resize radius:radius callback:callback];
         }];
     });
-}
-
-+ (ImageCallback)_mainThreadCallback:(ImageCallback)callback {
-    return ^(NSError* err, UIImage* image) {
-        asyncMain(^{
-            callback(err, image);
-        });
-    };
 }
 
 + (void)_fetch:(NSString*)url cacheKey:(NSString*)key callback:(DataCallback)callback {

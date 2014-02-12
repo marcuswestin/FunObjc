@@ -13,8 +13,13 @@
 #import "UIImage+Fun.h"
 #import "FunBase.h"
 
+@interface ImagesLoadObserver : NSObject
+- (void) onLoaded:(Block)callback;
+@end
+
 @interface Images : NSObject
 
++ (ImagesLoadObserver*)observeLoadRequests;
 + (void)load:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius callback:(ImageCallback)callback;
 + (void)load:(NSString*)url resize:(CGSize)size callback:(ImageCallback)callback;
 + (UIImage*)getLocal:(NSString*)url resize:(CGSize)size radius:(CGFloat)radius;
