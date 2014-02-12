@@ -20,6 +20,8 @@ UIColor* rgba(CGFloat r, CGFloat g, CGFloat b, CGFloat a);
 UIColor* rgb(CGFloat r, CGFloat g, CGFloat b);
 UIColor* hsva(CGFloat h, CGFloat s, CGFloat v, CGFloat a);
 UIColor* hsv(CGFloat h, CGFloat s, CGFloat v);
+UIColor* hexa(int hex, CGFloat a);
+UIColor* hex(int hex);
 
 #define LIGHT_GRAY rgb(230,230,230)
 #define STEELBLUE rgb(70,130,180)

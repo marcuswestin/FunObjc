@@ -20,6 +20,18 @@ UIColor* hsva(CGFloat h, CGFloat s, CGFloat v, CGFloat a) {
 UIColor* hsv(CGFloat h, CGFloat s, CGFloat v) {
     return hsva(h, s, v, 100.0);
 }
+UIColor* hex(int num) {
+    CGFloat r = (num & 0xFF0000) >> 16;
+    CGFloat g = (num & 0x00FF00) >> 8;
+    CGFloat b = (num & 0x0000FF) >> 0;
+    return rgb(r,g,b);
+}
+UIColor* hexa(int num, CGFloat alpha) {
+    CGFloat r = (num & 0xFF0000) >> 16;
+    CGFloat g = (num & 0x00FF00) >> 8;
+    CGFloat b = (num & 0x0000FF) >> 0;
+    return rgba(r,g,b,alpha);
+}
 
 @implementation UIColor (Fun)
 
