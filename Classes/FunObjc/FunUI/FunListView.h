@@ -93,4 +93,5 @@ enum ListViewDirection {
 - (FunListViewStickyGroup*) stickyGroupWithPosition:(CGFloat)y height:(CGFloat)height viewOffset:(CGFloat)viewOffset;
 - (UIView*) makeTopViewWithHeight:(CGFloat)height;
 - (ListViewIndex) indexForVisibleItemViewAtPoint:(CGPoint)point;
+- (BOOL) isAtBottom;
 @end

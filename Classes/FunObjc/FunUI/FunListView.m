@@ -869,6 +869,11 @@ static BOOL insetsForAllSet;
 - (ListContentView*)_bottomView {
     return self._views.lastObject;
 }
+
+- (BOOL)isAtBottom {
+    return _scrollView.contentOffset.y >= _scrollView.contentSize.height - _scrollView.height;
+}
+
 @end
 
 //////////////
