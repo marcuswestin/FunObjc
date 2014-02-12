@@ -358,7 +358,9 @@ static BOOL insetsForAllSet;
             [_delegate listSelectIndex:view.index];
         } else {
             ListGroupId groupId = [self _groupIdForIndex:view.index];
-            [_delegate listSelectGroupWithId:groupId withIndex:view.index];
+            if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
+                [_delegate listSelectGroupWithId:groupId withIndex:view.index];
+            }
         }
     }];
 }
