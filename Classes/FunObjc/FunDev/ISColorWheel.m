@@ -281,10 +281,10 @@ static PixelRGB ISColorWheel_HSBToRGB (float h, float s, float v)
 
 - (void)setCurrentColor:(UIColor*)color
 {
-    float h = 0.0;
-    float s = 0.0;
-    float b = 1.0;
-    float a = 1.0;
+    CGFloat h = 0.0;
+    CGFloat s = 0.0;
+    CGFloat b = 1.0;
+    CGFloat a = 1.0;
     
     [color getHue:&h saturation:&s brightness:&b alpha:&a];
     
