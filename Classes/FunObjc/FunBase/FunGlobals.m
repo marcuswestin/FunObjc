@@ -135,5 +135,5 @@ NSRange NSRangeMake(NSUInteger location, NSUInteger length) {
 }
 
 NSString* NSStringFromRange(NSRange range) {
-    return [NSString stringWithFormat:@"{ .location=%d, .length=%d }", range.location, range.length];
+    return [NSString stringWithFormat:@"{ .location=%lu, .length%lu }", (unsigned long)range.location, (unsigned long) range.length];
 }

@@ -10,7 +10,7 @@
 
 // Data types
 /////////////
-typedef NSInteger ListViewIndex;
+typedef long ListViewIndex;
 typedef id ListGroupId;
 
 typedef enum ListViewOrientation ListViewOrientation;

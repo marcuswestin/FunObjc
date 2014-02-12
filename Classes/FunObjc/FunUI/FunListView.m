@@ -579,9 +579,9 @@ static BOOL insetsForAllSet;
         }
     }
     
-    NSInteger index = _topListViewIndex - 1;
+    ListViewIndex index = _topListViewIndex - 1;
     if (![_delegate hasViewForIndex:index]) {
-        [NSException raise:@"Error" format:@"hasViewForIndex returned NO for index %d", index];
+        [NSException raise:@"Error" format:@"hasViewForIndex returned NO for index %ld", index];
     }
     
     ListGroupId groupId = [self _groupIdForIndex:index];
@@ -608,7 +608,7 @@ static BOOL insetsForAllSet;
     
     ListContentView* view = [self _getViewForIndex:index location:ListViewLocationTop];
     if (!view) {
-        [NSException raise:@"Error" format:@"Got nil view for list index %d", index];
+        [NSException raise:@"Error" format:@"Got nil view for list index %ld", index];
     }
     [self _addContentView:view at:ListViewLocationTop];
     _topListViewIndex = index;

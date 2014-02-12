@@ -414,7 +414,7 @@
     return [[NSDateFormatter new] veryShortWeekdaySymbols][self.weekday - 1];
 }
 - (NSString *)nameOfDayNumeric {
-    return [NSString stringWithFormat:@"%d", self.day];
+    return [NSString stringWithFormat:@"%ld", (long)self.day];
 }
 - (NSString*)nameOfDayNumericSuffix {
     return [NSNumber suffix:self.day+1];
