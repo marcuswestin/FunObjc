@@ -11,6 +11,7 @@
 #import "UIImage+Resize.h"
 #import "UIImage+RoundedCorner.h"
 #import "UIImage+Fun.h"
+#import "UIImage+ImageEffects.h"
 #import "FunBase.h"
 
 @interface ImagesLoadObserver : NSObject
