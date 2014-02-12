@@ -93,6 +93,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat1)outsetRight;
 - (StylerFloat1)outsetLeft;
 - (StylerFloat1)outsetBottom;
+- (StylerFloatSide)outsetSide;
 - (StylerFloat1)moveUp;
 - (StylerFloat1)moveDown;
 - (StylerViewFloat)below;
