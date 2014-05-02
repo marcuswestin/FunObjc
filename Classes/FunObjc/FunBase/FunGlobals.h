@@ -11,7 +11,7 @@
 #define IS_DISTRIBUTION (MODE == MODE_DISTRIBUTION)
 
 
-#if TARGET_IPHONE_SIMULATOR
+#ifdef MODE_DEV
     NSMutableSet* __AUTOs;
     #define ENABLE_AUTO(AUTO_NAME)\
         NSLog(@"Activate AUTO: %@", AUTO_NAME);\
