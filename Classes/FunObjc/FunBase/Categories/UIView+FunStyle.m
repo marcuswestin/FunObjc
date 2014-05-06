@@ -273,6 +273,8 @@ DeclareStyler(round,
               _view.clipsToBounds = YES;
               )
 
+DeclareStyler(clip, _view.clipsToBounds = YES;)
+
 DeclareFloat4ColorStyler(edges, w1,w2,w3,w4, color,
                          _edgeWidths = UIEdgeInsetsMake(w1,w2,w3,w4);
                          _edgeColor = color)
@@ -298,10 +300,6 @@ DeclareFloat4ColorStyler(edges, w1,w2,w3,w4, color,
 }
 - (ViewStyler *)hide {
     _view.hidden = YES;
-    return self;
-}
-- (ViewStyler *)clip {
-    _view.clipsToBounds = YES;
     return self;
 }
 /* Labels
