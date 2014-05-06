@@ -74,9 +74,6 @@ void _forceCrash() {
         [Files resetFileRoot];
         [view empty];
         [UILabel.appendTo(view).text(@"State has been reset.\nApp will close in 1 second.").wrapText.center render];
-        [view onTap:^(UITapGestureRecognizer *tap) {
-            // Do nothing
-        }];
         after(1, ^{
             _forceCrash();
         });
