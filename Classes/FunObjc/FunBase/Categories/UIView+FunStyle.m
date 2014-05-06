@@ -260,9 +260,7 @@ DeclareFloat3Styler(shadow, xOffset, yOffset, radius,
                     _view.layer.shadowRadius = radius;
                     _view.layer.shadowOpacity = 0.5;
                     )
-DeclareFloatStyler(radius, radius,
-                   _view.layer.cornerRadius = radius;
-                   _view.clipsToBounds = YES)
+DeclareFloatStyler(radius, radius, _view.layer.cornerRadius = radius)
 
 DeclareFloatColorStyler(border, width, color,
                         _view.layer.borderWidth = width;
