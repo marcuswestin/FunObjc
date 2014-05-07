@@ -658,7 +658,7 @@ static BOOL insetsForAllSet;
 //////////////////////////////////
 - (ListContentView*)_getViewForIndex:(ListViewIndex)index location:(ListViewLocation)location {
     UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
-    [_delegate populateView:content forIndex:index location:location];
+    [_delegate listPopulateView:content forIndex:index location:location];
     CGRect frame = content.bounds;
     if (_orientation == Vertical) {
         frame.size.height += (_itemMargins.top + _itemMargins.bottom);
@@ -706,8 +706,8 @@ static BOOL insetsForAllSet;
 
 - (void) _addGroupFootViewForIndex:(ListViewIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
     UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupFoot]];
-    if ([_delegate respondsToSelector:@selector(populateView:forGroupFoot:withIndex:)]) {
-        [_delegate populateView:view forGroupFoot:groupId withIndex:index];
+    if ([_delegate respondsToSelector:@selector(listPopulateView:forGroupFoot:withIndex:)]) {
+        [_delegate listPopulateView:view forGroupFoot:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;
@@ -729,8 +729,8 @@ static BOOL insetsForAllSet;
 
 - (void) _addGroupHeadViewForIndex:(ListViewIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
     UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHead]];
-    if ([_delegate respondsToSelector:@selector(populateView:forGroupHead:withIndex:)]) {
-        [_delegate populateView:view forGroupHead:groupId withIndex:index];
+    if ([_delegate respondsToSelector:@selector(listPopulateView:forGroupHead:withIndex:)]) {
+        [_delegate listPopulateView:view forGroupHead:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;

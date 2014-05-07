@@ -40,13 +40,13 @@ enum ListViewDirection {
 @protocol FunListViewDelegate <NSObject>
 @required
 - (BOOL) hasViewForIndex:(ListViewIndex)index;
-- (void) populateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
+- (void) listPopulateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
 - (void) listSelectIndex:(ListViewIndex)index;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
 - (id) listGroupIdForIndex:(ListViewIndex)index;
-- (void) populateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListViewIndex)index;
-- (void) populateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listPopulateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listPopulateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListViewIndex)index;
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousBottomGroupId;
 - (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListViewIndex)index;
