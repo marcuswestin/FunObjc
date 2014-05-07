@@ -17,11 +17,10 @@ static NSMutableSet* imageLoadObservers;
 @implementation ImagesLoadObserver
 - (void)onLoaded:(Block)callback {
     if ([_urls count] == 0) {
+        [imageLoadObservers removeObject:self];
         asyncMain(callback);
     } else {
         _callback = callback;
-        _urls = [NSMutableSet set];
-        [imageLoadObservers addObject:self];
     }
 }
 @end
@@ -48,7 +47,10 @@ static NSString* cacheKeyBase;
 }
 
 + (ImagesLoadObserver *)observeLoadRequests {
-    return [ImagesLoadObserver new];
+    ImagesLoadObserver* observer = [ImagesLoadObserver new];
+    observer.urls = [NSMutableSet set];
+    [imageLoadObservers addObject:observer];
+    return observer;
 }
 
 + (UIImage *)getLocal:(NSString *)url resize:(CGSize)resize radius:(CGFloat)radius {
@@ -84,6 +86,11 @@ static NSString* cacheKeyBase;
             }
         });
     };
+    
+    for (ImagesLoadObserver* observer in imageLoadObservers) {
+        [observer.urls addObject:url];
+    }
+    
     asyncHigh(^{
         NSData* processedData = [Files readCache:[self _cacheKeyFor:url resize:resize radius:radius]];
         if (processedData) {
