@@ -79,7 +79,7 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
     CGFloat _previousContentOffset;
     CGFloat _topEdge;
     CGFloat _bottomEdge;
-    BOOL _scrollViewPurged;
+    NSUInteger _scrollViewPurgedCount;
     NSMutableArray* _stickyGroups;
     UIView* _emptyView;
     UIView* _endViewTop;
@@ -854,13 +854,13 @@ static BOOL insetsForAllSet;
 }
 
 - (NSArray*)_views {
-    if (!_scrollViewPurged) {
+    if (_scrollViewPurgedCount < 2) {
         for (UIView* view in _scrollView.subviews) {
             if (![view isKindOfClass:[ListContentView class]]) {
                 [view removeAndClean];
+                _scrollViewPurgedCount += 1;
             }
         }
-        _scrollViewPurged = YES;
     }
     if (!_scrollView.subviews || !_scrollView.subviews.count) { return @[]; }
     return _scrollView.subviews;
