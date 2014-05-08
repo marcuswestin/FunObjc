@@ -270,7 +270,6 @@ DeclareFloatColorStyler(border, width, color,
 DeclareStyler(round,
               CGFloat radius = MIN(_view.frame.size.width, _view.frame.size.height);
               _view.layer.cornerRadius = radius/2;
-              _view.clipsToBounds = YES;
               )
 
 DeclareStyler(clip, _view.clipsToBounds = YES;)
