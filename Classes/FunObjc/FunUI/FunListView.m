@@ -82,7 +82,7 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
     NSUInteger _scrollViewPurgedCount;
     NSMutableArray* _stickyGroups;
     UIView* _emptyView;
-    UIView* _endViewTop;
+    ListContentView* _endViewTop;
     BOOL _hasContent;
     BOOL _hasCalledEmpty;
 }
@@ -757,7 +757,7 @@ static BOOL insetsForAllSet;
     }
 }
 
-- (void)_addView:(UIView*)view at:(ListViewLocation)location {
+- (void)_addView:(ListContentView*)view at:(ListViewLocation)location {
     if (location == ListViewLocationTop) {
         if (_orientation == Vertical) {
             _topEdge -= view.height;
