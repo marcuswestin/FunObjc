@@ -104,12 +104,12 @@ static CGFloat START_EDGE = 99999.0f;
     [self _beforeRender];
     
     if (insetsForAllSet) {
-        UIEdgeInsets insets = self.scrollView.contentInset;
+        UIEdgeInsets insets = _scrollView.contentInset;
         insets.top += insetsForAll.top;
         insets.right += insetsForAll.right;
         insets.bottom += insetsForAll.bottom;
         insets.left += insetsForAll.left;
-        self.scrollView.contentInset = insets;
+        _scrollView.contentInset = insets;
     }
     [self _setupScrollview];
     [self reloadDataForList];
@@ -123,7 +123,7 @@ static CGFloat START_EDGE = 99999.0f;
 /////////////////
 
 - (UIView *)makeTopViewWithHeight:(CGFloat)height {
-    _endViewTop = [ListContentView endViewWithFrame:CGRectMake(0, 0, self.scrollView.width, height)];
+    _endViewTop = [ListContentView endViewWithFrame:CGRectMake(0, 0, _scrollView.width, height)];
     return _endViewTop;
 }
 
@@ -397,7 +397,7 @@ static BOOL insetsForAllSet;
 }
 
 - (void)_renderInitialContent {
-    [self.scrollView empty];
+    [_scrollView empty];
     
     [self _withoutScrollEvents:^{
         _scrollView.contentSize = (_orientation == Vertical ? CGSizeMake(self.width, MAX_EDGE) : CGSizeMake(MAX_EDGE, self.height));
@@ -517,11 +517,12 @@ static BOOL insetsForAllSet;
 - (BOOL)_listAddNextViewDown {
     NSInteger index = _bottomItemIndex + 1;
     BOOL hasView = [_delegate hasViewForIndex:index];
-    
+    ListContentView* bottomView = [self _bottomView];
+
     if (!hasView) {
         // There are no more items to display at the bottom.
         // Last thing: add a group view at the bottom.
-        if ([self _bottomView].isGroupView) {
+        if (bottomView.isGroupView) {
             return NO; // All done!
             
         } else {
@@ -538,7 +539,6 @@ static BOOL insetsForAllSet;
         // Second time around, add a head view for the next bottom group
         // After these two have happened, the actual item view is added (see below)
         
-        ListContentView* bottomView = [self _bottomView];
         if (bottomView.isItemView) {
             [self _addGroupFootViewForIndex:_bottomItemIndex withGroupId:_bottomGroupId atLocation:ListViewLocationBottom];
             return YES;
