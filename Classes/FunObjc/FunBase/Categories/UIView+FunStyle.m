@@ -133,6 +133,7 @@ DeclareFloatStyler(y2, y2,
                    frame.origin.y = y2 - frame.size.height;
                    _view.frame = frame)
 DeclareFloatStyler(fromRight, offset, self.x2(offset))
+DeclareFloatStyler(fromLeft, offset, self.x(offset))
 DeclareFloatSideStyler(fromSide, offset, side, (side == Right ? self.x2(offset) : self.x(offset)))
 DeclareFloatStyler(x2, offset,
                    CGRect frame = _view.frame;
@@ -212,6 +213,11 @@ DeclareFloatStyler(fillLeftOfLast, offset,
 DeclareViewFloatSideStyler(fillSideOf, view, offset, side,
                            (side == Left ? self.fillLeftOf(view, offset) : self.fillRightOf(view, offset)))
 
+DeclareViewFloatStyler(fillBelow, view, offset,
+                       _view.y = view.y2 + offset;
+                       _view.height = _view.superview.height - view.height - offset)
+DeclareFloatStyler(fillBelowLast, offset, self.fillBelow(self.last, offset))
+
 /* Size
  ******/
 DeclareFloatStyler(w, width,
@@ -250,7 +256,10 @@ DeclareSizeStyler(bounds, size,
 
 DeclareStyler(size, [_view sizeToFit])
 DeclareStyler(sizeToFit, [_view sizeToFit])
-
+DeclareStyler(sizeHeight,
+              CGFloat w = _view.width;
+              [self size];
+              self.w(w))
 
 /* Styling
  *********/
@@ -382,6 +391,7 @@ DeclareStringStyler(placeholder, placeholderText,
                                 }
                             } else if (!placeholderView.superview) {
                                 [placeholderView appendTo:textView];
+                                [placeholderView centerVertically];
                             }
                         }];
                         if (_textView.text.length) {

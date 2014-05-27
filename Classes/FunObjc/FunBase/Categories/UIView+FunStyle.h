@@ -74,6 +74,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat1)centerY;
 - (StylerFloat2)centerXY;
 - (StylerFloat1)fromRight;
+- (StylerFloat1)fromLeft;
 - (StylerFloatSide)fromSide;
 - (StylerFloat1)x2;
 - (StylerFloat1)fromBottom;
@@ -110,6 +111,8 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerViewFloat)fillLeftOf;
 - (StylerFloat1)fillLeftOfLast;
 - (StylerViewFloatSide)fillSideOf;
+- (StylerViewFloat)fillBelow;
+- (StylerFloat1)fillBelowLast;
 
 /* Size
  ******/
@@ -118,6 +121,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat2)wh;
 - (StylerSize)bounds;
 - (Styler)size;
+- (Styler)sizeHeight;
 - (Styler)sizeToFit;
 - (Styler)fill;
 - (Styler)fillW;
