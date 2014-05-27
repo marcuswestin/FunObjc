@@ -15,6 +15,7 @@ typedef void (^PanHandler)(UIPanGestureRecognizer* pan);
 
 @interface UIView (UIControlFun)
 - (UITapGestureRecognizer*) onTap:(TapHandler)handler;
+- (UITapGestureRecognizer*) onTap:(id)target selector:(SEL)selector;
 - (UIPanGestureRecognizer*) onPan:(PanHandler)handler;
 @end
 
@@ -30,6 +31,7 @@ typedef void (^PanHandler)(UIPanGestureRecognizer* pan);
 @interface UIControl (UIControlFun)
 - (void) onChange:(EventHandler)handler;
 - (void) onTap:(EventHandler)handler;
+- (void)onTap:(id)target selector:(SEL)selector;
 - (void)onTouchDown:(EventHandler)handler;
 - (void)onTouchUp:(EventHandler)handler;
 - (void)onTouchUpOutside:(EventHandler)handler;

@@ -66,6 +66,12 @@ static NSMutableDictionary* tagNameToTagNumber;
     return view;
 }
 
+- (id)onTap:(id)target selector:(SEL)selector {
+    id view = [self render];
+    [_buttonView onTap:target selector:selector];
+    return view;
+}
+
 /* View Hierarchy
  ****************/
 DeclareIntegerStyler(tag, tagI, _view.tag = tagI)

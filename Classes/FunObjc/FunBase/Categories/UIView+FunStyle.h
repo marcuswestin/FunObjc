@@ -55,6 +55,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (void)apply;
 - (id)render;
 - (id)onTap:(EventHandler)handler;
+- (id)onTap:(id)target selector:(SEL)selector;
 
 /* View hierarchy
  ****************/

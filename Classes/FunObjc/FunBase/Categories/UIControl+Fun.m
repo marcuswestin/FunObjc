@@ -35,6 +35,11 @@ static NSString* KeySelectionChange = @"FunKeySelectionChange";
 - (UITapGestureRecognizer*)onTap:(TapHandler)handler {
     return [self onTapNumber:1 withTouches:1 handler:handler];
 }
+- (UITapGestureRecognizer *)onTap:(id)target selector:(SEL)selector {
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:selector];
+    [self addGestureRecognizer:tap];
+    return tap;
+}
 - (UITapGestureRecognizer*)onTapNumber:(NSUInteger)numberOfTapsRequires withTouches:(NSUInteger)numberOfTouchesRequired handler:(TapHandler)handler {
     UITapGestureRecognizer* tap = [self _addFunGesture:UITapGestureRecognizer.class Key:KeyTapHandler selector:@selector(_handleFunTap:) handler:handler];
     tap.numberOfTapsRequired = numberOfTapsRequires;
@@ -80,6 +85,9 @@ static NSString* KeySelectionChange = @"FunKeySelectionChange";
 }
 - (void)onTap:(EventHandler)handler {
     [self on:UIControlEventTouchUpInside handler:handler];
+}
+- (void)onTap:(id)target selector:(SEL)selector {
+    [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
 - (void)onTouchDown:(EventHandler)handler {
     [self on:UIControlEventTouchDown handler:handler];
