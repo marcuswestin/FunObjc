@@ -22,8 +22,6 @@
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 
 @interface Keyboard : NSObject
-@property BOOL isVisible;
-@property CGFloat visibleHeight;
 + (void)onWillShow:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)onWillHide:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
 + (void)onWillChange:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback;
@@ -33,6 +31,10 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
 + (void)dismiss;
+
++ (void)renderOverlay:(void(^)(UIView* overlay))renderBlock resizeBlock:(void(^)(UIView* overlay))resizeBlock;
++ (void)removeOverlay;
++ (BOOL)hasOverlay;
 
 + (CGFloat)heightForNumberPad;
 + (CGFloat)heightForDefaultKeyboard;

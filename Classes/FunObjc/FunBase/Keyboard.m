@@ -9,11 +9,19 @@
 #import "Keyboard.h"
 #import "Viewport.h"
 #import "FunGlobals.h"
+#import "UIView+Fun.h"
 
 @implementation KeyboardEventInfo
 - (void)animate:(void (^)(void))animations {
     [UIView animateWithDuration:_duration delay:0 options:_curve animations:animations completion:^(BOOL finished) {}];
 }
+@end
+
+@interface Keyboard ()
+@property BOOL isVisible;
+@property CGFloat visibleHeight;
+@property UIView* overlay;
+@property (copy) void (^resizeBlock)(UIView* overlay);
 @end
 
 @implementation Keyboard
@@ -84,6 +92,35 @@ static Keyboard* instance;
     return 252;
 }
 
++ (BOOL)hasOverlay {
+    return !!instance.overlay;
+}
+
++ (void)renderOverlay:(void (^)(UIView *))renderBlock resizeBlock:(void (^)(UIView *))resizeBlock {
+    if ([Keyboard hasOverlay]) {
+        // Remove previous overlay
+        [instance.overlay removeFromSuperview];
+    } else {
+        // Setup height change listened overlay. Removed in removeOverlay
+        [Keyboard onWillChange:instance callback:^(KeyboardEventInfo *info) {
+            instance.overlay.height += info.heightChange;
+            instance.overlay.y -= info.heightChange;
+            instance.resizeBlock(instance.overlay);
+        }];
+    }
+    UIWindow* window = [[[UIApplication sharedApplication] windows] objectAtIndex:1];
+    instance.overlay = [UIView.appendTo(window).h([Keyboard visibleHeight]).fromBottom(0) render];
+    instance.resizeBlock = resizeBlock;
+    renderBlock(instance.overlay);
+}
+
++ (void)removeOverlay {
+    [Keyboard offWillChange:instance];
+    [instance.overlay removeFromSuperview];
+    instance.overlay = nil;
+    instance.resizeBlock = nil;
+}
+
 - (void)_keyboardWillShow:(NSNotification*)notification {
     KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:YES];
     instance.isVisible = YES;
@@ -92,6 +129,7 @@ static Keyboard* instance;
 }
 
 - (void)_keyboardWillHide:(NSNotification*)notification {
+    [Keyboard removeOverlay];
     KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:NO];
     instance.isVisible = NO;
     instance.visibleHeight = info.height;
