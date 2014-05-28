@@ -122,6 +122,18 @@ static CGFloat START_EDGE = 99999.0f;
 // API methods //
 /////////////////
 
+- (void)expandToSizeOfContent {
+    [self _withoutScrollEvents:^{
+        [self _onDidReachTheVeryTop];
+        BOOL didAddView;
+        while ((didAddView = [self _listAddNextViewDown])) {
+            // Just keep adding views
+        }
+        self.scrollView.height = [self _bottomView].y2;
+        self.height = self.scrollView.height;
+    }];
+}
+
 - (UIView *)makeTopViewWithHeight:(CGFloat)height {
     _endViewTop = [ListContentView endViewWithFrame:CGRectMake(0, 0, _scrollView.width, height)];
     return _endViewTop;

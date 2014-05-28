@@ -94,4 +94,5 @@ enum ListViewDirection {
 - (UIView*) makeTopViewWithHeight:(CGFloat)height;
 - (ListViewIndex) indexForVisibleItemViewAtPoint:(CGPoint)point;
 - (BOOL) isAtBottom;
+- (void) expandToSizeOfContent;
 @end
