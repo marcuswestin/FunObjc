@@ -363,18 +363,19 @@ static BOOL insetsForAllSet;
         _scrollView.alwaysBounceHorizontal = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
     }
-    [_scrollView onTap:^(UITapGestureRecognizer *sender) {
-        CGPoint tapPoint = [sender locationInView:_scrollView];
-        ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
-        if ([view isItemView]) {
-            [_delegate listSelectIndex:view.index];
-        } else {
-            ListGroupId groupId = [self _groupIdForIndex:view.index];
-            if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
-                [_delegate listSelectGroupWithId:groupId withIndex:view.index];
-            }
+}
+
+- (void)_onTap:(UITapGestureRecognizer*)tap {
+    CGPoint tapPoint = [tap locationInView:_scrollView];
+    ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
+    if ([view isItemView]) {
+        [_delegate listSelectIndex:view.index];
+    } else {
+        ListGroupId groupId = [self _groupIdForIndex:view.index];
+        if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
+            [_delegate listSelectGroupWithId:groupId withIndex:view.index];
         }
-    }];
+    }
 }
 
 - (ListContentView*)visibleContentViewAtPoint:(CGPoint)point {
