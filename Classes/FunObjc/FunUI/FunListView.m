@@ -363,6 +363,7 @@ static BOOL insetsForAllSet;
         _scrollView.alwaysBounceHorizontal = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
     }
+    [_scrollView onTap:self selector:@selector(_onTap:)];
 }
 
 - (void)_onTap:(UITapGestureRecognizer*)tap {
