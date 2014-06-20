@@ -24,14 +24,14 @@ static FunAppDelegate* instance;
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [Files setup];
     _funApp = (id<FunApp>) self;
-    [_funApp styleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
-    [_funApp interfaceWillLoad];
+    [_funApp funAppStyleLabels:[UILabel styles] buttons:[UIButton styles] textFields:[UITextField styles] textViews:[UITextView styles]];
+    [_funApp funAppInterfaceWillLoad];
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (!self.window) {
-        UIViewController* rootVC = [_funApp rootViewControllerForFreshLoad];
+        UIViewController* rootVC = [_funApp funAppRootViewControllerForFreshLoad];
         if (!rootVC.restorationIdentifier) {
             rootVC.restorationIdentifier = rootVC.className;
         }
@@ -39,8 +39,8 @@ static FunAppDelegate* instance;
     }
     instance = self;
     [self handleLaunchNotification:launchOptions];
-    if ([_funApp respondsToSelector:@selector(interfaceDidLoad:)]) {
-        [_funApp interfaceDidLoad:self.window];
+    if ([_funApp respondsToSelector:@selector(funAppInterfaceDidLoad:)]) {
+        [_funApp funAppInterfaceDidLoad:self.window];
     }
     async(^{
         NSNumber* current = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
