@@ -687,7 +687,7 @@ static BOOL insetsForAllSet;
 - (CGRect)_frameForItemView {
     if (_orientation == Vertical) {
         CGFloat left = _itemMargins.left + _groupMargins.left;
-        CGFloat right = _itemMargins.right + _itemMargins.right;
+        CGFloat right = _itemMargins.right + _groupMargins.right;
         CGFloat width = self.width - (left + right);
         return CGRectMake(left, _itemMargins.top, width, 0);
     } else {
