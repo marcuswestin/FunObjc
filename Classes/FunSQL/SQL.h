@@ -25,7 +25,6 @@
 
 typedef NSError* (^MigrationBlock)(SQLConn* conn);
 @interface SQLMigrations : NSObject
-@property SQLConn* conn;
 - (void) registerMigration:(NSString*)name withBlock:(MigrationBlock)migrationBlock;
 @end
 

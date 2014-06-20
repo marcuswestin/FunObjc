@@ -62,6 +62,7 @@ static NSMutableDictionary* columnsCache;
     NSUInteger _migrationIndex;
     NSMutableArray* _newMigrations;
     NSString* _name;
+    SQLConn* _conn;
 }
 - (id)initWithName:(NSString*)name {
     if (self = [super init]) {
