@@ -341,7 +341,7 @@ AVAudioSession* audioCreateSession(NSString* category) {
 // LOWPASSFILTERTIMESLICE is part of the low pass filter and should be a small positive value
 Float32 getDbLevel(UInt32 inNumberFrames, UInt32* samples) {
     Float32 decibels = DBOFFSET; // When we have no signal we'll leave this on the lowest setting
-    Float32 currentFilteredValueOfSampleAmplitude, previousFilteredValueOfSampleAmplitude; // We'll need these in the low-pass filter
+    Float32 currentFilteredValueOfSampleAmplitude, previousFilteredValueOfSampleAmplitude = 0.0; // We'll need these in the low-pass filter
     Float32 peakValue = DBOFFSET; // We'll end up storing the peak value here
     
     for (int i=0; i < inNumberFrames; i++) {
