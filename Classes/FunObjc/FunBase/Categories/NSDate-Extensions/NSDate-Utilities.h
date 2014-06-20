@@ -6,6 +6,7 @@
 
 #import <Foundation/Foundation.h>
 
+#define D_SECOND	1
 #define D_MINUTE	60
 #define D_HOUR		3600
 #define D_DAY		86400
@@ -55,6 +56,8 @@
 - (NSDate *) dateBySubtractingHours: (NSInteger) dHours;
 - (NSDate *) dateByAddingMinutes: (NSInteger) dMinutes;
 - (NSDate *) dateBySubtractingMinutes: (NSInteger) dMinutes;
+- (NSDate *) dateByAddingSeconds: (NSInteger) dSeconds;
+- (NSDate *) dateBySubtractingSeconds: (NSInteger) dSeconds;
 - (NSDate *) dateAtStartOfDay;
 
 // Retrieving intervals
