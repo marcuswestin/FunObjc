@@ -119,7 +119,7 @@ static NSUInteger deallocCount;
 }
 
 - (void)render:(BOOL)animated {
-    [UILabel.appendTo(self.view).text(@"You should implement -render in your ViewController").wrapText.center render];
+    [UILabel.appendTo(self.view).text(@"You should implement -render in your ViewController").textColor(RED).wrapText.center render];
 }
 
 - (void)pushViewController:(UIViewController *)viewController {
