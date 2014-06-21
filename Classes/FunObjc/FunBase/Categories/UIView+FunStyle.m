@@ -215,7 +215,7 @@ DeclareViewFloatSideStyler(fillSideOf, view, offset, side,
 
 DeclareViewFloatStyler(fillBelow, view, offset,
                        _view.y = view.y2 + offset;
-                       _view.height = _view.superview.height - view.height - offset)
+                       _view.height = _view.superview.height - view.y2 - offset)
 DeclareFloatStyler(fillBelowLast, offset, self.fillBelow(self.last, offset))
 
 /* Size
