@@ -60,6 +60,7 @@ static Keyboard* instance;
     [Events off:@"KeyboardWillChange" subscriber:subscriber];
 }
 
++ (void)hide { return [self dismiss]; }
 + (void)dismiss {
     [[UIApplication sharedApplication].keyWindow endEditing:YES];
 }

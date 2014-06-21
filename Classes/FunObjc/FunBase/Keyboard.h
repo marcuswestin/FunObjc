@@ -31,6 +31,7 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
 + (void)dismiss;
++ (void)hide;
 
 + (void)renderOverlay:(void(^)(UIView* overlay))renderBlock resizeBlock:(void(^)(UIView* overlay))resizeBlock;
 + (void)removeOverlay;
