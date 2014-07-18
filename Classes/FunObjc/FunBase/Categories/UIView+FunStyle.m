@@ -218,6 +218,12 @@ DeclareViewFloatStyler(fillBelow, view, offset,
                        _view.height = _view.superview.height - view.y2 - offset)
 DeclareFloatStyler(fillBelowLast, offset, self.fillBelow(self.last, offset))
 
+DeclareViewFloatStyler(fillAbove, view, offset,
+                       _view.height = _view.superview.height - view.y - offset;
+                       _view.y = 0;)
+DeclareFloatStyler(fillAboveLast, offset, self.fillAbove(self.last, offset))
+
+
 /* Size
  ******/
 DeclareFloatStyler(w, width,
