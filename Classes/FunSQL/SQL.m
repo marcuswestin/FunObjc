@@ -67,7 +67,7 @@ static NSMutableDictionary* columnsCache;
 - (id)initWithName:(NSString*)name {
     if (self = [super init]) {
         _name = name;
-        NSDictionary* migrationInfo = [Files readDocumentJson:[self migrationDoc]];
+        NSDictionary* migrationInfo = [Files readDocumentJson:[SQLMigrations migrationDoc:name]];
         _migrationIndex = 0;
         _newMigrations = [NSMutableArray array];
         if (migrationInfo) {
@@ -78,8 +78,8 @@ static NSMutableDictionary* columnsCache;
     }
     return self;
 }
-- (NSString*)migrationDoc {
-    return [_name append:@"-MigrationInfo"];
++ (NSString*)migrationDoc:(NSString*)name {
+    return [name append:@"-MigrationInfo"];
 }
 - (void)registerMigration:(NSString *)name withBlock:(MigrationBlock)block {
     if (_migrationIndex < _completedMigrations.count) {
@@ -116,7 +116,7 @@ static NSMutableDictionary* columnsCache;
         }];
     }];
     
-    [Files writeDocumentJson:[self migrationDoc] object:@{@"completedMigrations": _completedMigrations}];
+    [Files writeDocumentJson:[SQLMigrations migrationDoc:_name] object:@{@"completedMigrations": _completedMigrations}];
 }
 @end
 
@@ -124,7 +124,12 @@ static NSMutableDictionary* columnsCache;
 
 static FMDatabaseQueue* queue;
 
-+ (void) openDocument:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
++ (void)removeDatabase:(NSString *)name {
+    [Files removeDocument:name];
+    [Files removeDocument:[SQLMigrations migrationDoc:name]];
+}
+
++ (void) openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
     queue = [FMDatabaseQueue databaseQueueWithPath:[Files documentPath:name]];
     columnsCache = [NSMutableDictionary dictionary];
     SQLMigrations* migrations = [[SQLMigrations alloc] initWithName:name];
