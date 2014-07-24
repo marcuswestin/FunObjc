@@ -19,6 +19,9 @@ static CGSize size;
 + (CGFloat)resolution {
     return [UIScreen mainScreen].scale;
 }
++ (CGFloat)scale {
+    return [self resolution];
+}
 
 + (CGFloat)height { return [Viewport size].height; }
 + (CGFloat)width { return [Viewport size].width; }

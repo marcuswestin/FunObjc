@@ -14,6 +14,7 @@
 + (CGFloat)width;
 + (CGSize)size;
 + (CGFloat)resolution;
++ (CGFloat)scale;
 + (CGRect)bounds;
 
 @end
