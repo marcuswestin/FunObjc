@@ -23,7 +23,7 @@
 - (void)updateSchema:(NSString*)sql error:(NSError**)outError;
 @end
 
-typedef NSError* (^MigrationBlock)(SQLConn* conn);
+typedef void (^MigrationBlock)(SQLConn* conn, NSError** outError);
 @interface SQLMigrations : NSObject
 - (void) registerMigration:(NSString*)name withBlock:(MigrationBlock)migrationBlock;
 @end

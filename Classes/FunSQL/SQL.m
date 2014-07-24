@@ -100,7 +100,7 @@ static NSMutableDictionary* columnsCache;
             MigrationBlock migrationBlock = migration[@"block"];
             NSError* err;
             @try {
-                err = migrationBlock(conn);
+                migrationBlock(conn, &err);
             }
             @catch (NSException *exception) {
                 err = makeError(exception.reason);
