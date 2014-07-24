@@ -129,6 +129,13 @@ static FMDatabaseQueue* queue;
     [Files removeDocument:[SQLMigrations migrationDoc:name]];
 }
 
++ (void)copyDatabase:(NSString *)fromName to:(NSString *)toName {
+    NSData* dbData = [Files readDocument:fromName];
+    NSData* migrationData = [Files readDocument:[SQLMigrations migrationDoc:fromName]];
+    [Files writeDocument:toName data:dbData];
+    [Files writeDocument:[SQLMigrations migrationDoc:toName] data:migrationData];
+}
+
 + (void) openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
     queue = [FMDatabaseQueue databaseQueueWithPath:[Files documentPath:name]];
     columnsCache = [NSMutableDictionary dictionary];
