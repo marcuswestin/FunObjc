@@ -22,6 +22,10 @@
     return [[NSDate new] timeIntervalSince1970];
 }
 
+- (long long)millisecondsSince1970 {
+    return (long long) ([self timeIntervalSince1970] * 1000);
+}
+
 #pragma mark Relative Dates
 
 + (NSDate *) dateWithDaysFromNow: (NSInteger) days
