@@ -25,7 +25,9 @@
     if (self = [super init]) {
         NSMutableArray* columns = [NSMutableArray array];
         FMResultSet* rs = [db getTableSchema:table];
-        if (!rs) { return nil; }
+        if (!rs || rs.columnNameToIndexMap.count == 0) {
+            [NSException raise:@"BadTable" format:@"Unknown table %@", table];
+        }
         while ([rs next]) {
             [columns addObject:[rs stringForColumn:@"name"]];
         }
