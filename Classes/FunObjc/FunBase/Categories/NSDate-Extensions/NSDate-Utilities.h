@@ -15,6 +15,8 @@
 
 @interface NSDate (Utilities)
 
++ (NSTimeInterval) timeIntervalSince1970;
+
 // Relative dates from the current date
 + (NSDate *) dateTomorrow;
 + (NSDate *) dateYesterday;

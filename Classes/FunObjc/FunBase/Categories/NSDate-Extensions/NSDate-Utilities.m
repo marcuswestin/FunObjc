@@ -18,6 +18,10 @@
 
 @implementation NSDate (Utilities)
 
++ (NSTimeInterval)timeIntervalSince1970 {
+    return [[NSDate new] timeIntervalSince1970];
+}
+
 #pragma mark Relative Dates
 
 + (NSDate *) dateWithDaysFromNow: (NSInteger) days
