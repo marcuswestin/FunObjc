@@ -13,7 +13,10 @@
 
 @implementation KeyboardEventInfo
 - (void)animate:(void (^)(void))animations {
-    [UIView animateWithDuration:_duration delay:0 options:_curve animations:animations completion:^(BOOL finished) {}];
+    [self animate:animations completion:^(BOOL finished) {}];
+}
+- (void)animate:(void (^)(void))animations completion:(void (^)(BOOL))completion {
+    [UIView animateWithDuration:_duration delay:0 options:_curve animations:animations completion:completion];
 }
 @end
 

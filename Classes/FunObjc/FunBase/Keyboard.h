@@ -17,6 +17,7 @@
 @property CGFloat heightChange;
 @property CGFloat height;
 - (void) animate:(void (^)(void))animations;
+- (void) animate:(void (^)(void))animations completion:(void (^)(BOOL finished))completion;
 @end
 
 typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
