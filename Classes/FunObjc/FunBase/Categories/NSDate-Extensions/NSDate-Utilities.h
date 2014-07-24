@@ -16,6 +16,7 @@
 @interface NSDate (Utilities)
 
 + (NSTimeInterval) timeIntervalSince1970;
++ (long long) millisecondsSince1970;
 - (long long) millisecondsSince1970;
 
 // Relative dates from the current date
