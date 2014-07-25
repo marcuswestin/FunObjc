@@ -21,6 +21,7 @@ typedef id (^DictionaryMapFn)(id val, id key);
 - (NSDictionary*)map:(DictionaryMapFn)mapFn;
 
 - (NSString *)toQueryString;
+- (NSString*)toJson;
 
 - (NSInteger)integerFor:(NSString*)property;
 - (id)nullSafeObjectForKey:(NSString*)key;

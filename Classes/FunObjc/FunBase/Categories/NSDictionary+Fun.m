@@ -9,6 +9,7 @@
 #import "NSDictionary+Fun.h"
 #import "NSArray+Fun.h"
 #import "NSString+Fun.h"
+#import "JSON.h"
 
 @implementation NSDictionary (Fun)
 
@@ -46,6 +47,10 @@
         [arr addObject:[NSString stringWithFormat:@"%@=%@", key.encodedURIComponent, [value stringValue].encodedURIComponent]];
     }];
     return [arr joinBy:@"&"];
+}
+
+- (NSString *)toJson {
+    return [JSON stringify:self];
 }
 
 - (NSInteger)integerFor:(NSString *)property {
