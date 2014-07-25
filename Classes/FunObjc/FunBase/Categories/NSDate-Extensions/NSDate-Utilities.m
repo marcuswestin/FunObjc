@@ -25,7 +25,7 @@
     return [[NSDate new] millisecondsSince1970];
 }
 - (long long)millisecondsSince1970 {
-    return (long long) ([self timeIntervalSince1970] * 1000);
+    return (long long)([self timeIntervalSince1970]) * 1000;
 }
 
 #pragma mark Relative Dates
