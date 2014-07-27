@@ -19,14 +19,10 @@
 
 void fatal(NSError* err) {
     if (!err) { return; }
-    asyncMain(^{
-        NSString* message = err.localizedDescription;
-        NSLog(@"FATAL %@ %@", message, err);
-        UIWindow* overlay = [Overlay showWithTapHandler:^(UITapGestureRecognizer *sender) {
-            // Do nothing
-        }];
-        [UILabel.appendTo(overlay).inset(0,8,0,8).text(message).textColor(RED).wrapText.center render];
-    });
+    NSString* message = err.localizedDescription;
+    NSLog(@"Fatal error %@ %@", message, err);
+    int *x = NULL;
+    *x = 42; // Force crash in fatal
 }
 
 static UIView* errorView;
