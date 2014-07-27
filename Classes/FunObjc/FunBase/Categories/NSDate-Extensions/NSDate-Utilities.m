@@ -16,6 +16,13 @@
 #define DATE_COMPONENTS (NSYearCalendarUnit| NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekCalendarUnit |  NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSWeekdayOrdinalCalendarUnit)
 #define CURRENT_CALENDAR [NSCalendar currentCalendar]
 
+long long minutesToMilliseconds(long long minutes) {
+    return secondsToMilliseconds(minutes * 60);
+}
+long long secondsToMilliseconds(long long seconds) {
+    return seconds * 1000;
+}
+
 @implementation NSDate (Utilities)
 
 + (NSTimeInterval)timeIntervalSince1970 {
@@ -25,7 +32,7 @@
     return [[NSDate new] millisecondsSince1970];
 }
 - (long long)millisecondsSince1970 {
-    return (long long)([self timeIntervalSince1970]) * 1000;
+    return secondsToMilliseconds([self timeIntervalSince1970]);
 }
 
 #pragma mark Relative Dates

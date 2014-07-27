@@ -13,6 +13,9 @@
 #define D_WEEK		604800
 #define D_YEAR		31556926
 
+long long secondsToMilliseconds(long long seconds);
+long long minutesToMilliseconds(long long minutes);
+
 @interface NSDate (Utilities)
 
 + (NSTimeInterval) timeIntervalSince1970;
