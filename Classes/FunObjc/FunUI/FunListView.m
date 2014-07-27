@@ -671,17 +671,23 @@ static BOOL insetsForAllSet;
 // Item & Group Head/Foot Views //
 //////////////////////////////////
 - (ListContentView*)_getViewForIndex:(ListViewIndex)index location:(ListViewLocation)location {
-    UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
-    [_delegate listPopulateView:content forIndex:index location:location];
-    CGRect frame = content.bounds;
+    CGRect frame = CGRectMake(0, 0, 0, 0);
     if (_orientation == Vertical) {
-        frame.size.height += (_itemMargins.top + _itemMargins.bottom);
         frame.size.width = self.width;
     } else {
         frame.size.height = self.height;
-        frame.size.width += (_itemMargins.left + _itemMargins.right);
     }
-    return [ListContentView withFrame:frame index:index content:content];
+
+    UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
+    ListContentView* contentView = [ListContentView withFrame:frame index:index content:content];
+    [_delegate listPopulateView:content forIndex:index location:location];
+    
+    if (_orientation == Vertical) {
+        contentView.height = (content.height + _itemMargins.top + _itemMargins.bottom);
+    } else {
+        contentView.width += (content.width + _itemMargins.left + _itemMargins.right);
+    }
+    return contentView;
 }
 
 - (CGRect)_frameForItemView {
