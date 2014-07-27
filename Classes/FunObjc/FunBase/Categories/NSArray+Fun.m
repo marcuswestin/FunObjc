@@ -7,6 +7,7 @@
 //
 
 #import "NSArray+Fun.h"
+#import "JSON.h"
 
 @implementation NSArray (Fun)
 
@@ -120,6 +121,10 @@
 
 - (NSString *)joinedByCommaNewline {
     return [self joinBy:@",\n"];
+}
+
+- (NSString *)toJson {
+    return [JSON stringify:self];
 }
 
 @end

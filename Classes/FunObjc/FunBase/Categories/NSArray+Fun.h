@@ -33,6 +33,8 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (NSString*)joinedByComma;
 - (NSString*)joinedByCommaSpace;
 - (NSString*)joinedByCommaNewline;
+
+- (NSString*)toJson;
 @end
 
 @interface NSOrderedSet (Fun)
