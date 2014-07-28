@@ -46,6 +46,7 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (void)openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (void)removeDatabase:(NSString*)name;
 + (void)copyDatabase:(NSString*)fromName to:(NSString*)toName;
++ (void)backupDatabase:(NSString*)name;
 + (NSString*) joinSelect:(NSDictionary*)tableColumns;
 @end
 

@@ -137,6 +137,14 @@ static FMDatabaseQueue* queue;
     [Files writeDocument:[SQLMigrations migrationDoc:toName] data:migrationData];
 }
 
++ (void)backupDatabase:(NSString *)name {
+    NSDate* date = [NSDate date];
+    NSDateFormatter* formatter = [NSDateFormatter new];
+    [formatter setDateFormat:@"yyyy:MM:dd HH:MM:ss:SSS"];
+    NSString* backupName = [NSString stringWithFormat:@"%@-Backup-%@", name, [formatter stringFromDate:date]];
+    [self copyDatabase:name to:backupName];
+}
+
 + (void) openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
     queue = [FMDatabaseQueue databaseQueueWithPath:[Files documentPath:name]];
     columnsCache = [NSMutableDictionary dictionary];
