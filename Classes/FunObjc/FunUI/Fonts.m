@@ -43,6 +43,10 @@
     return [UIFont fontWithName:@"HelveticaNeue-Light" size:size];
 }
 
++ (UIFont *)lightItalic:(CGFloat)size {
+    return [UIFont fontWithName:@"HelveticaNeue-LightItalic" size:size];
+}
+
 + (UIFont *)thin:(CGFloat)size {
     return [UIFont fontWithName:@"HelveticaNeue-Thin" size:size];
 }

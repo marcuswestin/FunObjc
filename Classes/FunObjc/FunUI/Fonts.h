@@ -14,6 +14,7 @@
 +(UIFont*)medium:(CGFloat)size;
 +(UIFont*)regular:(CGFloat)size;
 +(UIFont*)light:(CGFloat)size;
++(UIFont*)lightItalic:(CGFloat)size;
 +(UIFont*)thin:(CGFloat)size;
 +(UIFont*)ultraLight:(CGFloat)size;
 @end
