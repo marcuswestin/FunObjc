@@ -22,6 +22,9 @@ long long minutesToMilliseconds(long long minutes) {
 long long secondsToMilliseconds(long long seconds) {
     return seconds * 1000;
 }
+long long millisecondsToSeconds(long long milliseconds) {
+    return milliseconds / 1000;
+}
 
 @implementation NSDate (Utilities)
 

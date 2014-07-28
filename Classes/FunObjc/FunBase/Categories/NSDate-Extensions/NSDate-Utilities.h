@@ -15,6 +15,7 @@
 
 long long secondsToMilliseconds(long long seconds);
 long long minutesToMilliseconds(long long minutes);
+long long millisecondsToSeconds(long long milliseconds);
 
 @interface NSDate (Utilities)
 
