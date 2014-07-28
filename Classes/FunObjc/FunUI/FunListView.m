@@ -20,6 +20,7 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
 @property BOOL isGroupHead;
 @property BOOL isGroupFoot;
 @property BOOL isEndView;
+@property (readonly) UIView* content;
 @end
 @implementation ListContentView
 + (ListContentView *)withFrame:(CGRect)frame index:(ListViewIndex)index content:(UIView*)content {
@@ -369,8 +370,9 @@ static BOOL insetsForAllSet;
 - (void)_onTap:(UITapGestureRecognizer*)tap {
     CGPoint tapPoint = [tap locationInView:_scrollView];
     ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
+    CGPoint contentTapPoint = [_scrollView convertPoint:tapPoint toView:view.content];
     if ([view isItemView]) {
-        [_delegate listSelectIndex:view.index];
+        [_delegate listSelectIndex:view.index tapPoint:contentTapPoint];
     } else {
         ListGroupId groupId = [self _groupIdForIndex:view.index];
         if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {

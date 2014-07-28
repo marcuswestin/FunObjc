@@ -41,7 +41,7 @@ enum ListViewDirection {
 @required
 - (BOOL) hasViewForIndex:(ListViewIndex)index;
 - (void) listPopulateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
-- (void) listSelectIndex:(ListViewIndex)index;
+- (void) listSelectIndex:(ListViewIndex)index tapPoint:(CGPoint)tapPoint;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
 - (id) listGroupIdForIndex:(ListViewIndex)index;
