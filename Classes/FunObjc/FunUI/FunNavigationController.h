@@ -18,6 +18,7 @@
 
 @interface FunNavigationController : UINavigationController <UINavigationControllerDelegate>
 + (instancetype)withRootViewController:(UIViewController*)rootViewController navigationBar:(BOOL)navigationBarVisible;
++ (instancetype)instance;
 - (void)setup;
 - (void)pushViewController:(UIViewController*)viewController withAnimator:(id<FunTransitionAnimator>)animator;
 @end

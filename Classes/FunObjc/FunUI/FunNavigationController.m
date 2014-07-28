@@ -85,10 +85,16 @@ static NSTimeInterval duration = 0.25;
 // Custom navigation animations
 ///////////////////////////////
 
+static FunNavigationController* instance;
+
 + (instancetype)withRootViewController:(UIViewController *)rootViewController navigationBar:(BOOL)navigationBarVisible {
-    FunNavigationController* instance = [[self class] new];
+    instance = [[self class] new];
     instance.viewControllers = @[rootViewController];
     instance.navigationBarHidden = !navigationBarVisible;
+    return instance;
+}
+
++ (instancetype)instance {
     return instance;
 }
 
@@ -117,7 +123,9 @@ static BOOL hasSetup;
     return self;
 }
 
-- (void)setup {}
+- (void)setup {
+    [NSException raise:@"NotImplemented" format:@"Implement setup"];
+}
 
 //- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
 //    return nil;
