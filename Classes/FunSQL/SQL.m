@@ -14,11 +14,11 @@
 @interface TableInfo : NSObject
 @property NSString* insertOrReplaceSql;
 @property NSString* insertSql;
+@property NSArray* columns;
 - (NSArray*)values:(NSDictionary*)item;
 @end
 
 @implementation TableInfo {
-    NSArray* _columns;
     NSMutableArray* _values;
 }
 - (id)initWithTable:(NSString*)table db:(FMDatabase*)db {
@@ -87,8 +87,7 @@ static NSMutableDictionary* columnsCache;
     if (_migrationIndex < _completedMigrations.count) {
         NSString* expectedMigraitonName = _completedMigrations[_migrationIndex];
         if (![name isEqualToString:expectedMigraitonName]) {
-            NSLog(@"Error: Bad migration order");
-            [NSException raise:@"BadMigration" format:@"Expected migration named %@ but found %@", expectedMigraitonName, name];
+            fatal(makeError([NSString stringWithFormat:@"Expected migration named %@ but found %@", expectedMigraitonName, name]));
         }
     } else {
         [_newMigrations addObject:@{ @"name":name, @"block":block }];
@@ -203,6 +202,14 @@ static FMDatabaseQueue* queue;
 static NSMutableDictionary* columns;
 
 @implementation SQLConn
+
+- (BOOL)table:(NSString *)table hasColumn:(NSString *)column {
+    return [[self tableInfo:table].columns containsObject:column];
+}
+
+- (BOOL)tableExists:(NSString *)table {
+    return [_db tableExists:table];
+}
 
 - (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args ];

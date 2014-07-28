@@ -21,6 +21,8 @@
 - (void)insertOrReplaceInto:(NSString*)table item:(id)item error:(NSError**)outError;
 - (void)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items error:(NSError**)outError;
 - (void)updateSchema:(NSString*)sql error:(NSError**)outError;
+- (BOOL)table:(NSString*)table hasColumn:(NSString*)column;
+- (BOOL)tableExists:(NSString*)table;
 @end
 
 typedef void (^MigrationBlock)(SQLConn* conn, NSError** outError);
