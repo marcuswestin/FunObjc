@@ -74,6 +74,32 @@
 - (void)setSize:(CGSize)size {
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, size.width, size.height);
 }
+- (CGSize)aspectRatioSizeWithWidth:(CGFloat)width {
+    CGSize size = self.size;
+    CGFloat ratio = width / size.width;
+    return CGSizeMake(width, size.height * ratio);
+}
+- (CGSize)aspectRatioSizeWithHeight:(CGFloat)height {
+    CGSize size = self.size;
+    CGFloat ratio = height / size.height;
+    return CGSizeMake(size.width * ratio, height);
+}
+
+- (CGSize)aspectRatioSizeFilling:(CGSize)target {
+    CGSize size = self.size;
+    CGFloat wRatio = target.width / size.width;
+    CGFloat hRatio = target.height / size.height;
+    CGFloat targetRatio = MAX(wRatio, hRatio);
+    return CGSizeMake(size.width * targetRatio, size.height * targetRatio);
+}
+- (CGSize)aspectRatioSizeWithin:(CGSize)target {
+    CGSize size = self.size;
+    CGFloat wRatio = target.width / size.width;
+    CGFloat hRatio = target.height / size.height;
+    CGFloat targetRatio = MIN(wRatio, hRatio);
+    return CGSizeMake(size.width * targetRatio, size.height * targetRatio);
+}
+
 - (void)addSize:(CGSize)size {
     [self addWidth:size.width height:size.height];
 }

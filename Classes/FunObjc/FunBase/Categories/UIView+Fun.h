@@ -26,6 +26,10 @@
 - (CGFloat)height;
 - (CGFloat)width;
 - (CGSize)size;
+- (CGSize)aspectRatioSizeWithWidth:(CGFloat)width;
+- (CGSize)aspectRatioSizeWithHeight:(CGFloat)height;
+- (CGSize)aspectRatioSizeFilling:(CGSize)size;
+- (CGSize)aspectRatioSizeWithin:(CGSize)size;
 - (void)setWidth:(CGFloat)width;
 - (void)setHeight:(CGFloat)height;
 - (void)setSize:(CGSize)size;
