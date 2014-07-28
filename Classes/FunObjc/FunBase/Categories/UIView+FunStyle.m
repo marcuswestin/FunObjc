@@ -489,7 +489,7 @@ DeclareImageStyler(imageFill, image,
     [[[instance class] styles] applyTo:instance];
     return instance.styler;
 }
-- (id)viewByName:(NSString *)name {
+- (UIView*)viewByName:(NSString *)name {
     NSNumber* tagNumber = tagNameToTagNumber[name];
     if (!tagNumber) { return nil; }
     return [self viewWithTag:[tagNumber integerValue]];

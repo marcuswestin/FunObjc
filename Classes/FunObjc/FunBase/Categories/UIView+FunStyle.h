@@ -182,7 +182,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
-- (id)viewByName:(NSString*)name;
+- (UIView*)viewByName:(NSString*)name;
 - (UILabel*)labelByName:(NSString*)name;
 - (void)sizeToParent;
 @end
