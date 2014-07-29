@@ -471,7 +471,15 @@ DeclareImageStyler(imageFill, image,
         ViewStyler* styler = self.styler;
         UIView* superview = siblingView.superview;
         [superview insertSubview:styler.view aboveSubview:siblingView];
-        styler.view.width = superview.width;
+        [styler.view sizeToParent];
+        return styler;
+    };
+}
++ (StylerViewInteger)insertAtIndex {
+    return ^(UIView* superview, NSInteger index) {
+        ViewStyler* styler = self.styler;
+        [superview insertSubview:styler.view atIndex:index];
+        [styler.view sizeToParent];
         return styler;
     };
 }
