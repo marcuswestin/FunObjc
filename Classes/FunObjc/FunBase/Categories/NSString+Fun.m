@@ -115,4 +115,17 @@
     return [[self substringToIndex:string.length] isEqualToString:string];
 }
 
+- (NSInteger)countOccurancesOfSubstring:(NSString*)substr {
+    NSUInteger count = 0;
+    NSUInteger length = [self length];
+    NSRange range = NSMakeRange(0, length);
+    while(range.location != NSNotFound) {
+        range = [self rangeOfString:substr options:0 range:range];
+        if(range.location != NSNotFound) {
+            range = NSMakeRange(range.location + range.length, length - (range.location + range.length));
+            count++;
+        }
+    }
+    return count;
+}
 @end

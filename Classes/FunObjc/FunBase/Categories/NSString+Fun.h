@@ -30,5 +30,5 @@
 - (NSString*)stringByInjecting:(NSString*)string every:(NSUInteger)nth;
 - (BOOL)matchesPattern:(NSString*)regexPattern;
 - (BOOL)startsWith:(NSString*)string;
-
+- (NSInteger)countOccurancesOfSubstring:(NSString*)substring;
 @end
