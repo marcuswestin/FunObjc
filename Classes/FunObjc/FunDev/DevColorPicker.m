@@ -81,14 +81,16 @@ static DevColorPicker* picker;
     [_alphaSlider addTarget:self action:@selector(onAlphaSliderDidChange) forControlEvents:UIControlEventValueChanged];
     [_overlay addSubview:_alphaSlider];
     
-    UIButton* close = [UIButton.appendTo(_overlay).belowLast(0).bg(WHITE).text(@"Close").size.h(buttonHeight).centerHorizontally onTap:^(UIEvent *event) {
-        [DevColorPicker hide];
-    }];
+    UIButton* close = [UIButton.appendTo(_overlay).belowLast(0).bg(WHITE).text(@"Close").size.h(buttonHeight).centerHorizontally onTap:self selector:@selector(onClose)];
     
     _rgba = [UILabel.appendTo(_overlay).y(close.y).h(close.height).w(100).bg(WHITE).fillLeftOf(close,0).textFont([UIFont systemFontOfSize:12]) render];
     _hsla = [UILabel.appendTo(_overlay).y(close.y).h(close.height).w(100).bg(WHITE).fillRightOf(close,0).textFont([UIFont systemFontOfSize:12]).textAlignment(NSTextAlignmentRight) render];
     
     [self colorWheelDidChangeColor:_colorWheel];
+}
+
+- (void)onClose {
+    [DevColorPicker hide];
 }
 
 - (void)onBrigthnessSliderDidChange {

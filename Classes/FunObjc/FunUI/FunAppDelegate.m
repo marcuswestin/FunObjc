@@ -69,21 +69,22 @@ void _forceCrash() {
 
 - (void)_showDevMenu {
     UIView* overlay = [Overlay show];
-    UIView* view = [UIView.appendTo(overlay).fill render];
-    UIView* reset = [UIButton.appendTo(view).text(@"Reset State").size.center onTap:^(UIEvent *event) {
-        [Files resetFileRoot];
-        [view empty];
-        [UILabel.appendTo(view).text(@"State has been reset.\nApp will close in 1 second.").wrapText.center render];
-        after(1, ^{
-            _forceCrash();
-        });
-    }];
-    
-    [UIButton.appendTo(view).text(@"Crash").size.center.below(reset, 10) onTap:^(UIEvent *event) {
-        async(^{
-            _forceCrash();
-        });
-    }];
+    [UIButton.appendTo(overlay).text(@"Reset State").size.center onTap:self selector:@selector(resetState)];
+    [UIButton.appendTo(overlay).text(@"Crash").size.center.belowLast(10) onTap:self selector:@selector(crash)];
+}
+
+- (void)resetState {
+    [Files resetFileRoot];
+    [Overlay showMessage:@"State has been reset.\nApp will close in 1 second."];
+    after(1, ^{
+        _forceCrash();
+    });
+}
+
+- (void)crash {
+    async(^{
+        _forceCrash();
+    });
 }
 
 // View state saving
