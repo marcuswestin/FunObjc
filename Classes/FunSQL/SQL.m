@@ -142,6 +142,9 @@ static FMDatabaseQueue* queue;
     NSDateFormatter* formatter = [NSDateFormatter new];
     [formatter setDateFormat:@"yyyy:MM:dd HH:MM:ss:SSS"];
     NSString* backupName = [NSString stringWithFormat:@"%@-Backup-%@", name, [formatter stringFromDate:date]];
+    
+    NSString* size = [NSByteCountFormatter stringFromByteCount:[Files sizeOfDocument:name] countStyle:NSByteCountFormatterCountStyleFile];
+    NSLog(@"SQL: Backup db \"%@\" to \"%@\" (size: %@)", name, backupName, size);
     [self copyDatabase:name to:backupName];
 }
 
