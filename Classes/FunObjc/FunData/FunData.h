@@ -1,3 +1,5 @@
+#import "FastCoder.h"
+
 #import "CreditCards.h"
 #import "EmailAddresses.h"
 #import "Encoder.h"
