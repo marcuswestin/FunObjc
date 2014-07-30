@@ -171,4 +171,14 @@ static NSCharacterSet* illegalFileNameCharacters;
 + (NSString *)readStringDocument:(NSString *)name {
     return [Files readDocument:name].toString;
 }
+
++ (unsigned long long)sizeOfDocument:(NSString *)filename {
+    return [self sizeOfFileAtPath:[self documentPath:filename]];
+}
++ (unsigned long long)sizeOfCache:(NSString *)filename {
+    return [self sizeOfFileAtPath:[self cachePath:filename]];
+}
++ (unsigned long long)sizeOfFileAtPath:(NSString *)path {
+    return [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil][NSFileSize] unsignedLongLongValue];
+}
 @end

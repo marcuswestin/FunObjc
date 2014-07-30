@@ -42,4 +42,7 @@
 
 + (void)writeStringDocument:(NSString*)string name:(NSString*)name;
 + (NSString*)readStringDocument:(NSString*)name;
+
++ (unsigned long long)sizeOfDocument:(NSString*)filename;
++ (unsigned long long)sizeOfCache:(NSString*)filename;
 @end
