@@ -155,6 +155,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (StylerFloat3Color)textShadow;
 - (StylerFont)textFont;
 - (StylerInteger1)textLines;
+- (Styler(^)(NSLineBreakMode lineBreakMode))textLineBreakMode;
 - (Styler)wrapText;
 - (Styler(^)(UIKeyboardType keyboardType))keyboardType;
 - (Styler(^)(UIKeyboardAppearance keyboardAppearance))keyboardAppearance;

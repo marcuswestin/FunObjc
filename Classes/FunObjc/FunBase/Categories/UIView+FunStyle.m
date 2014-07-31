@@ -373,6 +373,8 @@ DeclareFloat3ColorStyler(textShadow, xOffset, yOffset, radius, color,
 }
 DeclareIntegerStyler(textLines, lines,
                      _labelView.numberOfLines = lines)
+DeclareStyler1(textLineBreakMode, NSLineBreakMode, lineBreakMode,
+               _labelView.lineBreakMode = lineBreakMode)
 DeclareStyler(wrapText,
               [_labelView wrapText];
               [self size])
