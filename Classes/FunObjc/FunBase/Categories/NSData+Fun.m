@@ -9,11 +9,21 @@
 #import "NSData+Fun.h"
 #import "JSON.h"
 #import "NSDate-Utilities.h"
+#import "FastCoder.h"
 
 @implementation NSData (Fun)
 
 - (NSString *)toString {
     return [[NSString alloc] initWithData:self encoding:NSUTF8StringEncoding];
+}
+
+- (id)fastDecode {
+    return [FastCoder decode:self];
+}
+
+- (NSData *)fastEncode {
+    [NSException raise:@"BadInvocation" format:@"fastEncode called on NSData*"];
+    return nil;
 }
 
 @end

@@ -11,5 +11,7 @@
 @interface NSData (Fun)
 
 - (NSString*) toString;
+- (id) fastDecode;
+- (NSData*) fastEncode DEPRECATED_ATTRIBUTE;
 
 @end

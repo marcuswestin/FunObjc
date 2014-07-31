@@ -12,4 +12,5 @@
 - (NSString*)className;
 - (BOOL)isNull;
 - (NSDictionary *)classProperties;
+- (NSData*)fastEncode;
 @end

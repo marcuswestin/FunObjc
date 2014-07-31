@@ -8,6 +8,7 @@
 
 #import "NSObject+Fun.h"
 #import "FunRuntimeProperties.h"
+#import "FastCoder.h"
 
 @implementation NSObject (Fun)
 - (BOOL)isNull {
@@ -29,6 +30,10 @@ static NSMutableDictionary* classPropCache;
     }
     
     return classPropCache[self.className];
+}
+
+- (NSData *)fastEncode {
+    return [FastCoder encode:self];
 }
 
 @end
