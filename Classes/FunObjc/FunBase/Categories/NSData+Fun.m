@@ -18,7 +18,7 @@
 }
 
 - (id)fastDecode {
-    return [FastCoder decode:self];
+    return [FastCoder objectWithData:self];
 }
 
 - (NSData *)fastEncode {

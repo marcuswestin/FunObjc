@@ -50,7 +50,5 @@ extern NSString *const FastCodingException;
 
 + (id)objectWithData:(NSData *)data;
 + (NSData *)dataWithRootObject:(id)object;
-+ (id)decode:(NSData *)data;
-+ (NSData *)encode:(id)object;
 
 @end

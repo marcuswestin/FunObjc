@@ -33,7 +33,7 @@ static NSMutableDictionary* classPropCache;
 }
 
 - (NSData *)fastEncode {
-    return [FastCoder encode:self];
+    return [FastCoder dataWithRootObject:self];
 }
 
 @end
