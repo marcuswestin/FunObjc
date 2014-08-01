@@ -45,4 +45,7 @@
 
 + (unsigned long long)sizeOfDocument:(NSString*)filename;
 + (unsigned long long)sizeOfCache:(NSString*)filename;
+
++ (NSArray*)documentURLs;
++ (NSArray*)cacheURLs;
 @end

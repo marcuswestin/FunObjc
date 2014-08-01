@@ -20,6 +20,20 @@ static NSString* _funPersistPath;
 
 static BOOL didReset = NO;
 
++ (NSArray *)documentURLs {
+    NSError* err;
+    NSArray* urls = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_funDocumentsDirectory error:&err];
+    if (err) { fatal(err); }
+    return urls;
+}
+
++ (NSArray *)cacheURLs {
+    NSError* err;
+    NSArray* urls = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_funCachesDirectory error:&err];
+    if (err) { fatal(err); }
+    return urls;
+}
+
 + (void)setup {
     _appDocumentsDirectory = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
     _appCachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
