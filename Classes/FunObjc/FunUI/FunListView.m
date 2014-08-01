@@ -372,7 +372,7 @@ static BOOL insetsForAllSet;
     ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
     CGPoint contentTapPoint = [_scrollView convertPoint:tapPoint toView:view.content];
     if ([view isItemView]) {
-        [_delegate listSelectIndex:view.index tapPoint:contentTapPoint];
+        [_delegate listSelectIndex:view.index view:view.content pointInView:contentTapPoint];
     } else {
         ListGroupId groupId = [self _groupIdForIndex:view.index];
         if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
