@@ -365,8 +365,8 @@ static NSMutableDictionary* columns;
         *outError = _db.lastError;
         return;
     }
-    if (_db.changes > 1) {
-        *outError = makeError(@"updateOne affected multipe rows");
+    if (_db.changes != 1) {
+        *outError = makeError(_db.changes == 0 ? @"updateOne affected no rows" : @"updateOne affected multipe rows");
         return;
     }
 }
