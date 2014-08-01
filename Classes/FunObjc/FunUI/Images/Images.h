@@ -13,6 +13,7 @@
 #import "UIImage+Fun.h"
 #import "UIImage+ImageEffects.h"
 #import "FunBase.h"
+#import "AsyncImageView.h"
 
 @interface ImagesLoadObserver : NSObject
 - (void) onLoaded:(Block)callback;
