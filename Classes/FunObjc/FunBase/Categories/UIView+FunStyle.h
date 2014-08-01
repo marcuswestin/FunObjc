@@ -187,6 +187,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 - (Styler) styler;
 - (UIView*)viewByName:(NSString*)name;
 - (UILabel*)labelByName:(NSString*)name;
+- (NSString*)name;
 - (void)sizeToParent;
 @end
 @interface UIButton (FunStyler)

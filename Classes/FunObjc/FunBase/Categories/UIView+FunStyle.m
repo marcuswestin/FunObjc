@@ -35,7 +35,7 @@ static NSMutableDictionary* tagNameToTagNumber;
 }
 
 + (void)load {
-    tagIntegerToTagName = [NSMutableArray arrayWithObject:@0];
+    tagIntegerToTagName = [NSMutableArray arrayWithObject:@""];
     tagNameToTagNumber = [NSMutableDictionary dictionary];
 }
 
@@ -506,6 +506,9 @@ DeclareImageStyler(imageFill, image,
 }
 - (UILabel *)labelByName:(NSString *)name {
     return (UILabel*)[self viewByName:name];
+}
+- (NSString *)name {
+    return tagIntegerToTagName[self.tag];
 }
 @end
 @implementation UIButton (FunStyler)
