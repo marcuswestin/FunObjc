@@ -386,6 +386,20 @@ static CGFloat STATIC = 0.5f;
     [self removeFromSuperview];
     [self recursivelyCleanup];
 }
+- (UIView *)viewDescendantAtPoint:(CGPoint)point {
+    if (!CGRectContainsPoint(self.bounds, point)) {
+        return nil;
+    }
+    NSArray* subviews = self.subviews;
+    for (int i=subviews.count-1; i>=0; i--) { // Loop in reverse to make top-most subview be hit first
+        UIView* subview = subviews[i];
+        CGPoint subviewPoint = [self convertPoint:point toView:subview];
+        if ([subview pointInside:subviewPoint withEvent:nil]) {
+            return [subview viewDescendantAtPoint:subviewPoint];
+        }
+    }
+    return self;
+}
 
 /* Screenshot
  ************/

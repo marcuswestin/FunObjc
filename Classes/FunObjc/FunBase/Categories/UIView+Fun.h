@@ -93,6 +93,7 @@
 - (UIView*)firstSubview;
 - (UIView*)lastSubview;
 - (void)removeAndClean;
+- (UIView*)viewDescendantAtPoint:(CGPoint)point;
 
 /* Screenshot
  ************/
