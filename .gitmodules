@@ -1,0 +1,3 @@
+[submodule "Dependencies/iConsole"]
+	path = Dependencies/iConsole
+	url = https://github.com/nicklockwood/iConsole.git
