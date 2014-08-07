@@ -119,13 +119,11 @@ static BOOL hasSetup;
     }
     hasSetup = true;
     self.delegate = self;
-    [self setup];
+    [self render];
     return self;
 }
 
-- (void)setup {
-    [NSException raise:@"NotImplemented" format:@"Implement setup"];
-}
+- (void)render {}
 
 //- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
 //    return nil;
