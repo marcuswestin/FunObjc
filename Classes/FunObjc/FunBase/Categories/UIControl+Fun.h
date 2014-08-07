@@ -14,7 +14,7 @@ typedef void (^TapHandler)(UITapGestureRecognizer* tap);
 typedef void (^PanHandler)(UIPanGestureRecognizer* pan);
 
 @interface UIView (UIControlFun)
-- (UITapGestureRecognizer*) onTap:(TapHandler)handler;
+- (UITapGestureRecognizer*) onTap:(TapHandler)handler DEPRECATED_ATTRIBUTE;
 - (UITapGestureRecognizer*) onTap:(id)target selector:(SEL)selector;
 - (UIPanGestureRecognizer*) onPan:(PanHandler)handler;
 @end
