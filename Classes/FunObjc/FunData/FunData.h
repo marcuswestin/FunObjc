@@ -7,3 +7,6 @@
 #import "PhoneNumbers.h"
 
 #import "LinkedList.h"
+
+double CGPointDistanceSquared(CGPoint pointA, CGPoint pointB);
+double CGPointDistance(CGPoint pointA, CGPoint pointB);
