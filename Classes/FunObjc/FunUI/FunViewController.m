@@ -123,7 +123,17 @@ static NSUInteger deallocCount;
 }
 
 - (void)pushViewController:(UIViewController *)viewController {
-    [self.navigationController pushViewController:viewController animated:YES];
+    [self pushViewController:viewController animated:YES];
+}
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    [self.navigationController pushViewController:viewController animated:animated];
+}
+
+- (void)popViewController {
+    [self popViewControllerAnimated:YES];
+}
+- (void)popViewControllerAnimated:(BOOL)animated {
+    [self.navigationController popViewControllerAnimated:animated];
 }
 
 - (FunNavigationController *)nav {

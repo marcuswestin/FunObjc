@@ -21,4 +21,7 @@
 - (void)render:(BOOL)animated;
 - (void)cleanup;
 - (void)pushViewController:(UIViewController *)viewController;
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
+- (void)popViewController;
+- (void)popViewControllerAnimated:(BOOL)animated;
 @end
