@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Events.h"
+#import "FunGlobals.h"
 
 @interface KeyboardEventInfo : NSObject
 @property NSTimeInterval duration;
@@ -31,6 +32,8 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (void)offWillChange:(EventSubscriber)subscriber;
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
++ (void)animation:(Block)animationBlock;
++ (void)animation:(Block)animationBlock completion:(void (^)(BOOL finished))completionBlock;
 + (void)dismiss;
 + (void)hide;
 

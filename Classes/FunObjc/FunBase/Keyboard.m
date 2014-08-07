@@ -72,6 +72,14 @@ static Keyboard* instance;
     return (UIViewAnimationOptions)458752;
 }
 
++ (void)animation:(Block)animationBlock {
+    [self animation:animationBlock completion:nil];
+}
+
++ (void)animation:(Block)animationBlock completion:(void (^)(BOOL finished))completionBlock {
+    [UIView animateWithDuration:[Keyboard animationDuration] delay:0 options:[Keyboard animationOptions] animations:animationBlock completion:completionBlock];
+}
+
 + (BOOL)isVisible {
     return instance.isVisible;
 }
