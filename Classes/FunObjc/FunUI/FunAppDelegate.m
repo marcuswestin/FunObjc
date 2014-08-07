@@ -72,9 +72,10 @@ void _forceCrash() {
 }
 
 - (void)_showDevMenu {
-    UIView* overlay = [Overlay show];
-    [UIButton.appendTo(overlay).text(@"Reset State").size.center onTap:self selector:@selector(resetState)];
-    [UIButton.appendTo(overlay).text(@"Crash").size.center.belowLast(10) onTap:self selector:@selector(crash)];
+    [iConsole show];
+//    UIView* overlay = [Overlay show];
+//    [UIButton.appendTo(overlay).text(@"Reset State").size.center onTap:self selector:@selector(resetState)];
+//    [UIButton.appendTo(overlay).text(@"Crash").size.center.belowLast(10) onTap:self selector:@selector(crash)];
 }
 
 - (void)resetState {
