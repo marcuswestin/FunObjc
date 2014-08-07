@@ -11,6 +11,10 @@
 #import "Keyboard.h"
 #import "Overlay.h"
 
+@interface StatusBar (FunAppDelegate)
++ (void)setupWithRootViewController:(UIViewController*)rootViewController;
+@end
+
 static FunAppDelegate* instance;
 
 @implementation FunAppDelegate
@@ -109,6 +113,7 @@ void _forceCrash() {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.restorationIdentifier = NSStringFromClass([self class]);
     self.window.rootViewController = rootViewController;
+    [StatusBar setupWithRootViewController:rootViewController];
     [self.window makeKeyAndVisible];
 }
 - (UIViewController*)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
@@ -143,6 +148,59 @@ void _forceCrash() {
     if (launchNotification) {
         [Events fire:@"Application.didLaunchWithNotification" info:launchNotification];
     }
+}
+
+// Status bar tap events
+////////////////////////
+
+static BOOL touchIsOnStatusBar;
+static CGPoint touchStartPoint;
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    touchIsOnStatusBar = NO;
+    if (touches.count != 1) {
+        return;
+    }
+    UITouch* touch = touches.anyObject;
+    touchStartPoint = [touch locationInView:self.window];
+    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
+    if (touch.window.windowLevel != UIWindowLevelStatusBar) {
+        return;
+    }
+    if (!CGRectContainsPoint(statusBarFrame, touchStartPoint)) {
+        return;
+    }
+    touchIsOnStatusBar = YES;
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesCancelled:touches withEvent:event];
+    touchIsOnStatusBar = NO;
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesMoved:touches withEvent:event];
+    if (!touchIsOnStatusBar) {
+        return;
+    }
+    if (touches.count != 1) {
+        return;
+    }
+    UITouch* touch = touches.anyObject;
+    CGPoint point = [touch locationInView:[self window]];
+    
+    if (CGPointDistance(point, touchStartPoint) > 5) {
+        touchIsOnStatusBar = NO;
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+    if (!touchIsOnStatusBar) {
+        return;
+    }
+    [Events fire:@"StatusBarTap"];
 }
 
 // Lifecycle events

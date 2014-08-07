@@ -354,6 +354,19 @@ static BOOL insetsForAllSet;
     insetsForAllSet = YES;
 }
 
+static BOOL shouldScrollToTopDefaultValue = YES;
++ (void)shouldScrollToTopOnStatusBarTapByDefault:(BOOL)defaultValue {
+    shouldScrollToTopDefaultValue = defaultValue;
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
+    if (_shouldScrollToTopHandler) {
+        return _shouldScrollToTopHandler();
+    } else {
+        return shouldScrollToTopDefaultValue;
+    }
+}
+
 - (void)_setupScrollview {
     [_scrollView appendTo:self];
     [_scrollView setDelegate:self];

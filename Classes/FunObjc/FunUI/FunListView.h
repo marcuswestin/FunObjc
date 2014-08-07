@@ -76,11 +76,13 @@ enum ListViewDirection {
 @property NSString* loadingMessage;
 @property NSString* emptyMessage;
 @property BOOL shouldMoveWithKeyboard;
+@property (copy) BOOL (^shouldScrollToTopHandler)();
 @property ListViewIndex startIndex;
 @property ListViewLocation startLocation;
 @property ListViewOrientation orientation;
 
 + (void) insetAll:(UIEdgeInsets)insets;
++ (void) shouldScrollToTopOnStatusBarTapByDefault:(BOOL)defaultValue;
 - (void) reloadDataForList;
 - (void) stopScrollingList;
 - (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListViewIndex)firstIndex;

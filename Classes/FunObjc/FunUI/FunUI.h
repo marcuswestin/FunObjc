@@ -14,3 +14,4 @@
 #import "FunViewController.h"
 #import "Images.h"
 #import "Colors.h"
+#import "StatusBar.h"
