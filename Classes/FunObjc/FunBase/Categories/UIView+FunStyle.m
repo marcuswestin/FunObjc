@@ -485,6 +485,16 @@ DeclareImageStyler(imageFill, image,
         return styler;
     };
 }
++ (StylerView)insertBefore {
+    return ^(UIView* siblingView) {
+        ViewStyler* styler = self.styler;
+        UIView* superview = siblingView.superview;
+        [superview insertSubview:styler.view belowSubview:siblingView];
+        assert(styler.view.indexInSuperview == siblingView.indexInSuperview - 1);
+        [styler.view sizeToParent];
+        return styler;
+    };
+}
 - (ViewStyler *)styler {
     return [[ViewStyler alloc] initWithView:self];
 }

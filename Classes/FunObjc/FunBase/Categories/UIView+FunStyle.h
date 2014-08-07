@@ -182,6 +182,7 @@ typedef Styler (^StylerDate)(NSDate* date);
 + (StylerView) prependBefore;
 + (StylerView) appendAfter;
 + (StylerViewInteger) insertAtIndex;
++ (StylerView) insertBefore;
 + (Styler) styler;
 + (StylerRect) frame;
 - (Styler) styler;
