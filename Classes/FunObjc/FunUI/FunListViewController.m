@@ -31,7 +31,7 @@
     }
     CGSize size = self.view.size;
     _listView = [[FunListView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
-    [_listView prependTo:self.view];
+    [_listView appendTo:self.view];
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
 }
