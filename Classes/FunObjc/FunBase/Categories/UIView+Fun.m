@@ -400,6 +400,24 @@ static CGFloat STATIC = 0.5f;
     }
     return self;
 }
+- (NSInteger)indexInSuperview {
+    return [self.superview.subviews indexOfObject:self];
+}
+- (UIView *)nextSiblingView {
+    NSInteger index = self.indexInSuperview;
+    if (index + 1 == self.superview.subviews.count) {
+        return nil;
+    }
+    return self.superview.subviews[index + 1];
+}
+- (UIView *)previousSiblingView {
+    NSInteger index = self.indexInSuperview;
+    if (index == 0) {
+        return nil;
+    }
+    return self.superview.subviews[index - 1];
+}
+
 
 /* Screenshot
  ************/

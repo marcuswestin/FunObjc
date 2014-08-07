@@ -94,6 +94,9 @@
 - (UIView*)lastSubview;
 - (void)removeAndClean;
 - (UIView*)viewDescendantAtPoint:(CGPoint)point;
+- (NSInteger)indexInSuperview;
+- (UIView*)nextSiblingView;
+- (UIView*)previousSiblingView;
 
 /* Screenshot
  ************/
