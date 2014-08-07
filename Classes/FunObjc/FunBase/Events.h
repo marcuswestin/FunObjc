@@ -14,6 +14,7 @@ typedef id EventSubscriber;
 @interface Events : NSObject
 // Pass in `self` for subscriber
 + (void)on:(NSString*)signal subscriber:(EventSubscriber)subscriber callback:(EventCallback)callback;
++ (void)once:(NSString*)signal subscriber:(EventSubscriber)subscriber callback:(EventCallback)callback;
 + (void)off:(NSString*)signal subscriber:(EventSubscriber)subscriber;
 + (void)fire:(NSString*)signal info:(id)info;
 + (void)fire:(NSString*)signal;

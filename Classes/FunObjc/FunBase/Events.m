@@ -37,6 +37,13 @@ static NSMutableDictionary* signals;
     [signals[signal] addObject:[Subscription withSubscriber:subscriber callback:callback]];
 }
 
++ (void)once:(NSString *)signal subscriber:(EventSubscriber)subscriber callback:(EventCallback)callback {
+    [Events on:signal subscriber:subscriber callback:^(id info) {
+        callback(info);
+        [Events off:signal subscriber:subscriber];
+    }];
+}
+
 + (void)off:(NSString *)signal subscriber:(EventSubscriber)subscriber {
     NSMutableSet* callbacks = signals[signal];
     for (Subscription* subscription in callbacks) {
