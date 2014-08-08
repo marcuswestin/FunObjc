@@ -14,6 +14,13 @@
 @end
 
 @interface State : NSObject <NSCoding>
++ (void)observeValue:(NSString*)valueName subscriber:(id)subscriber callback:(void(^)(id value))callback;
++ (void)updateValue:(NSString*)valueName newValue:(id)newValue;
++ (void)incrementValue:(NSString*)valueName;
++ (void)decrementValue:(NSString*)valueName;
++ (void)addToValue:(NSString*)valueName number:(NSInteger)num;
++ (id)getValue:(NSString*)valueName;
+
 + (instancetype) fromDict:(NSDictionary*)dict;
 + (instancetype) fromDeflatedDict:(NSDictionary*)deflatedDict;
 + (instancetype) fromDeflatedJson:(NSString*)json;

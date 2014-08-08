@@ -13,6 +13,53 @@
 
 @implementation State
 
++ (void)initialize {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        observations = [NSMutableDictionary dictionary];
+        builtMaps = [NSMutableSet set];
+        deflateMaps = [NSMutableDictionary dictionary];
+        inflateMaps = [NSMutableDictionary dictionary];
+    });
+}
+
+
+
+// Observations API
+///////////////////
+static NSMutableDictionary* observations;
++ (void)observeValue:(NSString *)valueName subscriber:(id)subscriber callback:(void (^)(id))callback {
+    NSString* observationName = [self _observationName:(valueName)];
+    [Events on:observationName subscriber:subscriber callback:callback];
+    callback(observations[observationName]);
+}
++ (void)updateValue:(NSString *)valueName newValue:(id)newValue {
+    NSString* observationName = [self _observationName:valueName];
+    if (![observations[observationName] isEqual:newValue]) {
+        observations[observationName] = newValue;
+        [Events fire:observationName info:newValue];
+    }
+}
++ (id)getValue:(NSString *)valueName {
+    NSString* observationName = [self _observationName:valueName];
+    return observations[observationName];
+}
++ (NSString*)_observationName:(NSString*)valueName {
+    return [NSString stringWithFormat:@"_Obs-%@", valueName];
+}
++ (void)incrementValue:(NSString *)valueName {
+    [self addToValue:valueName number:1];
+}
++ (void)decrementValue:(NSString *)valueName {
+    [self addToValue:valueName number:-1];
+}
++ (void)addToValue:(NSString *)valueName number:(NSInteger)addNumber {
+    NSNumber* val = [self getValue:valueName];
+    [self updateValue:valueName newValue:num((val ? [val integerValue] : 0) + addNumber)];
+}
+
+// Construction API
+///////////////////
 + (instancetype)fromDict:(NSDictionary*)dict inflate:(BOOL)inflate {
     if ([dict isKindOfClass:State.class]) {
         return (State*)dict;
@@ -149,11 +196,6 @@
 static NSMutableSet* builtMaps;
 static NSMutableDictionary* deflateMaps;
 static NSMutableDictionary* inflateMaps;
-+ (void)initialize {
-    builtMaps = [NSMutableSet set];
-    deflateMaps = [NSMutableDictionary dictionary];
-    inflateMaps = [NSMutableDictionary dictionary];
-}
 - (NSDictionary*)serializeMap {
     if (![self conformsToProtocol:@protocol(StateInflateDeflate)]) {
         return nil;
