@@ -22,6 +22,11 @@
 + (UIView*)snapshotViewAfterScreenUpdates:(BOOL)afterUpdates;
 + (CGRect)bounds;
 + (UIColor*)backgroundColor;
++ (void)setHeight:(CGFloat)height;
++ (CGFloat)height;
++ (CGRect)frame;
++ (CGSize)size;
++ (UIView*)backgroundView;
 
 @end
 

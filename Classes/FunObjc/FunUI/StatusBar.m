@@ -18,6 +18,33 @@ static UIView* background;
 static CGFloat height = 20.0;
 static BOOL isHidden;
 
++ (UIView *)backgroundView {
+    return background;
+}
+
++ (CGFloat)height {
+    return height;
+}
+
++ (void)setHeight:(CGFloat)newHeight {
+    height = newHeight;
+    background.height = height;
+}
+
++ (CGRect)frame {
+//    return (isHidden ? CGRectZero : background.frame);
+    return background.frame;
+}
+
++ (CGRect)bounds {
+//    return (isHidden ? CGRectZero : background.bounds);
+    return background.bounds;
+}
+
++ (CGSize)size {
+    return CGSizeMake([Viewport width], height);
+}
+
 + (BOOL)isHidden {
     return isHidden;
 }
@@ -111,10 +138,6 @@ static BOOL isHidden;
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
     background.backgroundColor = backgroundColor;
-}
-
-+ (CGRect)bounds {
-    return CGRectMake(0, 0, [Viewport width], 20);
 }
 
 + (UIColor *)backgroundColor {
