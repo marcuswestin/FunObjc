@@ -165,10 +165,7 @@ static CGPoint touchStartPoint;
     }
     UITouch* touch = touches.anyObject;
     touchStartPoint = [touch locationInView:self.window];
-    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
-    if (touch.window.windowLevel != UIWindowLevelStatusBar) {
-        return;
-    }
+    CGRect statusBarFrame = [StatusBar frame];
     if (!CGRectContainsPoint(statusBarFrame, touchStartPoint)) {
         return;
     }
