@@ -124,6 +124,17 @@ static NSMutableDictionary* columnsCache;
 @implementation SQL
 
 static FMDatabaseQueue* queue;
+static NSMutableArray* openCallbacks;
+
++ (void)whenOpen:(void (^)())callback {
+    if (queue) {
+        callback();
+    } else if (openCallbacks) {
+        [openCallbacks addObject:callback];
+    } else {
+        openCallbacks = [NSMutableArray arrayWithObject:callback];
+    }
+}
 
 + (void)removeDatabase:(NSString *)name {
     [Files removeDocument:name];
@@ -154,6 +165,13 @@ static FMDatabaseQueue* queue;
     SQLMigrations* migrations = [[SQLMigrations alloc] initWithName:name];
     migrationsFn(migrations);
     [migrations _finish];
+    if (openCallbacks) {
+        NSArray* callbacks = openCallbacks;
+        openCallbacks = nil;
+        for (Block callback in callbacks) {
+            callback();
+        }
+    }
 }
 
 + (void)autocommit:(SQLAutocommitBlock)block {
