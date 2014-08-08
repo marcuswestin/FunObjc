@@ -190,8 +190,8 @@ static FMDatabaseQueue* queue;
     return result;
 }
 
-+ (long long)selectLongLong:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
-    long long __block result;
++ (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    NSNumber* __block result;
     [SQL autocommit:^(SQLConn *conn) {
         FMResultSet* resultSet = [conn.db executeQuery:sql withArgumentsInArray:args];
         if (!resultSet) {
@@ -199,11 +199,11 @@ static FMDatabaseQueue* queue;
             return;
         }
         if (![resultSet next]) {
-            *outError = makeError(@"selectLongLong got 0 rows");
+            *outError = makeError(@"selectNumber got 0 rows");
         }
-        result = [resultSet longLongIntForColumnIndex:0];
+        result = [resultSet objectForColumnIndex:0];
         if ([resultSet next]) {
-            *outError = makeError(@"selectLongLong got more than 1 row");
+            *outError = makeError(@"selectNumber got more than 1 row");
         }
     }];
     return result;

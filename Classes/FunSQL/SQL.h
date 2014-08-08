@@ -43,7 +43,7 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (NSArray*)select:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
-+ (long long)selectLongLong:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
++ (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (void)removeDatabase:(NSString*)name;
