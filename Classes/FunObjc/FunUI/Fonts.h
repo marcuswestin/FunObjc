@@ -10,6 +10,7 @@
 
 @interface Fonts : NSObject
 +(BOOL)loadData:(NSData*)fontData;
++(void)setName:(NSString*)name;
 +(UIFont*)bold:(CGFloat)size;
 +(UIFont*)medium:(CGFloat)size;
 +(UIFont*)regular:(CGFloat)size;
