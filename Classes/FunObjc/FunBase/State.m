@@ -29,19 +29,23 @@
 ///////////////////
 static NSMutableDictionary* observations;
 + (void)observeValue:(NSString *)valueName subscriber:(id)subscriber callback:(void (^)(id))callback {
-    NSString* observationName = [self _observationName:(valueName)];
+    NSString* observationName = [State _observationName:valueName];
     [Events on:observationName subscriber:subscriber callback:callback];
     callback(observations[observationName]);
 }
++ (void)unobserveValue:(NSString *)valueName subscriber:(id)subscriber {
+    NSString* observationName = [State _observationName:valueName];
+    [Events off:observationName subscriber:subscriber];
+}
 + (void)updateValue:(NSString *)valueName newValue:(id)newValue {
-    NSString* observationName = [self _observationName:valueName];
+    NSString* observationName = [State _observationName:valueName];
     if (![observations[observationName] isEqual:newValue]) {
         observations[observationName] = newValue;
         [Events fire:observationName info:newValue];
     }
 }
 + (id)getValue:(NSString *)valueName {
-    NSString* observationName = [self _observationName:valueName];
+    NSString* observationName = [State _observationName:valueName];
     return observations[observationName];
 }
 + (NSString*)_observationName:(NSString*)valueName {

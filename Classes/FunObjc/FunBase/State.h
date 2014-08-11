@@ -15,6 +15,7 @@
 
 @interface State : NSObject <NSCoding>
 + (void)observeValue:(NSString*)valueName subscriber:(id)subscriber callback:(void(^)(id value))callback;
++ (void)unobserveValue:(NSString*)valueName subscriber:(id)subscriber;
 + (void)updateValue:(NSString*)valueName newValue:(id)newValue;
 + (void)incrementValue:(NSString*)valueName;
 + (void)decrementValue:(NSString*)valueName;
