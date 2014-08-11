@@ -391,7 +391,7 @@ static CGFloat STATIC = 0.5f;
         return nil;
     }
     NSArray* subviews = self.subviews;
-    for (int i=subviews.count-1; i>=0; i--) { // Loop in reverse to make top-most subview be hit first
+    for (NSInteger i=subviews.count-1; i>=0; i--) { // Loop in reverse to make top-most subview be hit first
         UIView* subview = subviews[i];
         CGPoint subviewPoint = [self convertPoint:point toView:subview];
         if ([subview pointInside:subviewPoint withEvent:nil]) {

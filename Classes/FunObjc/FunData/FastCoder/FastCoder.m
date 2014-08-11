@@ -962,7 +962,7 @@ CFHashCode FCDictionaryHashCallback(const void* value)
     BOOL mutable = ([self classForCoder] == [NSMutableIndexSet class]);
     if (mutable) FCCacheWrittenObject(self, cache);
     
-    NSUInteger __block rangeCount = 0; // I wish we could get this directly from NSSet...
+    uint32_t __block rangeCount = 0; // I wish we could get this directly from NSSet...
     [self enumerateRangesUsingBlock:^(NSRange range, BOOL *stop) {
         rangeCount += 1;
     }];
@@ -970,8 +970,8 @@ CFHashCode FCDictionaryHashCallback(const void* value)
     FCWriteUInt32((mutable ? FCTypeMutableIndexSet : FCTypeIndexSet), output);
     FCWriteUInt32(rangeCount, output);
     [self enumerateRangesUsingBlock:^(NSRange range, BOOL *stop) {
-        FCWriteUInt32(range.location, output);
-        FCWriteUInt32(range.length, output);
+        FCWriteUInt32((uint32_t)range.location, output);
+        FCWriteUInt32((uint32_t)range.length, output);
     }];
     
     if (!mutable) FCCacheWrittenObject(self, cache);
