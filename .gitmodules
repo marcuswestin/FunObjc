@@ -1,6 +1,6 @@
 [submodule "Dependencies/iConsole"]
 	path = Dependencies/iConsole
-	url = https://github.com/nicklockwood/iConsole.git
+	url = https://github.com/marcuswestin/iConsole.git
 [submodule "Dependencies/AsyncImageView"]
 	path = Dependencies/AsyncImageView
 	url = https://github.com/nicklockwood/AsyncImageView.git
