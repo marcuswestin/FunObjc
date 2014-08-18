@@ -33,7 +33,7 @@
 @implementation UITextField (Fun)
 - (void)bindTextTo:(NSMutableString *)str {
     if (!str || str.isNull) {
-        NSLog(@"WARNING UITextField -bindTextTo: got nil string");
+        DLog(@"WARNING UITextField -bindTextTo: got nil string");
         return;
     }
     self.text = str;

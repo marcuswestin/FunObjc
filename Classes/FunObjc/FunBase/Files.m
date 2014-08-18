@@ -133,7 +133,7 @@ static BOOL didReset = NO;
 + (BOOL)_write:(NSString*)path data:(NSData*)data {
     NSError* err;
     if (![data writeToFile:path options:NSDataWritingAtomic error:&err]) {
-        NSLog(@"Error writing file: %@", err);
+        DLog(@"Error writing file: %@", err);
         return NO;
     }
     return YES;

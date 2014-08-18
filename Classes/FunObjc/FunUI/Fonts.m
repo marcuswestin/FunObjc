@@ -7,6 +7,7 @@
 //
 
 #import "Fonts.h"
+#import "FunBase.h"
 #import <CoreText/CoreText.h>
 
 @implementation Fonts
@@ -18,7 +19,7 @@
     CGFontRef font = CGFontCreateWithDataProvider(provider);
     if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
         CFStringRef errorDescription = CFErrorCopyDescription(error);
-        NSLog(@"Failed to load font: %@", errorDescription);
+        DLog(@"Failed to load font: %@", errorDescription);
         CFRelease(errorDescription);
         success = NO;
     }

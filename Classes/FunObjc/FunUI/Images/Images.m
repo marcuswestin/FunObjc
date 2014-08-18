@@ -153,7 +153,7 @@ static NSString* cacheKeyBase;
 }
 
 + (void) _onFetched:(NSString*)url error:(NSError*)error data:(NSData*)data {
-//    NSLog(@"Fetched %@ %@ %d", url, error, (data ? data.length : -1));
+//    DLog(@"Fetched %@ %@ %d", url, error, (data ? data.length : -1));
     NSArray* callbacks;
     @synchronized(loading) {
         callbacks = loading[url];

@@ -21,7 +21,7 @@
     NSError *err;
     CGImageRef imageRef = [imageGenerator copyCGImageAtTime:cmTime actualTime:NULL error:&err];
     if (err) {
-        NSLog(@"Error generating thumbnail for video result: %@", err);
+        DLog(@"Error generating thumbnail for video result: %@", err);
         return nil;
     }
     

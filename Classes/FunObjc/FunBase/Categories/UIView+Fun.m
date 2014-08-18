@@ -296,7 +296,7 @@
 
 static CGFloat STATIC = 0.5f;
 - (void)setOutsetShadowColor:(UIColor *)color radius:(CGFloat)radius spread:(CGFloat)spread x:(CGFloat)offsetX y:(CGFloat)offsetY {
-    if (self.clipsToBounds) { NSLog(@"Warning: outset shadow put on view with clipped bounds"); }
+    if (self.clipsToBounds) { DLog(@"Warning: outset shadow put on view with clipped bounds"); }
     NSArray* colors = @[(id)color.CGColor, (id)[UIColor.clearColor CGColor]];
     
     CAGradientLayer *top = [CAGradientLayer layer];

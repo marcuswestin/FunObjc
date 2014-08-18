@@ -76,7 +76,7 @@
     NSError* err;
     NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:0 error:&err];
     if (err) {
-        NSLog(@"Error in stringByReplacingPattern:withTemplate: %@", err);
+        DLog(@"Error in stringByReplacingPattern:withTemplate: %@", err);
         return nil;
     }
     

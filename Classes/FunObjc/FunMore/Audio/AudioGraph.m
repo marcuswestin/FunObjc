@@ -271,7 +271,7 @@ void audioError(NSString* errorString, OSStatus status) {
 	} else { // no, format as an integer
 		sprintf(str, "%d", (int)status);
     }
-    NSLog(@"*** %@ error: %s\n", errorString, str);
+    DLog(@"*** %@ error: %s\n", errorString, str);
 }
 BOOL audioCheck(NSString* str, OSStatus status) {
     if (status != noErr) {
@@ -327,9 +327,9 @@ AVAudioSession* audioCreateSession(NSString* category) {
     NSError* err;
     AVAudioSession* session = [AVAudioSession sharedInstance];
     [session setCategory:category error:&err];
-    if (err) { NSLog(@"ERROR setCategory:withOptions: %@", err); return nil; }
+    if (err) { DLog(@"ERROR setCategory:withOptions: %@", err); return nil; }
     [session setActive:YES error:&err];
-    if (err) { NSLog(@"ERROR setActive: %@", err); return nil; }
+    if (err) { DLog(@"ERROR setActive: %@", err); return nil; }
     return session;
 }
 

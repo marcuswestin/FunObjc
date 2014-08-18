@@ -60,7 +60,7 @@
 + (void)findContactsWithPhoneNumber:(NSString *)phoneNumber callback:(ArrayCallback)callback {
     NSString* normalized = [PhoneNumbers normalize:phoneNumber];
     NSPredicate* predicate = [NSPredicate predicateWithFormat:@"phoneNumbers contains %@", normalized];
-    NSLog(@"Find contacts with %@", normalized);
+    DLog(@"Find contacts with %@", normalized);
     [AddressBook findContactsMatchingPredicate:predicate callback:callback];
 }
 
@@ -68,9 +68,9 @@
     static BOOL preloaded;
     if (preloaded) { return; }
     preloaded = YES;
-    NSLog(@"AddressBook: preloading all contacts into memory");
+    DLog(@"AddressBook: preloading all contacts into memory");
     [self loadAllContacts:^(NSArray *contacts) {
-        NSLog(@"AddressBook: all contacts preloaded into memory");
+        DLog(@"AddressBook: all contacts preloaded into memory");
     }];
 }
 
@@ -92,7 +92,7 @@ static NSArray* allContacts;
     
     asyncDefault(^{
         if (AddressBook.authorizationStatus != kABAuthorizationStatusAuthorized) {
-            NSLog(@"WARNING [AddressBook loadContacts]: non-authorized status %@", AddressBook.authorizationStatusString);
+            DLog(@"WARNING [AddressBook loadContacts]: non-authorized status %@", AddressBook.authorizationStatusString);
             return callback(nil);
         }
         @synchronized(self) {
@@ -102,7 +102,7 @@ static NSArray* allContacts;
             
             ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
             if (!addressBook) {
-                NSLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
+                DLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
                 callback(nil);
                 return;
             }

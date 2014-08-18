@@ -26,7 +26,7 @@ static BOOL useUnquotedKeys = NO;
         obj = [self sanitize:obj];
     }
     @catch (NSException *exception) {
-        NSLog(@"Threw in [JSON serialize:] %@", exception);
+        DLog(@"Threw in [JSON serialize:] %@", exception);
         [exception raise];
         return nil;
     }
@@ -43,7 +43,7 @@ static BOOL useUnquotedKeys = NO;
     }
 
     if (err) {
-        NSLog(@"Error: %@", err);
+        DLog(@"Error: %@", err);
         return nil;
     }
     return data;
@@ -58,7 +58,7 @@ static BOOL useUnquotedKeys = NO;
     NSError* err;
     id result = [JSON parseData:data error:&err];
     if (err) {
-        NSLog(@"JSON parseData: %@", err);
+        DLog(@"JSON parseData: %@", err);
     }
     return result;
 }

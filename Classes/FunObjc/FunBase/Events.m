@@ -76,9 +76,9 @@ static NSMutableDictionary* signals;
 }
 + (void)syncFire:(NSString *)signal callbacks:(NSSet*)callbacks info:(id)info {
     if (info) {
-        NSLog(@"@ Event %@, Info: %@", signal, info);
+        DLog(@"@ Event %@, Info: %@", signal, info);
     } else {
-        NSLog(@"@ Event %@", signal);
+        DLog(@"@ Event %@", signal);
     }
     for (Subscription* subscription in callbacks) {
         subscription.callback(info);

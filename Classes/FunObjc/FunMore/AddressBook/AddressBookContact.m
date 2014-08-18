@@ -16,7 +16,7 @@
     if (!_image) {
         ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
         if (!addressBook) {
-            NSLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
+            DLog(@"Could not open address book. Use [AddressBook authorize:] and [AddressBook authorizationStatus].");
             return nil;
         }
         _image = [self imageWithAddressBook:addressBook];
@@ -48,7 +48,7 @@
     return @"(no name)";
 }
 - (NSString *)displayAddress {
-    NSLog(@"TODO Figure out AddressBookContact displayAddress");
+    DLog(@"TODO Figure out AddressBookContact displayAddress");
     if (_phoneNumbers.count) {
         return [PhoneNumbers format:_phoneNumbers.firstObject];
     } else {

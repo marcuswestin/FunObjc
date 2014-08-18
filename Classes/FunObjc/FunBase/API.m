@@ -159,9 +159,9 @@ static NSString* uuidHeader;
     NSString* url = [server stringByAppendingString:path];
 
     if ([contentType isEqualToString:@"application/json"]) {
-        NSLog(@"API %@ %@ SEND:\n%@", method, url, data.toString);
+        DLog(@"API %@ %@ SEND:\n%@", method, url, data.toString);
     } else {
-        NSLog(@"API %@ %@ SEND: %lu bytes", method, url, (unsigned long)data.length);
+        DLog(@"API %@ %@ SEND: %lu bytes", method, url, (unsigned long)data.length);
     }
     NSDictionary* devInterceptRes = [API _devIntercept:path];
     if (devInterceptRes) {
@@ -191,7 +191,7 @@ static NSString* uuidHeader;
         return callback(connectionError, nil);
     }
     
-    NSLog(@"API %@ %@ RECV:\n%@\n\n", method, path, [data toString]);
+    DLog(@"API %@ %@ RECV:\n%@\n\n", method, path, [data toString]);
 
     NSString* contentType = httpRes.allHeaderFields[@"content-type"];
     NSDictionary* res;
@@ -208,7 +208,7 @@ static NSString* uuidHeader;
     }
     
     if (err) {
-        NSLog(@"API error %@ %@: %@", method, path, err);
+        DLog(@"API error %@ %@: %@", method, path, err);
         return callback(err, nil);
     }
     

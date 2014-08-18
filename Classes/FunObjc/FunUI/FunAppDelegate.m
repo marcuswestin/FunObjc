@@ -51,45 +51,7 @@ static FunAppDelegate* instance;
         [Files writeNumber:current name:@"LastLaunchTime"];
     });
     
-#if DEBUG
-    [self _setupDevMenu];
-#endif
-    
     return YES;
-}
-
-- (void)_setupDevMenu {
-    UIView* devButton = [UILabel.appendTo(self.window).text(@"{D}").radius(8).bg(rgba(123,123,123,.5)).size.outsetAll(4).x(4).fromBottom(50).textCenter render];
-    DragAndDrop* drag = [DragAndDrop forView:devButton];
-    [drag onTap:^(UITapGestureRecognizer *tap) {
-        [self _showDevMenu];
-    }];
-}
-
-void _forceCrash() {
-    int *x = NULL;
-    *x = 42;
-}
-
-- (void)_showDevMenu {
-    [iConsole show];
-//    UIView* overlay = [Overlay show];
-//    [UIButton.appendTo(overlay).text(@"Reset State").size.center onTap:self selector:@selector(resetState)];
-//    [UIButton.appendTo(overlay).text(@"Crash").size.center.belowLast(10) onTap:self selector:@selector(crash)];
-}
-
-- (void)resetState {
-    [Files resetFileRoot];
-    [Overlay showMessage:@"State has been reset.\nApp will close in 1 second."];
-    after(1, ^{
-        _forceCrash();
-    });
-}
-
-- (void)crash {
-    async(^{
-        _forceCrash();
-    });
 }
 
 // View state saving
@@ -111,7 +73,7 @@ void _forceCrash() {
 }
 // View state utils
 - (void)_loadInterfaceWithRootViewController:(UIViewController*)rootViewController {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[iConsoleWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.restorationIdentifier = NSStringFromClass([self class]);
     self.window.rootViewController = rootViewController;
     [StatusBar setupWithRootViewController:rootViewController];

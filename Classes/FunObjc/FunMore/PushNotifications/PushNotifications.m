@@ -78,7 +78,7 @@ static PushAuthorizationCallback authorizationCallback;
 
 + (void)initialize {
     [Events on:@"Application.didRegisterForRemoteNotificationsWithDeviceToken" subscriber:self callback:^(NSData* deviceToken) {
-        NSLog(@"PushNotifications: Authorized");
+        DLog(@"PushNotifications: Authorized");
         PushAuthorization* auth = [PushAuthorization new];
         auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios_prod, ios_sandbox, osx_prod, osx_sandbox
         auth.token = [PushNotifications tokenString:deviceToken];
@@ -86,7 +86,7 @@ static PushAuthorizationCallback authorizationCallback;
     }];
     
     [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" subscriber:self callback:^(NSError* err) {
-        NSLog(@"PushNotifications: Failed Auth");
+        DLog(@"PushNotifications: Failed Auth");
         authorizationCallback(err, nil);
     }];
     
@@ -107,7 +107,7 @@ static PushAuthorizationCallback authorizationCallback;
         callback(err, auth);
         authorizationCallback = nil;
     };
-    NSLog(@"PushNotifications: Authorize");
+    DLog(@"PushNotifications: Authorize");
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:NotificationTypes];
 }
 

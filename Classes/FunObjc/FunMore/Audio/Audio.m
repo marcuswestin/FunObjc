@@ -236,7 +236,7 @@ static AudioPlaybackProgressCallback _progressCallback;
 + (BOOL)recordFromMicrophoneToFile:(NSString *)path {
     _session = audioCreateSession(AVAudioSessionCategoryPlayAndRecord);
     if (!_session.inputAvailable) {
-        NSLog(@"Audio: WARNING Requested input is not available");
+        DLog(@"Audio: WARNING Requested input is not available");
         return NO;
     }
 

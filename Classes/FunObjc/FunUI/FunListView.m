@@ -94,7 +94,7 @@ static CGFloat START_EDGE = 99999.0f;
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-//        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag; // UIScrollViewKeyboardDismissModeInteractive
     }
     return self;
 }

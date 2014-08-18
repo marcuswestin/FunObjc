@@ -112,7 +112,7 @@ static NSMutableDictionary* observations;
         if (deserializeMap) {
             NSString* deserializedKey = deserializeMap[key];
             if (!deserializeMap) {
-                NSLog(@"WARNING Saw unknown deserialize key %@ for class %@", key, self.className);
+                DLog(@"WARNING Saw unknown deserialize key %@ for class %@", key, self.className);
                 continue;
             }
             [self _setPropertyKey:deserializedKey value:dict[key] props:props];
@@ -125,7 +125,7 @@ static NSMutableDictionary* observations;
 - (void)_setPropertyKey:(NSString*)key value:(id)value props:(NSDictionary*)props {
     NSString* propertyClassName = props[key];
     if (!propertyClassName) {
-        NSLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
+        DLog(@"WARNING Saw unknown property key %@ for class %@", key, self.className);
         return;
     }
     
@@ -133,7 +133,7 @@ static NSMutableDictionary* observations;
         if (propertyClassName.length != 1) {
             Class class = NSClassFromString(props[key]);
             if (!class) {
-                NSLog(@"WARNING Saw unknown class %@ for key %@. (Did you forget '@implementation %@'?)", props[key], key, props[key]);
+                DLog(@"WARNING Saw unknown class %@ for key %@. (Did you forget '@implementation %@'?)", props[key], key, props[key]);
             }
             if ([class isSubclassOfClass:[State class]]) {
                 value = [class fromDict:value];
@@ -165,11 +165,11 @@ static NSMutableDictionary* observations;
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
-    NSLog(@"WARNING State class \"%@\" attempted to set value %@ for undefined key %@", self.className, value, key);
+    DLog(@"WARNING State class \"%@\" attempted to set value %@ for undefined key %@", self.className, value, key);
 }
 
 - (void)setNilValueForKey:(NSString *)key {
-//    NSLog(@"Warning State class \"%@\" attempted to set nil value for key %@", self.className, key);
+//    DLog(@"Warning State class \"%@\" attempted to set nil value for key %@", self.className, key);
 }
 
 - (NSString*)className {

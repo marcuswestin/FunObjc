@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Flutterby Labs Inc. All rights reserved.
 //
 
+#import "FunBase.h"
 #import "FunCategories.h"
 #import "SQL.h"
 #import "FMDatabaseAdditions.h"
@@ -96,7 +97,7 @@ static NSMutableDictionary* columnsCache;
 }
 - (void)_finish {
     [_newMigrations each:^(NSDictionary* migration, NSUInteger i) {
-        NSLog(@"Running migration %@", migration[@"name"]);
+        DLog(@"Running migration %@", migration[@"name"]);
         [SQL transact:^(SQLConn *conn, SQLRollbackBlock rollback) {
             MigrationBlock migrationBlock = migration[@"block"];
             NSError* err;
@@ -107,11 +108,11 @@ static NSMutableDictionary* columnsCache;
                 err = makeError(exception.reason);
             }
             if (err) {
-                NSLog(@"FAILED migration: %@", err);
+                DLog(@"FAILED migration: %@", err);
                 rollback();
                 fatal(err);
             } else {
-                NSLog(@"Completed migration %@", migration[@"name"]);
+                DLog(@"Completed migration %@", migration[@"name"]);
                 [_completedMigrations addObject:migration[@"name"]];
             }
         }];
@@ -155,7 +156,7 @@ static NSMutableArray* openCallbacks;
     NSString* backupName = [NSString stringWithFormat:@"%@-Backup-%@", name, [formatter stringFromDate:date]];
     
     NSString* size = [NSByteCountFormatter stringFromByteCount:[Files sizeOfDocument:name] countStyle:NSByteCountFormatterCountStyleFile];
-    NSLog(@"SQL: Backup db \"%@\" to \"%@\" (size: %@)", name, backupName, size);
+    DLog(@"SQL: Backup db \"%@\" to \"%@\" (size: %@)", name, backupName, size);
     [self copyDatabase:name to:backupName];
 }
 

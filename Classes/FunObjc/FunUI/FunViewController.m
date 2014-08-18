@@ -47,7 +47,7 @@ static NSUInteger deallocCount;
         [API waitForCurrentRequests:^{
             after(1, ^{
                 if (deallocCount > before) { return; }
-                NSLog(@"WARNING: dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className);
+                DLog(@"WARNING: dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className);
 //                [NSException raise:@"Error" format:@"dealloc was never called for %@ despite call to didMoveToParentViewController. It looks like you might have a memory leak in %@!", className, className];
             });
         }];

@@ -20,16 +20,15 @@
 void fatal(NSError* err) {
     if (!err) { return; }
     NSString* message = err.localizedDescription;
-    NSLog(@"Fatal error %@ %@", message, err);
-    int *x = NULL;
-    *x = 42; // Force crash in fatal
+    DLog(@"Fatal error %@ %@", message, err);
+    abort();
 }
 
 static UIView* errorView;
 
 void error(NSError* err) {
     if (!err) { return; }
-    NSLog(@"ERROR %@ %@", err.localizedDescription, err);
+    DLog(@"ERROR %@ %@", err.localizedDescription, err);
     asyncMain(^{
         Class cameraClass = NSClassFromString(@"Camera");
         if (cameraClass) {
