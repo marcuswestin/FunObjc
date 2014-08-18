@@ -11,6 +11,7 @@
 #import "SQL.h"
 #import "FMDatabaseAdditions.h"
 #import "Files.h"
+#import "StatusBar.h"
 
 @interface TableInfo : NSObject
 @property NSString* insertOrReplaceSql;
@@ -160,7 +161,14 @@ static NSMutableArray* openCallbacks;
     [self copyDatabase:name to:backupName];
 }
 
-+ (void) openDatabase:(NSString*)name withMigrations:(SQLRegisterMigrations)migrationsFn {
++ (void) openDatabase:(NSString*)name practiceMode:(BOOL)practiceMode withMigrations:(SQLRegisterMigrations)migrationsFn {
+    if (practiceMode) {
+        [SQL copyDatabase:name to:@"SQLMigrationPractice"];
+        name = @"SQLMigrationPractice";
+        [UILabel.appendTo([StatusBar backgroundView]).xy(10,60).bg(RED).text(@"Migration practice mode").size.textCenter.outsetSides(4).textColor(WHITE) render];
+    } else {
+        [SQL backupDatabase:name];
+    }
     queue = [FMDatabaseQueue databaseQueueWithPath:[Files documentPath:name]];
     columnsCache = [NSMutableDictionary dictionary];
     SQLMigrations* migrations = [[SQLMigrations alloc] initWithName:name];
