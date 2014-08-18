@@ -179,10 +179,10 @@ static NSCharacterSet* illegalFileNameCharacters;
     NSDictionary* dict = [Files readDocumentJson:name];
     return (dict ? dict[@"Number"] : nil);
 }
-+ (void)writeStringDocument:(NSString *)string name:(NSString *)name {
++ (void)writeString:(NSString *)string name:(NSString *)name {
     [Files writeDocument:name data:string.toData];
 }
-+ (NSString *)readStringDocument:(NSString *)name {
++ (NSString *)readString:(NSString *)name {
     return [Files readDocument:name].toString;
 }
 

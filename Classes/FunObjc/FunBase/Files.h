@@ -40,8 +40,8 @@
 + (void)writeNumber:(NSNumber*)number name:(NSString*)name;
 + (NSNumber*)readNumber:(NSString*)name;
 
-+ (void)writeStringDocument:(NSString*)string name:(NSString*)name;
-+ (NSString*)readStringDocument:(NSString*)name;
++ (void)writeString:(NSString*)string name:(NSString*)name;
++ (NSString*)readString:(NSString*)name;
 
 + (unsigned long long)sizeOfDocument:(NSString*)filename;
 + (unsigned long long)sizeOfCache:(NSString*)filename;

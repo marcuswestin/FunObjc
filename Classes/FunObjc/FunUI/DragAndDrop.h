@@ -11,10 +11,7 @@
 #import "UIControl+Fun.h"
 
 @interface DragAndDrop : NSObject
-@property UIView* view;
-@property CGFloat startX;
-@property CGFloat startY;
-@property (copy) EventHandler tapHandler;
 + (instancetype)forView:(UIView*)view;
-- (void)onTap:(TapHandler)tapHandler;
+- (void)onTap:(id)target selector:(SEL)selector;
+- (void)persistPositionToDocument:(NSString*)documentName;
 @end
