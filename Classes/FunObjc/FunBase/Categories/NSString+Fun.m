@@ -73,8 +73,12 @@
 }
 
 - (NSString *)stringByReplacingPattern:(NSString *)regexPattern withTemplate:(NSString *)replaceTemplate {
+    return [self stringByReplacingPattern:regexPattern withTemplate:replaceTemplate options:0];
+}
+
+- (NSString *)stringByReplacingPattern:(NSString *)regexPattern withTemplate:(NSString *)replaceTemplate options:(NSRegularExpressionOptions)options {
     NSError* err;
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:0 error:&err];
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:options error:&err];
     if (err) {
         DLog(@"Error in stringByReplacingPattern:withTemplate: %@", err);
         return nil;

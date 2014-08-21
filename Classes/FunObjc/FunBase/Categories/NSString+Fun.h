@@ -26,6 +26,7 @@
 - (BOOL)is:(NSString*)string;
 - (NSString*)append:(NSString*)string;
 - (NSString*)stringByReplacingPattern:(NSString*)regexPattern withTemplate:(NSString*)replaceTemplate;
+- (NSString*)stringByReplacingPattern:(NSString*)regexPattern withTemplate:(NSString*)replaceTemplate options:(NSRegularExpressionOptions)options;
 - (NSString*)stringByRemovingPattern:(NSString*)regexPattern;
 - (NSString*)stringByInjecting:(NSString*)string every:(NSUInteger)nth;
 - (BOOL)matchesPattern:(NSString*)regexPattern;
