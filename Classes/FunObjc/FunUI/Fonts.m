@@ -34,6 +34,14 @@ static NSString* name = @"HelveticaNeue";
     name = newName;
 }
 
++ (UIFont *)heavy:(CGFloat)size {
+    return [self fontWithType:@"Heavy" size:size];
+}
+
++ (UIFont *)black:(CGFloat)size {
+    return [self fontWithType:@"Black" size:size];
+}
+
 + (UIFont *)bold:(CGFloat)size {
     return [self fontWithType:@"Bold" size:size];
 }
@@ -44,7 +52,7 @@ static NSString* name = @"HelveticaNeue";
 }
 
 + (UIFont*)regular:(CGFloat)size {
-    return [self fontWithType:@"" size:size];
+    return [self fontWithType:nil size:size];
     return [UIFont fontWithName:@"HelveticaNeue" size:size];
 }
 
@@ -58,6 +66,10 @@ static NSString* name = @"HelveticaNeue";
     return [UIFont fontWithName:@"HelveticaNeue-LightItalic" size:size];
 }
 
++ (UIFont *)book:(CGFloat)size {
+    return [self fontWithType:@"Book" size:size];
+}
+
 + (UIFont *)thin:(CGFloat)size {
     return [self fontWithType:@"Thin" size:size];
     return [UIFont fontWithName:@"HelveticaNeue-Thin" size:size];
@@ -68,6 +80,12 @@ static NSString* name = @"HelveticaNeue";
 }
 
 + (UIFont*)fontWithType:(NSString*)type size:(CGFloat)size {
-    return [UIFont fontWithName:[NSString stringWithFormat:@"%@-%@", name, type] size:size];
+    NSString* fontName = [NSString stringWithFormat:@"%@%@%@", name, type ? @"-" : @"", type ? type : @""];
+    UIFont* font = [UIFont fontWithName:fontName size:size];
+    if (!font) {
+        fatal(makeError([NSString stringWithFormat:@"Font not vailable: %@ %f", fontName, size]));
+    }
+    return font;
 }
+
 @end

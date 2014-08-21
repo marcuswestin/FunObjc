@@ -18,4 +18,7 @@
 +(UIFont*)lightItalic:(CGFloat)size;
 +(UIFont*)thin:(CGFloat)size;
 +(UIFont*)ultraLight:(CGFloat)size;
++(UIFont*)heavy:(CGFloat)size;
++(UIFont*)black:(CGFloat)size;
++(UIFont*)book:(CGFloat)size;
 @end
