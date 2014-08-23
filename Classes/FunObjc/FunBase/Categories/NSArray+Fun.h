@@ -26,6 +26,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (id) item:(NSInteger)index;
 - (id) reverseItem:(NSInteger)index;
 - (BOOL) hasIndex:(NSInteger)index;
+- (NSInteger) lastIndex;
 
 - (NSString*)joinBy:(NSString*)joiner;
 - (NSString*)joinBy:(NSString*)joiner last:(NSString*)lastJoiner;

@@ -87,6 +87,10 @@
     return (index >= 0 && index < self.count);
 }
 
+- (NSInteger)lastIndex {
+    return self.count - 1;
+}
+
 - (id)reverseItem:(NSInteger)index {
     if (index < 0 || index >= self.count) {
         return 0;
