@@ -15,7 +15,7 @@
 #import "UIView+FunStyle.h"
 #import "UIView+Fun.h"
 #import "NSArray+Fun.h"
-
+#import "StatusBar.h"
 
 
 @interface FunViewController ()
@@ -34,6 +34,9 @@
     [_listView appendTo:self.view];
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
+    
+    _listView.shouldMoveWithKeyboard = YES;
+    [_listView.scrollView addContentInsetTop:[StatusBar height]];
 }
 
 @end
