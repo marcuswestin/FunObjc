@@ -8,6 +8,7 @@
 
 #import "FunListView.h"
 #import "UIView+Fun.h"
+#import "LinkedList.h"
 
 // Custom subviews - differentiate head/foot/item views //
 //////////////////////////////////////////////////////////
@@ -20,12 +21,13 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
 @property BOOL isGroupHead;
 @property BOOL isGroupFoot;
 @property BOOL isEndView;
-@property (readonly) UIView* content;
+@property UIView* content;
 @end
 @implementation ListContentView
 + (ListContentView *)withFrame:(CGRect)frame index:(ListViewIndex)index content:(UIView*)content {
     ListContentView* view = [[ListContentView alloc] initWithFrame:frame];
     view.index = index;
+    view.content = content;
     [view addSubview:content];
     return view;
 }
@@ -51,9 +53,6 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
 }
 - (BOOL)isItemView {
     return !_isGroupFoot && !_isGroupHead && !_isEndView;
-}
-- (UIView *)content {
-    return self.subviews.firstObject;
 }
 @end
 
@@ -86,6 +85,7 @@ static ListViewOrientation Vertical = ListViewOrientationVertical;
     ListContentView* _endViewTop;
     BOOL _hasContent;
     BOOL _hasCalledEmpty;
+    LinkedList* _contentViews;
 }
 
 static CGFloat MAX_EDGE = 9999999.0f;
@@ -95,6 +95,7 @@ static CGFloat START_EDGE = 99999.0f;
     if (self = [super initWithFrame:frame]) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag; // UIScrollViewKeyboardDismissModeInteractive
+        _contentViews = [LinkedList new];
     }
     return self;
 }
@@ -144,7 +145,7 @@ static CGFloat START_EDGE = 99999.0f;
     return [self visibleContentViewWithIndex:index].content;
 }
 - (ListContentView*)visibleContentViewWithIndex:(ListViewIndex)index {
-    return [self._views pickOne:^BOOL(ListContentView* view, NSUInteger i) {
+    return [_contentViews pickOne:^BOOL(ListContentView* view, NSUInteger i) {
         return view.isItemView && view.index == index;
     }];
 }
@@ -178,7 +179,7 @@ static CGFloat START_EDGE = 99999.0f;
     
     _topListViewIndex += numItems;
     _bottomItemIndex += numItems;
-    for (ListContentView* view in [self _views]) {
+    for (ListContentView* view in _contentViews) {
         view.index += numItems;
     }
     
@@ -192,6 +193,7 @@ static CGFloat START_EDGE = 99999.0f;
     ListContentView* topView = [self _topView];
     if (topView.isGroupHead) {
         [topView removeFromSuperview];
+        [_contentViews removeTail];
         _topEdge += [self _orientedSizeOfView:topView];
     }
     
@@ -283,7 +285,7 @@ static CGFloat START_EDGE = 99999.0f;
     return (view ? [self addSize:(CGSizeMake(width - view.width, 0)) toVisibleView:view].width : 0);
 }
 - (CGSize)addSize:(CGSize)addSize toVisibleView:(ListContentView*)targetView {
-    for (ListContentView* view in self._views) {
+    for (ListContentView* view in _contentViews) {
         if (view == targetView) {
             [view addSize:addSize];
         } else if (view.index > targetView.index) {
@@ -395,7 +397,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 }
 
 - (ListContentView*)visibleContentViewAtPoint:(CGPoint)point {
-    for (ListContentView* view in self._views) {
+    for (ListContentView* view in _contentViews) {
         if (CGRectContainsPoint(view.frame, point)) {
             return view;
         }
@@ -652,6 +654,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     ListContentView* view;
     while ((view = [self _topView]) && (_orientation == Vertical ? view.y2 : view.x2) < targetEdge) {
         [view removeAndClean];
+        [_contentViews removeTail];
         _topEdge += (_orientation == Vertical ? view.height : view.width);
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
@@ -670,6 +673,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     ListContentView* view;
     while ((view = [self _bottomView]) && (_orientation == Vertical ? view.y : view.x) > targetEdge) {
         [view removeAndClean];
+        [_contentViews removeHead];
         _bottomEdge -= [self _orientedSizeOfView:view];
         if (view.isItemView) {
             if ([_delegate respondsToSelector:@selector(listViewWasRemoved:location:index:)]) {
@@ -802,6 +806,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
             view.x = _topEdge;
         }
         [_scrollView insertSubview:view atIndex:0];
+        [_contentViews addObjectToTail:view];
     } else {
         if (_orientation == Vertical) {
             view.y = _bottomEdge;
@@ -811,6 +816,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
             _bottomEdge += view.width;
         }
         [_scrollView addSubview:view];
+        [_contentViews addObjectToHead:view];
     }
 }
 
@@ -867,7 +873,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
         [self _addOrientedContentSize:change];
         CGFloat dx = (_orientation == Vertical ? 0 : change);
         CGFloat dy = (_orientation == Vertical ? change : 0);
-        for (UIView* subView in self._views) {
+        for (UIView* subView in _contentViews) {
             [subView moveByX:dx y:dy];
         }
     }];
@@ -888,23 +894,11 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }
 }
 
-- (NSArray*)_views {
-    if (_scrollViewPurgedCount < 2) {
-        for (UIView* view in _scrollView.subviews) {
-            if (![view isKindOfClass:[ListContentView class]]) {
-                [view removeAndClean];
-                _scrollViewPurgedCount += 1;
-            }
-        }
-    }
-    if (!_scrollView.subviews || !_scrollView.subviews.count) { return @[]; }
-    return _scrollView.subviews;
-}
 - (ListContentView*)_topView {
-    return self._views.firstObject;
+    return _contentViews.tail;
 }
 - (ListContentView*)_bottomView {
-    return self._views.lastObject;
+    return _contentViews.head;
 }
 
 - (BOOL)isAtBottom {

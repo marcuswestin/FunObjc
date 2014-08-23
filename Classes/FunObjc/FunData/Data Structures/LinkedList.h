@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NSArray+Fun.h"
 
-@interface LinkedList : NSObject
+@interface LinkedList : NSObject <NSFastEnumeration>
 - (void)addObjectToHead:(id)obj;
-- (id)removeObjectFromHead;
+- (id)removeHead;
 - (void)addObjectToTail:(id)obj;
-- (id)removeObjectFromTail;
+- (id)removeTail;
 - (id)tail;
 - (id)head;
 - (id)pointer;
@@ -22,4 +23,8 @@
 - (void)movePointerBackward;
 - (id)peekNextPointer;
 - (id)peekPrevPointer;
+
+- (void)each:(Iterate)iterateFn;
+- (id)pickOne:(Filter)pickFn;
 @end
+
