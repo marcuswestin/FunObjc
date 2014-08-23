@@ -12,7 +12,7 @@
 #import "Overlay.h"
 
 @interface StatusBar (FunAppDelegate)
-+ (void)setupWithRootViewController:(UIViewController*)rootViewController;
++ (void)setupWithWindow:(UIWindow*)window;
 @end
 
 static FunAppDelegate* instance;
@@ -76,8 +76,8 @@ static FunAppDelegate* instance;
     self.window = [[iConsoleWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.restorationIdentifier = NSStringFromClass([self class]);
     self.window.rootViewController = rootViewController;
-    [StatusBar setupWithRootViewController:rootViewController];
     [self.window makeKeyAndVisible];
+    [StatusBar setupWithWindow:self.window];
 }
 - (UIViewController*)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     Class ViewControllerClass = NSClassFromString(identifierComponents.lastObject);

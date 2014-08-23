@@ -132,8 +132,8 @@ static BOOL isHidden;
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
 }
 
-+ (void)setupWithRootViewController:(UIViewController*)rootViewController {
-    [background appendTo:rootViewController.view];
++ (void)setupWithWindow:(UIWindow*)window {
+    [background appendTo:window];
 }
 
 + (void)setBackgroundColor:(UIColor *)backgroundColor {
