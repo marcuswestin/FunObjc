@@ -30,6 +30,7 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (void)offWillShow:(EventSubscriber)subscriber;
 + (void)offWillHide:(EventSubscriber)subscriber;
 + (void)offWillChange:(EventSubscriber)subscriber;
++ (void)off:(EventSubscriber)subscriber;
 + (UIViewAnimationOptions)animationOptions;
 + (NSTimeInterval)animationDuration;
 + (void)animation:(Block)animationBlock;
