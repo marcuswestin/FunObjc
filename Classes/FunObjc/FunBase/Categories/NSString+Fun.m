@@ -111,6 +111,10 @@
     return [self stringByRemovingPattern:@"\\s"];
 }
 
+- (NSString *)stringByPrependingString:(NSString *)string {
+    return [string stringByAppendingString:self];
+}
+
 - (BOOL)matchesPattern:(NSString *)regexPattern {
     return [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", regexPattern] evaluateWithObject:self];
 }
