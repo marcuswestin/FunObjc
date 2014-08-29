@@ -86,9 +86,6 @@ static NSString* KeySelectionChange = @"FunKeySelectionChange";
 - (void)onTap:(EventHandler)handler {
     [self on:UIControlEventTouchUpInside handler:handler];
 }
-- (void)onTap:(id)target selector:(SEL)selector {
-    [self addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
-}
 - (void)onTouchDown:(EventHandler)handler {
     [self on:UIControlEventTouchDown handler:handler];
 }

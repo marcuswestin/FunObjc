@@ -31,7 +31,6 @@ typedef void (^PanHandler)(UIPanGestureRecognizer* pan);
 @interface UIControl (UIControlFun)
 - (void) onChange:(EventHandler)handler;
 - (void) onTap:(EventHandler)handler DEPRECATED_ATTRIBUTE;
-- (void)onTap:(id)target selector:(SEL)selector;
 - (void)onTouchDown:(EventHandler)handler;
 - (void)onTouchUp:(EventHandler)handler;
 - (void)onTouchUpOutside:(EventHandler)handler;
