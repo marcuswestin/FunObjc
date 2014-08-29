@@ -27,6 +27,7 @@
 + (CGRect)frame;
 + (CGSize)size;
 + (UIView*)backgroundView;
++ (void)setBackgroundGradientFrom:(UIColor*)color to:(UIColor*)color2;
 
 @end
 
