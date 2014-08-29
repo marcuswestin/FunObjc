@@ -35,6 +35,7 @@
 - (void)setSize:(CGSize)size;
 - (void)addWidth:(CGFloat)width height:(CGFloat)height;
 - (void)containSubviews;
+- (void)containLastViewHorizontally;
 - (void)containLastViewVertically;
 - (void)containSubviewsHorizontally;
 - (void)containSubviewsVertically;
