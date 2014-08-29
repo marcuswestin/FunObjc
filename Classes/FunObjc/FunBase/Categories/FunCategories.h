@@ -18,6 +18,7 @@
 #import "UILabel+Fun.h"
 #import "NSURLConnection+Fun.h"
 #import "UIActionSheet+Fun.h"
+#import "UITextView+Fun.h"
 
 #import "APTimeZones.h"
 #import "CLLocation+APTimeZones.h"
