@@ -63,7 +63,7 @@ static FunAppDelegate* instance;
 }
 // View state restoration
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-    return ![Files didReset];
+    return NO;
 }
 - (void)application:(UIApplication*)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
     id root = [coder decodeObjectForKey:@"FunRootViewController"]; // TODO Versioning

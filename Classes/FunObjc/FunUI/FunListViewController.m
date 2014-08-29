@@ -37,6 +37,9 @@
     _listView.shouldMoveWithKeyboard = YES;
     _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag; // UIScrollViewKeyboardDismissModeInteractive
     [_listView.scrollView addContentInsetTop:[StatusBar height]];
+    if (!self.navigationController.navigationBarHidden) {
+        [_listView.scrollView addContentInsetTop:self.navigationController.navigationBar.frame.size.height];
+    }
 }
 
 @end
