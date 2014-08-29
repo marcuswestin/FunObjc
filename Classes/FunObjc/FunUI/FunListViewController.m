@@ -34,8 +34,8 @@
     [_listView appendTo:self.view];
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
-    
     _listView.shouldMoveWithKeyboard = YES;
+    _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag; // UIScrollViewKeyboardDismissModeInteractive
     [_listView.scrollView addContentInsetTop:[StatusBar height]];
 }
 
