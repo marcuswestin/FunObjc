@@ -91,6 +91,7 @@
 @property UIViewController* modalViewController;
 @property BOOL saveToAlbum;
 @property BOOL allowsEditing;
+@property UIView* previousFirstResponder;
 @end
 
 @implementation Camera
@@ -189,6 +190,9 @@ static UIStatusBarStyle statusBarStyle;
 }
 
 + (void)_showInViewController:(UIViewController*)viewController animated:(BOOL)animated {
+    if ([Keyboard isVisible]) {
+        camera.previousFirstResponder = [Keyboard findFirstResponder];
+    }
     [viewController presentViewController:camera.picker animated:animated completion:nil];
 }
 
@@ -289,8 +293,12 @@ static UIStatusBarStyle statusBarStyle;
 
 - (void)_finishWith:(CameraResult*)result {
     CameraCaptureCallback callback = _callback;
+    UIView* previousFirstResponder = camera.previousFirstResponder;
     [Camera hide];
     asyncMain(^{
+        if (previousFirstResponder) {
+            [previousFirstResponder becomeFirstResponder];
+        }
         callback(nil, result);
     });
 }

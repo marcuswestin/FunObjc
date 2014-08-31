@@ -12,4 +12,6 @@
 
 @interface FunListViewController : FunViewController
 @property FunListView* listView;
+@property BOOL shouldMoveWithKeyboard;
+- (void) moveListWithKeyboard:(CGFloat)keyboardHeightChange;
 @end

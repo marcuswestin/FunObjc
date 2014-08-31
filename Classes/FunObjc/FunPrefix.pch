@@ -12,3 +12,5 @@
 #endif
 
 #define ZAssert(condition, ...) do { if (!(condition)) { ALog(__VA_ARGS__); }} while(0)
+
+#define DEPRECATE __attribute__((deprecated))

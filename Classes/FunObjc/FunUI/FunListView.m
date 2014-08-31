@@ -94,7 +94,6 @@ static CGFloat START_EDGE = 99999.0f;
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag; // UIScrollViewKeyboardDismissModeInteractive
         _contentViews = [LinkedList new];
     }
     return self;
@@ -155,11 +154,11 @@ static CGFloat START_EDGE = 99999.0f;
     
     // Top should start scrolled down below the navigation bar
     if (_startLocation == ListViewLocationTop && !_hasReachedTheVeryBottom) {
-        //        [_scrollView addContentOffset:-self.navigationController.navigationBar.y2 animated:NO];
+        async(^{ // Why does this require an async execution, when the bottom case does not?
+            [_scrollView addContentOffsetY:-(_scrollView.contentInset.top + _itemMargins.top) animated:NO];
+        });
     } else if (_startLocation == ListViewLocationBottom) {
-        // TODO Check if there is a visible status bar
-        // TODO Check if there is a visible navigation bar
-//        [_scrollView addContentOffset:20 animated:NO];
+        [_scrollView addContentOffsetY:_scrollView.contentInset.bottom + _itemMargins.bottom animated:NO];
     }
 }
 
@@ -269,13 +268,6 @@ static CGFloat START_EDGE = 99999.0f;
     }
 }
 
-- (void)moveListWithKeyboard:(CGFloat)heightChange {
-    [_scrollView addContentInsetTop:heightChange];
-    for (UIView* view in self.subviews) {
-        [view moveByY:-heightChange];
-    }
-}
-
 - (CGFloat)setHeight:(CGFloat)height forVisibleViewWithIndex:(ListViewIndex)index {
     ListContentView* view = [self visibleContentViewWithIndex:index];
     return (view ? [self addSize:(CGSizeMake(0, height - view.height)) toVisibleView:view].height : 0);
@@ -307,22 +299,6 @@ static CGFloat START_EDGE = 99999.0f;
 //////////////////////
 // Setup & Teardown //
 //////////////////////
-
-- (void)willMoveToWindow:(UIWindow *)newWindow {
-    if (newWindow) {
-        [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
-            if (_shouldMoveWithKeyboard) {
-                [UIView animateWithDuration:info.duration delay:0 options:info.curve animations:^{
-                    [self moveListWithKeyboard:info.heightChange];
-                }];
-            } else {
-                [_scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
-            }
-        }];
-    } else {
-        [Keyboard offWillChange:self];
-    }
-}
 
 - (void)_beforeRender {
     if (!_delegate) {

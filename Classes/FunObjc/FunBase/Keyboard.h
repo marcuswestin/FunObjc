@@ -49,4 +49,6 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (BOOL)isVisible;
 + (CGFloat)visibleHeight;
 
++ (UIView*)findFirstResponder;
+
 @end

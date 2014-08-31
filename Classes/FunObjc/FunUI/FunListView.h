@@ -75,7 +75,6 @@ enum ListViewDirection {
 @property (readonly) ListGroupId bottomGroupId;
 @property NSString* loadingMessage;
 @property NSString* emptyMessage;
-@property BOOL shouldMoveWithKeyboard;
 @property (copy) BOOL (^shouldScrollToTopHandler)();
 @property ListViewIndex startIndex;
 @property ListViewLocation startLocation;
@@ -87,7 +86,6 @@ enum ListViewDirection {
 - (void) stopScrollingList;
 - (void) appendToListCount:(NSUInteger)numItems startingAtIndex:(ListViewIndex)firstIndex;
 - (void) prependToListCount:(NSUInteger)numItems;
-- (void) moveListWithKeyboard:(CGFloat)keyboardHeightChange;
 - (CGFloat) setHeight:(CGFloat)height forVisibleViewWithIndex:(ListViewIndex)index;
 - (CGFloat) setWidth:(CGFloat)width forVisibleViewWithIndex:(ListViewIndex)index;
 - (void) extendBottom;

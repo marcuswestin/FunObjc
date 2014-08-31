@@ -22,6 +22,9 @@
 - (void)_funViewControllerRender:(BOOL)animated;
 @end
 
+@interface FunListViewController ()
+@property id subscriber;
+@end
 
 @implementation FunListViewController
 
@@ -34,12 +37,41 @@
     [_listView appendTo:self.view];
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
+    _subscriber = @1;
     
-    _listView.shouldMoveWithKeyboard = YES;
+    _shouldMoveWithKeyboard = YES;
+    _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     [_listView.scrollView addContentInsetTop:[StatusBar height]];
     if (!self.navigationController.navigationBarHidden) {
-        [_listView.scrollView addContentInsetTop:self.navigationController.navigationBar.frame.size.height];
+        CGFloat height = self.navigationController.navigationBar.frame.size.height;
+        [_listView.scrollView addContentInsetTop:height];
     }
+    // TODO Check if there is a visible navigation bar on bottom
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [Keyboard onWillChange:_subscriber callback:^(KeyboardEventInfo *info) {
+        if (_shouldMoveWithKeyboard) {
+            [info animate:^{
+                [self moveListWithKeyboard:info.heightChange];
+            }];
+        } else {
+            [_listView.scrollView addContentInsetBottom:info.heightChange]; // make room for keyboard
+        }
+    }];
+}
+
+- (void)moveListWithKeyboard:(CGFloat)heightChange {
+    [_listView.scrollView addContentInsetTop:heightChange];
+    for (UIView* view in _listView.subviews) {
+        [view moveByY:-heightChange];
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [Keyboard off:_subscriber];
 }
 
 @end

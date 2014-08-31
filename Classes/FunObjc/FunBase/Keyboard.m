@@ -183,12 +183,24 @@ static NSNotification* nextNotification;
     if (!info.duration) {
         info.curve = 0; // UIView animation does not respect duration if curve is keyboard curve
     }
-    info.frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    info.frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    info.heightChange = (info.frameBegin.origin.y - info.frameEnd.origin.y);
-    info.height = ([Viewport height] - info.frameEnd.origin.y);
+    CGRect frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    CGRect frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    info.frameBegin = frameBegin;
+    info.frameEnd = frameEnd;
+    if (frameBegin.origin.y > [Viewport height]) {
+        frameBegin.origin.y = [Viewport height];
+    }
+    if (frameEnd.origin.y > [Viewport height]) {
+        frameEnd.origin.y = [Viewport height];
+    }
+    DLog(@"KEYBAORD INFO \n%@\n%@", NSStringFromCGRect(frameBegin), NSStringFromCGRect(frameEnd))
+    info.heightChange = (frameBegin.origin.y - frameEnd.origin.y);
+    info.height = ([Viewport height] - frameEnd.origin.y);
     return info;
 }
 
++ (UIView *)findFirstResponder {
+    return [[UIApplication sharedApplication].keyWindow findFirstResponder];
+}
 
 @end
