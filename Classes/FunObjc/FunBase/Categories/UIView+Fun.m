@@ -370,8 +370,9 @@ static CGFloat STATIC = 0.5f;
     [[self subviews] makeObjectsPerformSelector:@selector(removeAndClean)];
     return self;
 }
-- (void)appendTo:(UIView *)superview {
+- (UIView*)appendTo:(UIView *)superview {
     [superview addSubview:self];
+    return self;
 }
 - (void)prependTo:(UIView *)superview {
     [superview insertSubview:self atIndex:0];
