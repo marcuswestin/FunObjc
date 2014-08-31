@@ -418,7 +418,18 @@ static CGFloat STATIC = 0.5f;
     }
     return self.superview.subviews[index - 1];
 }
-
+- (UIView *)findFirstResponder {
+    if (self.isFirstResponder) {
+        return self;
+    }
+    for (UIView* view in self.subviews) {
+        UIView* firstResponder = [view findFirstResponder];
+        if (firstResponder) {
+            return firstResponder;
+        }
+    }
+    return nil;
+}
 
 /* Screenshot
  ************/

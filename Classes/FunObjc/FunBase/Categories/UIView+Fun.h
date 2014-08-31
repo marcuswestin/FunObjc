@@ -97,6 +97,7 @@
 - (NSInteger)indexInSuperview;
 - (UIView*)nextSiblingView;
 - (UIView*)previousSiblingView;
+- (UIView*)findFirstResponder;
 
 /* Screenshot
  ************/
