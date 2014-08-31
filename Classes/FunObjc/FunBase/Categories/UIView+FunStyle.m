@@ -67,7 +67,8 @@ static NSMutableDictionary* tagNameToTagNumber;
 }
 
 - (id)onTap:(id)target selector:(SEL)selector {
-    id view = [self render];
+    UIView* view = [self render];
+    view.userInteractionEnabled = YES;
     [_buttonView onTap:target selector:selector];
     return view;
 }
