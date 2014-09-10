@@ -24,4 +24,7 @@
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (void)popViewController;
 - (void)popViewControllerAnimated:(BOOL)animated;
++ (void)show;
++ (void)showWithState:(id)state;
+- (UIView *)backdrop;
 @end
