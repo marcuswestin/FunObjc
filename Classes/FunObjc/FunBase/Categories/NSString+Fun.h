@@ -29,6 +29,7 @@
 - (NSString*)stringByReplacingPattern:(NSString*)regexPattern withTemplate:(NSString*)replaceTemplate options:(NSRegularExpressionOptions)options;
 - (NSString*)stringByRemovingPattern:(NSString*)regexPattern;
 - (NSString*)stringByInjecting:(NSString*)string every:(NSUInteger)nth;
+- (NSString*)stringByPrependingString:(NSString*)string;
 - (BOOL)matchesPattern:(NSString*)regexPattern;
 - (BOOL)startsWith:(NSString*)string;
 - (NSInteger)countOccurancesOfSubstring:(NSString*)substring;

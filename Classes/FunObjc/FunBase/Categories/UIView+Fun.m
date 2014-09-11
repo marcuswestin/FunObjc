@@ -147,6 +147,9 @@
     
     self.frame = frame;
 }
+- (void)containLastViewHorizontally {
+    self.width = self.lastSubview.x2;
+}
 - (void)containLastViewVertically {
     self.height = self.lastSubview.y2;
 }

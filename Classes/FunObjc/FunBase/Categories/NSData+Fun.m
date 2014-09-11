@@ -8,7 +8,7 @@
 
 #import "NSData+Fun.h"
 #import "JSON.h"
-#import "NSDate-Utilities.h"
+#import "NSDate+Utilities.h"
 #import "FastCoder.h"
 
 @implementation NSData (Fun)

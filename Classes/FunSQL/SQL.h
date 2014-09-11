@@ -28,6 +28,7 @@
 typedef void (^MigrationBlock)(SQLConn* conn, NSError** outError);
 @interface SQLMigrations : NSObject
 - (void) registerMigration:(NSString*)name withBlock:(MigrationBlock)migrationBlock;
++ (NSString*)migrationDoc:(NSString*)name;
 @end
 
 typedef void (^SQLRegisterMigrations)(SQLMigrations* migrations);

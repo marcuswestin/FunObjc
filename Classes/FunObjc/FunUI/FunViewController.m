@@ -144,4 +144,24 @@ static NSUInteger deallocCount;
     }
 }
 
++ (void)show {
+    [self showWithState:nil];
+}
+
++ (void)showWithState:(id)state {
+    FunNavigationController* rootVc = (FunNavigationController*)[[UIApplication sharedApplication].delegate window].rootViewController;
+    FunViewController* vc = [self withState:state];
+    [StatusBar hideWithAnimation:UIStatusBarAnimationNone];
+    UIView* backdrop = [[UIView alloc] initWithFrame:[Viewport bounds]];
+    [StatusBar showWithAnimation:UIStatusBarAnimationNone];
+    SetProperty(vc, @"FunVCBackdrop", backdrop);
+    [[rootVc.view snapshotViewAfterScreenUpdates:YES] appendTo:backdrop];
+    [backdrop prependTo:vc.view];
+    [rootVc pushViewController:vc animated:NO];
+}
+
+- (UIView *)backdrop {
+    return GetProperty(self, @"FunVCBackdrop");
+}
+
 @end

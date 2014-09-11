@@ -17,6 +17,7 @@
 static UIView* background;
 static CGFloat height = 20.0;
 static BOOL isHidden;
+static CALayer* layer;
 
 + (UIView *)backgroundView {
     return background;
@@ -29,6 +30,9 @@ static BOOL isHidden;
 + (void)setHeight:(CGFloat)newHeight {
     height = newHeight;
     background.height = height;
+    if (layer) {
+        layer.frame = background.bounds;
+    }
 }
 
 + (CGRect)frame {
@@ -142,6 +146,15 @@ static BOOL isHidden;
 
 + (UIColor *)backgroundColor {
     return background.backgroundColor;
+}
+
++ (void)setBackgroundGradientFrom:(UIColor *)color to:(UIColor *)color2 {
+    [StatusBar setBackgroundColor:TRANSPARENT];
+    CAGradientLayer* gradient = [CAGradientLayer layer];
+    gradient.colors = @[(id)hex(0xFB8F8F).CGColor, (id)hex(0x9A0404).CGColor];
+    gradient.frame = [StatusBar bounds];
+    [[StatusBar backgroundView].layer addSublayer:gradient];
+    layer = gradient;
 }
 
 @end

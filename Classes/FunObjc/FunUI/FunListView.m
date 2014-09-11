@@ -103,16 +103,6 @@ static CGFloat START_EDGE = 99999.0f;
 - (void)setDelegate:(id<FunListViewDelegate>)delegate {
     _delegate = delegate;
     [self _beforeRender];
-    
-    if (insetsForAllSet) {
-        UIEdgeInsets insets = _scrollView.contentInset;
-        insets.top += insetsForAll.top;
-        insets.right += insetsForAll.right;
-        insets.bottom += insetsForAll.bottom;
-        insets.left += insetsForAll.left;
-        _scrollView.contentInset = insets;
-    }
-    [self _setupScrollview];
     [self reloadDataForList];
 }
 - (id<FunListViewDelegate>)delegate {
@@ -305,6 +295,11 @@ static CGFloat START_EDGE = 99999.0f;
         [NSException raise:@"Error" format:@"Missing FunListView delegate"];
     }
     
+    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    [_scrollView addContentInset:insetsForAll];
+    [_scrollView appendTo:self];
+    [_scrollView setDelegate:self];
+    [_scrollView onTap:self selector:@selector(_onTap:)];
     if (!_startLocation) {
         _startLocation = ListViewLocationTop;
     }
@@ -319,6 +314,14 @@ static CGFloat START_EDGE = 99999.0f;
     }
     if (!self.emptyMessage) {
         self.emptyMessage = @"Nothing here";
+    }
+    
+    if (_orientation == Vertical) {
+        _scrollView.alwaysBounceVertical = YES;
+        _scrollView.showsVerticalScrollIndicator = NO;
+    } else {
+        _scrollView.alwaysBounceHorizontal = YES;
+        _scrollView.showsHorizontalScrollIndicator = NO;
     }
 }
 
@@ -343,19 +346,6 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     } else {
         return shouldScrollToTopDefaultValue;
     }
-}
-
-- (void)_setupScrollview {
-    [_scrollView appendTo:self];
-    [_scrollView setDelegate:self];
-    if (_orientation == Vertical) {
-        _scrollView.alwaysBounceVertical = YES;
-        _scrollView.showsVerticalScrollIndicator = NO;
-    } else {
-        _scrollView.alwaysBounceHorizontal = YES;
-        _scrollView.showsHorizontalScrollIndicator = NO;
-    }
-    [_scrollView onTap:self selector:@selector(_onTap:)];
 }
 
 - (void)_onTap:(UITapGestureRecognizer*)tap {
@@ -405,6 +395,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 
 - (void)_renderInitialContent {
     [_scrollView empty];
+    _contentViews = [LinkedList new];
     
     [self _withoutScrollEvents:^{
         _scrollView.contentSize = (_orientation == Vertical ? CGSizeMake(self.width, MAX_EDGE) : CGSizeMake(MAX_EDGE, self.height));
