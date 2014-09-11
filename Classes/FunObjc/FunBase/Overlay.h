@@ -13,7 +13,7 @@
 
 + (UIWindow*)show;
 + (UIWindow*)showMessage:(NSString*)message;
-+ (UIWindow*)showWithTapHandler:(TapHandler)tapHandler;
++ (UIWindow*)showWithTapSubscriber:(id)subscriber selector:(SEL)selector;
 + (void)hide;
 
 @end

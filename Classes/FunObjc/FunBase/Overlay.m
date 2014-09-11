@@ -13,13 +13,16 @@
 
 static UIWindow* overlayWindow;
 static UIWindow* previousWindow;
+static Overlay* instance;
+
++ (void)initialize {
+    instance = [Overlay new];
+}
 
 + (UIWindow *)show {
-    return [self showWithTapHandler:^(UITapGestureRecognizer *sender) {
-        [Overlay hide];
-    }];
+    return [self showWithTapSubscriber:instance selector:@selector(hide)];
 }
-+ (UIWindow *)showWithTapHandler:(TapHandler)tapHandler {
++ (UIWindow *)showWithTapSubscriber:(id)subscriber selector:(SEL)selector {
     [Overlay hide];
     previousWindow = [UIApplication sharedApplication].keyWindow;
     previousWindow.opaque = YES;
@@ -27,7 +30,7 @@ static UIWindow* previousWindow;
     overlayWindow = [[UIWindow alloc] initWithFrame:previousWindow.frame];
     overlayWindow.windowLevel = UIWindowLevelStatusBar + 1;
     [overlayWindow makeKeyAndVisible];
-    [overlayWindow onTap:tapHandler];
+    [overlayWindow onTap:subscriber selector:selector];
 
     overlayWindow.alpha = 0;
     
@@ -74,6 +77,10 @@ static CGFloat fuzzyBlurBlur = 2.0;
 }
 
 + (void)hide {
+    [instance hide];
+}
+
+- (void)hide {
     if (!overlayWindow) { return; }
     UIWindow* _overlayWindow = overlayWindow;
     UIWindow* _previousWindow = previousWindow;

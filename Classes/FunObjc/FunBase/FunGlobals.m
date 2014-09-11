@@ -26,6 +26,20 @@ void fatal(NSError* err) {
 
 static UIView* errorView;
 
+@interface ErrorView : NSObject
+@property UIView* view;
+@end
+static ErrorView* instance;
+@implementation ErrorView
+- (void)hide {
+    if (!_view) { return; }
+    [UIView animateWithDuration:.5 animations:^{
+        _view.y2 = 0;
+    }];
+    _view = nil;
+}
+@end
+
 void error(NSError* err) {
     if (!err) { return; }
     DLog(@"ERROR %@ %@", err.localizedDescription, err);
@@ -46,14 +60,6 @@ void error(NSError* err) {
         NSString* message = err.localizedDescription;
         UILabel* label = [UILabel.appendTo(view).text(message).textColor(WHITE).insetSides(8).wrapText render];
         
-        Block hide = ^{
-            if (!view) { return; }
-            [UIView animateWithDuration:.5 animations:^{
-                view.y2 = 0;
-            }];
-            view = nil;
-        };
-        
         [view containSubviewsVertically];
         view.height += 32;
         [label.styler.fromBottom(8) apply];
@@ -61,10 +67,12 @@ void error(NSError* err) {
         [UIView animateWithDuration:.5 animations:^{
             view.y = 0;
             after(30, ^{
-                hide();
+                [instance hide];
             });
         }];
-        [view onTap:hide];
+        instance = [ErrorView new];
+        instance.view = view;
+        [view onTap:instance selector:@selector(hide)];
     });
 }
 
