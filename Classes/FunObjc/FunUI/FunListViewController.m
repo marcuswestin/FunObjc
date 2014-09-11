@@ -35,6 +35,8 @@
     CGSize size = self.view.size;
     _listView = [[FunListView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
     [_listView appendTo:self.view];
+    _listView.shouldMoveWithKeyboard = YES;
+    _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
     _subscriber = @1;
