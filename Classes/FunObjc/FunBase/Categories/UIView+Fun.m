@@ -109,16 +109,16 @@
     frame.size.width += width;
     self.frame = frame;
 }
-- (void)containSubviews {
-    [self containSubviewsHorizontally:YES vertically:YES];
+- (instancetype)containSubviews {
+    return [self containSubviewsHorizontally:YES vertically:YES];
 }
-- (void)containSubviewsHorizontally {
-    [self containSubviewsHorizontally:YES vertically:NO];
+- (instancetype)containSubviewsHorizontally {
+    return [self containSubviewsHorizontally:YES vertically:NO];
 }
-- (void)containSubviewsVertically {
-    [self containSubviewsHorizontally:NO vertically:YES];
+- (instancetype)containSubviewsVertically {
+    return [self containSubviewsHorizontally:NO vertically:YES];
 }
-- (void)containSubviewsHorizontally:(BOOL)horizontally vertically:(BOOL)vertically {
+- (instancetype)containSubviewsHorizontally:(BOOL)horizontally vertically:(BOOL)vertically {
     CGRect frame = self.frame;
     if (horizontally) { frame.size.width = 0; }
     if (vertically) { frame.size.height = 0; }
@@ -146,6 +146,7 @@
     }
     
     self.frame = frame;
+    return self;
 }
 - (void)containLastViewHorizontally {
     self.width = self.lastSubview.x2;

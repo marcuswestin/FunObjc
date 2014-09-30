@@ -34,11 +34,11 @@
 - (void)setHeight:(CGFloat)height;
 - (void)setSize:(CGSize)size;
 - (void)addWidth:(CGFloat)width height:(CGFloat)height;
-- (void)containSubviews;
+- (instancetype)containSubviews;
 - (void)containLastViewHorizontally;
 - (void)containLastViewVertically;
-- (void)containSubviewsHorizontally;
-- (void)containSubviewsVertically;
+- (instancetype)containSubviewsHorizontally;
+- (instancetype)containSubviewsVertically;
 - (void)setHeightUp:(CGFloat)height;
 - (void)addHeightUp:(CGFloat)addHeight;
 - (void)addSize:(CGSize)size;
