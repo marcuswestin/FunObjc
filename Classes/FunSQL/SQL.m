@@ -166,7 +166,7 @@ static NSMutableArray* openCallbacks;
     if (practiceMode) {
         [SQL copyDatabase:name to:@"SQLMigrationPractice"];
         name = @"SQLMigrationPractice";
-        [UILabel.appendTo([StatusBar backgroundView]).xy(10,60).bg(RED).text(@"Migration practice mode").size.textCenter.outsetSides(4).textColor(WHITE) render];
+        [UILabel.appendTo([StatusBar backgroundView]).bg([WHITE withAlpha:0.5]).text(@"Migration practice mode").textFont([Fonts bold:8]).size.textCenter.outsetSides(2).textColor(RED).fromRight(33).y(5) render];
     } else {
         [SQL backupDatabase:name];
     }
