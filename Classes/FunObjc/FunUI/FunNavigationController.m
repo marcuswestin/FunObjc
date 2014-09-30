@@ -88,7 +88,7 @@ static NSTimeInterval duration = 0.25;
 static FunNavigationController* instance;
 
 + (instancetype)withRootViewController:(UIViewController *)rootViewController navigationBar:(BOOL)navigationBarVisible {
-    instance = [[self class] new];
+    instance = [[[self class] alloc] init];
     instance.viewControllers = @[rootViewController];
     instance.navigationBarHidden = !navigationBarVisible;
     return instance;

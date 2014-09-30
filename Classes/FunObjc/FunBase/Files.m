@@ -34,7 +34,7 @@ static BOOL didReset = NO;
     return urls;
 }
 
-+ (void)setup {
++ (void)initialize {
     _appDocumentsDirectory = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
     _appCachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
     _funPersistPath = [NSString stringWithFormat:@"%@/%@", _appDocumentsDirectory, @"FunFilesPathPersist"];
