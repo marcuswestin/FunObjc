@@ -56,7 +56,7 @@ static FunAppDelegate* instance;
 
 // View state saving
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
-    return YES;
+    return NO;
 }
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.window.rootViewController forKey:@"FunRootViewController"]; // TODO Versioning
