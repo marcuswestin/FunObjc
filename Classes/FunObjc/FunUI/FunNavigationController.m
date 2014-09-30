@@ -174,16 +174,17 @@ static BOOL hasSetup;
     [super pushViewController:viewController animated:YES];
 }
 
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
-    return _animator;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
-    if ([_animator shouldStartInteractiveTransition]) {
-        return _animator;
-    } else {
-        return nil;
-    }
-}
+// Merely implementing these two methods disabled interactiveSwipePop gesture. Should figure out either a way to re-enable it, or a better way to enable interactive transitions.
+//- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
+//    return _animator;
+//}
+//
+//- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController {
+//    if ([_animator shouldStartInteractiveTransition]) {
+//        return _animator;
+//    } else {
+//        return nil;
+//    }
+//}
 
 @end
