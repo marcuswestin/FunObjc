@@ -8,6 +8,7 @@
 
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
+#import "FunObjc.h"
 
 @interface SQLConn : NSObject
 @property FMDatabase* db;
