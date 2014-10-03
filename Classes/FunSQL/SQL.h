@@ -15,13 +15,15 @@
 - (NSArray*)select:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
 - (NSDictionary*)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
 - (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
+- (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)updateOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)insertInto:(NSString*)table item:(id)item error:(NSError**)outError;
 - (void)insertMultiple:(NSString*)sql argsList:(NSArray*)argsList error:(NSError**)outError;
 - (void)insertOrReplaceInto:(NSString*)table item:(id)item error:(NSError**)outError;
 - (void)insertOrReplaceMultipleInto:(NSString*)table items:(NSArray*)items error:(NSError**)outError;
-- (void)updateSchema:(NSString*)sql error:(NSError**)outError;
+- (void)updateSchema:(NSString*)sql error:(NSError**)outError DEPRECATED_ATTRIBUTE;
+- (void)schema:(NSString*)sql error:(NSError**)outError;
 - (BOOL)table:(NSString*)table hasColumn:(NSString*)column;
 - (BOOL)tableExists:(NSString*)table;
 @end
@@ -47,6 +49,11 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
++ (NSArray*)select:(NSString*)sql args:(NSArray*)args;
++ (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args;
++ (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args;
++ (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args;
++ (void)execute:(NSString*)sql args:(NSArray*)args;
 + (void)openDatabase:(NSString*)name practiceMode:(BOOL)practiceMode withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (void)removeDatabase:(NSString*)name;
 + (void)copyDatabase:(NSString*)fromName to:(NSString*)toName;

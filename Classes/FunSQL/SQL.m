@@ -202,6 +202,9 @@ static NSMutableArray* openCallbacks;
     }];
 }
 
++ (NSArray *)select:(NSString *)sql args:(NSArray *)args {
+    return [self select:sql args:args error:nil];
+}
 + (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSArray* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -210,6 +213,9 @@ static NSMutableArray* openCallbacks;
     return result;
 }
 
++ (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args {
+    return [self selectMaybe:sql args:args error:nil];
+}
 + (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -218,31 +224,29 @@ static NSMutableArray* openCallbacks;
     return result;
 }
 
++ (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args {
+    return [self selectNumber:sql args:args error:nil];
+}
 + (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     NSNumber* __block result;
     [SQL autocommit:^(SQLConn *conn) {
-        FMResultSet* resultSet = [conn.db executeQuery:sql withArgumentsInArray:args];
-        if (!resultSet) {
-            *outError = conn.db.lastError;
-            return;
-        }
-        if (![resultSet next]) {
-            *outError = makeError(@"selectNumber got 0 rows");
-        }
-        result = [resultSet objectForColumnIndex:0];
-        if ([resultSet next]) {
-            *outError = makeError(@"selectNumber got more than 1 row");
-        }
+        result = [conn selectNumber:sql args:args error:outError];
     }];
     return result;
 }
 
++ (void)execute:(NSString *)sql args:(NSArray *)args {
+    return [self execute:sql args:args error:nil];
+}
 + (void)execute:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     [SQL autocommit:^(SQLConn *conn) {
         [conn execute:sql args:args error:outError];
     }];
 }
 
++ (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args {
+    return [self selectOne:sql args:args error:nil];
+}
 + (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -278,7 +282,7 @@ static NSMutableDictionary* columns;
 - (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args ];
     if (!resultSet) {
-        *outError = _db.lastError;
+        [self onError:_db.lastError outError:outError];
         return nil;
     }
     
@@ -290,14 +294,22 @@ static NSMutableDictionary* columns;
     return rows;
 }
 
+- (void)onError:(NSError*)err outError:(NSError *__autoreleasing *)outError {
+    if (!outError) {
+        [NSException raise:@"DbError" format:@"Database error without outError set: %@", err];
+    } else {
+        *outError = err;
+    }
+}
+
 - (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     NSDictionary* row = [self selectMaybe:sql args:args error:outError];
-    if (*outError) {
+    if (outError && *outError) {
         return nil;
     }
     
     if (!row) {
-        *outError = makeError([NSString stringWithFormat:@"SelectOne returned no rows.\nQuery: %@", sql]);
+        [self onError:makeError([NSString stringWithFormat:@"SelectOne returned no rows.\nQuery: %@", sql]) outError:outError];
         return nil;
     }
     
@@ -307,23 +319,41 @@ static NSMutableDictionary* columns;
 - (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     NSArray* rows = [self select:sql args:args error:outError];
     
-    if (*outError) {
+    if (outError && *outError) {
         return nil;
     }
     
     if (rows.count > 1) {
-        *outError = makeError([NSString stringWithFormat:@"SelectOne/SelectMaybe got more than 1 rows.\nQuery: %@", sql]);
+        [self onError:makeError([NSString stringWithFormat:@"SelectOne/SelectMaybe got more than 1 rows.\nQuery: %@", sql]) outError:outError];
         return nil;
     }
     
     return rows.firstObject;
 }
 
+- (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
+    FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args];
+    if (!resultSet) {
+        [self onError:_db.lastError outError:outError];
+        return nil;
+    }
+    if (![resultSet next]) {
+        [self onError:makeError(@"selectNumber got 0 rows") outError:outError];
+        return nil;
+    }
+    NSNumber* result = [resultSet objectForColumnIndex:0];
+    if ([resultSet next]) {
+        [self onError:makeError(@"selectNumber got more than 1 row") outError:outError];
+        return nil;
+    }
+    return result;
+}
+
 - (void)insertMultiple:(NSString *)sql argsList:(NSArray *)argsList error:(NSError *__autoreleasing *)outError {
     for (NSArray* args in argsList) {
         BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
         if (!success) {
-            *outError = _db.lastError;
+            [self onError:_db.lastError outError:outError];
             return;
         }
     }
@@ -337,7 +367,7 @@ static NSMutableDictionary* columns;
     for (id item in items) {
         BOOL success = [_db executeUpdate:tableInfo.insertOrReplaceSql withArgumentsInArray:[tableInfo values:item]];
         if (!success) {
-            *outError = _db.lastError;
+            [self onError:_db.lastError outError:outError];
             return;
         }
     }
@@ -359,21 +389,24 @@ static NSMutableDictionary* columns;
     }
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:values];
     if (!success) {
-        *outError = _db.lastError;
+        [self onError:_db.lastError outError:outError];
         return;
     }
 }
 
 - (void)updateSchema:(NSString *)sql error:(NSError *__autoreleasing *)outError {
+    return [self schema:sql error:outError];
+}
+- (void)schema:(NSString *)sql error:(NSError *__autoreleasing *)outError {
     NSArray* statements = [sql split:@";"];
     if (!statements.count) {
-        *outError = makeError(@"Empty schema");
+        [self onError:makeError(@"Empty schema") outError:outError];
         return;
     }
     for (NSString* statement in statements) {
         if (!statement.trim.hasContent) { continue; }
         [self execute:statement args:nil error:outError];
-        if (*outError) {
+        if (outError && *outError) {
             return;
         }
     }
@@ -382,7 +415,7 @@ static NSMutableDictionary* columns;
 - (void)execute:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
     if (!success) {
-        *outError = _db.lastError;
+        [self onError:_db.lastError outError:outError];
         return;
     }
 }
@@ -390,11 +423,11 @@ static NSMutableDictionary* columns;
 - (void)updateOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     BOOL success = [_db executeUpdate:sql withArgumentsInArray:args];
     if (!success) {
-        *outError = _db.lastError;
+        [self onError:_db.lastError outError:outError];
         return;
     }
     if (_db.changes != 1) {
-        *outError = makeError(_db.changes == 0 ? @"updateOne affected no rows" : @"updateOne affected multipe rows");
+        [self onError:makeError(_db.changes == 0 ? @"updateOne affected no rows" : @"updateOne affected multipe rows") outError:outError];
         return;
     }
 }
