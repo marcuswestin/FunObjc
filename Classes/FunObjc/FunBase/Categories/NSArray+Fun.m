@@ -60,7 +60,7 @@
 }
 
 - (NSMutableArray *)filter:(Filter)filterFn {
-    NSMutableArray* results = [NSMutableArray array];
+    NSMutableArray* results = [NSMutableArray arrayWithCapacity:self.count];
     [self each:^(id val, NSUInteger i) {
         if (!filterFn(val, i)) { return; }
         [results addObject:val];
