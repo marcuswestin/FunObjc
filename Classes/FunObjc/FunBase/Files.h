@@ -11,7 +11,6 @@
 
 @interface Files : NSObject
 
-+ (void)setup;
 + (NSDictionary*)readDocumentJson:(NSString*)filename;
 + (id)readDocumentJson:(NSString*)filename property:(NSString*)property;
 + (BOOL)writeDocumentJson:(NSString*)filename object:(NSDictionary*)object;
