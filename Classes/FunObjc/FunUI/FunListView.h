@@ -39,17 +39,17 @@ enum ListViewDirection {
 ///////////
 @protocol FunListViewDelegate <NSObject>
 @required
-- (BOOL) hasViewForIndex:(ListViewIndex)index;
-- (void) listPopulateView:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
-- (void) listSelectIndex:(ListViewIndex)index view:(UIView*)view pointInView:(CGPoint)point;
+- (BOOL) listHasIndex:(ListViewIndex)index;
+- (void) listPopulate:(UIView*)view forIndex:(ListViewIndex)index location:(ListViewLocation)location;
+- (void) listSelect:(ListViewIndex)index view:(UIView*)view pointInView:(CGPoint)point;
 @optional
 - (void) listRenderEmptyInView:(UIView*)view isFirst:(BOOL)isFirst;
 - (id) listGroupIdForIndex:(ListViewIndex)index;
-- (void) listPopulateView:(UIView*)view forGroupHead:(ListGroupId)groupId withIndex:(ListViewIndex)index;
-- (void) listPopulateView:(UIView*)view forGroupFoot:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listPopulateHead:(UIView*)view forGroup:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listPopulateFoot:(UIView*)view forGroup:(ListGroupId)groupId withIndex:(ListViewIndex)index;
 - (void) listTopGroupDidChangeTo:(ListGroupId)newTopGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousTopGroupId;
 - (void) listBottomGroupDidChangeTo:(ListGroupId)newBottomGroupId withIndex:(ListViewIndex)index from:(ListGroupId)previousBottomGroupId;
-- (void) listSelectGroupWithId:(ListGroupId)groupId withIndex:(ListViewIndex)index;
+- (void) listSelectGroup:(ListGroupId)groupId withIndex:(ListViewIndex)index;
 - (void) listDidScroll:(CGFloat)offsetChange;
 - (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListViewIndex)index;
 @end

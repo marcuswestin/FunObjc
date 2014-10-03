@@ -353,11 +353,11 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     ListContentView* view = [self visibleContentViewAtPoint:tapPoint];
     CGPoint contentTapPoint = [_scrollView convertPoint:tapPoint toView:view.content];
     if ([view isItemView]) {
-        [_delegate listSelectIndex:view.index view:view.content pointInView:contentTapPoint];
+        [_delegate listSelect:view.index view:view.content pointInView:contentTapPoint];
     } else {
         ListGroupId groupId = [self _groupIdForIndex:view.index];
-        if ([_delegate respondsToSelector:@selector(listSelectGroupWithId:withIndex:)]) {
-            [_delegate listSelectGroupWithId:groupId withIndex:view.index];
+        if ([_delegate respondsToSelector:@selector(listSelectGroup:withIndex:)]) {
+            [_delegate listSelectGroup:groupId withIndex:view.index];
         }
     }
 }
@@ -406,7 +406,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     
     ListGroupId startGroupId = [self _groupIdForIndex:_startIndex];
     
-    if (![_delegate hasViewForIndex:_startIndex]) {
+    if (![_delegate listHasIndex:_startIndex]) {
         [self _renderEmpty];
         return; // Empty list
     }
@@ -420,7 +420,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
         {
             ListViewIndex previousIndex = _topListViewIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
-            BOOL hasPreviousView = [_delegate hasViewForIndex:previousIndex];
+            BOOL hasPreviousView = [_delegate listHasIndex:previousIndex];
             if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
                 [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationTop];
             }
@@ -437,7 +437,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
         {
             ListViewIndex nextIndex = _bottomItemIndex + 1;
             ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
-            BOOL hasNextView = [_delegate hasViewForIndex:nextIndex];
+            BOOL hasNextView = [_delegate listHasIndex:nextIndex];
             if (!hasNextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
                 [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationBottom];
             }
@@ -514,7 +514,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 
 - (BOOL)_listAddNextViewDown {
     NSInteger index = _bottomItemIndex + 1;
-    BOOL hasView = [_delegate hasViewForIndex:index];
+    BOOL hasView = [_delegate listHasIndex:index];
     ListContentView* bottomView = [self _bottomView];
 
     if (!hasView) {
@@ -580,7 +580,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }
     
     ListViewIndex index = _topListViewIndex - 1;
-    if (![_delegate hasViewForIndex:index]) {
+    if (![_delegate listHasIndex:index]) {
         [NSException raise:@"Error" format:@"hasViewForIndex returned NO for index %ld", index];
     }
     
@@ -666,7 +666,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 
     UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
     ListContentView* contentView = [ListContentView withFrame:frame index:index content:content];
-    [_delegate listPopulateView:content forIndex:index location:location];
+    [_delegate listPopulate:content forIndex:index location:location];
     
     if (_orientation == Vertical) {
         contentView.height = (content.height + _itemMargins.top + _itemMargins.bottom);
@@ -712,8 +712,8 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 
 - (void) _addGroupFootViewForIndex:(ListViewIndex)index withGroupId:(id)groupId atLocation:(ListViewLocation)location {
     UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupFoot]];
-    if ([_delegate respondsToSelector:@selector(listPopulateView:forGroupFoot:withIndex:)]) {
-        [_delegate listPopulateView:view forGroupFoot:groupId withIndex:index];
+    if ([_delegate respondsToSelector:@selector(listPopulateFoot:forGroup:withIndex:)]) {
+        [_delegate listPopulateFoot:view forGroup:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;
@@ -735,8 +735,8 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 
 - (void) _addGroupHeadViewForIndex:(ListViewIndex)index withGroupId:(ListGroupId)groupId atLocation:(ListViewLocation)location {
     UIView* view = [[UIView alloc] initWithFrame:[self _frameForGroupHead]];
-    if ([_delegate respondsToSelector:@selector(listPopulateView:forGroupHead:withIndex:)]) {
-        [_delegate listPopulateView:view forGroupHead:groupId withIndex:index];
+    if ([_delegate respondsToSelector:@selector(listPopulateHead:forGroup:withIndex:)]) {
+        [_delegate listPopulateHead:view forGroup:groupId withIndex:index];
     }
     
     CGRect frame = view.bounds;
