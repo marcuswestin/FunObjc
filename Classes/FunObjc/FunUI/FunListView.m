@@ -158,6 +158,7 @@ static CGFloat START_EDGE = 99999.0f;
 
 - (void)prependToListCount:(NSUInteger)numItems {
     if (numItems == 0) {
+        if (!_hasContent) { [self _renderEmpty]; }
         return;
     }
     
@@ -223,6 +224,7 @@ static CGFloat START_EDGE = 99999.0f;
 
 - (void)appendToListCount:(NSUInteger)numItems startingAtIndex:(ListViewIndex)firstIndex {
     if (numItems == 0) {
+        if (!_hasContent) { [self _renderEmpty]; }
         return;
     }
     
