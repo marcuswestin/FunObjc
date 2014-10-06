@@ -202,9 +202,12 @@ static NSMutableArray* openCallbacks;
     }];
 }
 
-+ (NSArray *)select:(NSString *)sql args:(NSArray *)args {
-    return [self select:sql args:args error:nil];
-}
++ (NSArray *)select:(NSString *)sql args:(NSArray *)args { return [self select:sql args:args error:nil]; }
++ (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args { return [self selectMaybe:sql args:args error:nil]; }
++ (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args { return [self selectNumber:sql args:args error:nil]; }
++ (void)execute:(NSString *)sql args:(NSArray *)args { return [self execute:sql args:args error:nil]; }
++ (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args { return [self selectOne:sql args:args error:nil]; }
+
 + (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSArray* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -213,9 +216,6 @@ static NSMutableArray* openCallbacks;
     return result;
 }
 
-+ (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args {
-    return [self selectMaybe:sql args:args error:nil];
-}
 + (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -224,9 +224,6 @@ static NSMutableArray* openCallbacks;
     return result;
 }
 
-+ (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args {
-    return [self selectNumber:sql args:args error:nil];
-}
 + (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     NSNumber* __block result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -235,18 +232,12 @@ static NSMutableArray* openCallbacks;
     return result;
 }
 
-+ (void)execute:(NSString *)sql args:(NSArray *)args {
-    return [self execute:sql args:args error:nil];
-}
 + (void)execute:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     [SQL autocommit:^(SQLConn *conn) {
         [conn execute:sql args:args error:outError];
     }];
 }
 
-+ (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args {
-    return [self selectOne:sql args:args error:nil];
-}
 + (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     __block NSDictionary* result;
     [SQL autocommit:^(SQLConn *conn) {
@@ -278,6 +269,12 @@ static NSMutableDictionary* columns;
 - (BOOL)tableExists:(NSString *)table {
     return [_db tableExists:table];
 }
+
+- (NSArray *)select:(NSString *)sql args:(NSArray *)args { return [self select:sql args:args error:nil]; }
+- (NSDictionary *)selectMaybe:(NSString *)sql args:(NSArray *)args { return [self selectMaybe:sql args:args error:nil]; }
+- (NSNumber *)selectNumber:(NSString *)sql args:(NSArray *)args { return [self selectNumber:sql args:args error:nil]; }
+- (void)execute:(NSString *)sql args:(NSArray *)args { return [self execute:sql args:args error:nil]; }
+- (NSDictionary *)selectOne:(NSString *)sql args:(NSArray *)args { return [self selectOne:sql args:args error:nil]; }
 
 - (NSArray *)select:(NSString *)sql args:(NSArray *)args error:(NSError *__autoreleasing *)outError {
     FMResultSet* resultSet = [_db executeQuery:sql withArgumentsInArray:args ];

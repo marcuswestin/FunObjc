@@ -17,6 +17,11 @@
 - (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
+- (NSArray*)select:(NSString*)sql args:(NSArray*)args;
+- (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args;
+- (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args;
+- (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args;
+- (void)execute:(NSString*)sql args:(NSArray*)args;
 - (void)updateOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)insertInto:(NSString*)table item:(id)item error:(NSError**)outError;
 - (void)insertMultiple:(NSString*)sql argsList:(NSArray*)argsList error:(NSError**)outError;
