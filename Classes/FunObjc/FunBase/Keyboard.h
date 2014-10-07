@@ -16,7 +16,6 @@
 @property CGRect frameBegin;
 @property CGRect frameEnd;
 @property CGFloat heightChange;
-@property CGFloat height;
 - (void) animate:(void (^)(void))animations;
 - (void) animate:(void (^)(void))animations completion:(void (^)(BOOL finished))completion;
 @end
@@ -47,7 +46,6 @@ typedef void (^KeyboardEventCallback)(KeyboardEventInfo* info);
 + (CGFloat)heightForLargestKeyboard;
 
 + (BOOL)isVisible;
-+ (CGFloat)visibleHeight;
 
 + (UIView*)findFirstResponder;
 

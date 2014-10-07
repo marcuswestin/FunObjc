@@ -22,7 +22,6 @@
 
 @interface Keyboard ()
 @property BOOL isVisible;
-@property CGFloat visibleHeight;
 @property UIView* overlay;
 @property (copy) void (^resizeBlock)(UIView* overlay);
 @end
@@ -37,6 +36,10 @@ static Keyboard* instance;
 //    [notifications addObserver:instance selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
 //    [notifications addObserver:instance selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [notifications addObserver:instance selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+//    [notifications addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    [notifications addObserver:instance selector:@selector(_keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+    
+    currentFrame = CGRectMake(0, [Viewport height], [Viewport width], 0);
 }
 
 + (void)onWillShow:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback {
@@ -90,10 +93,6 @@ static Keyboard* instance;
     return instance.isVisible;
 }
 
-+ (CGFloat)visibleHeight {
-    return instance.visibleHeight;
-}
-
 + (NSTimeInterval)animationDuration {
     return (NSTimeInterval)0.25;
 }
@@ -127,7 +126,7 @@ static Keyboard* instance;
         }];
     }
     UIWindow* window = [[[UIApplication sharedApplication] windows] objectAtIndex:1];
-    instance.overlay = [UIView.appendTo(window).h([Keyboard visibleHeight]).fromBottom(0) render];
+    instance.overlay = [UIView.appendTo(window).frame(currentFrame) render];
     instance.resizeBlock = resizeBlock;
     renderBlock(instance.overlay);
 }
@@ -150,13 +149,26 @@ static Keyboard* instance;
 //    [Keyboard removeOverlay];
 //    KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:NO];
 //    instance.isVisible = NO;
+//    currentFrame = CGRectMake(0, [Viewport height], [Viewport width], 0);
+//    after(0, ^{
+//        
+//    });
 //    instance.visibleHeight = info.height;
 //    [Events syncFire:@"KeyboardWillHide" info:info];
 //}
 
+//- (void)_keyboardDidChangeFrame:(NSNotification*)notification {
+//    
+//}
+
+- (void)_keyboardDidHide:(NSNotification*)notification {
+    currentFrame = CGRectMake(0, [Viewport height], [Viewport width], 0);
+    instance.isVisible = NO;
+    [Keyboard removeOverlay];
+}
+
 - (void)_keyboardWillChangeFrame:(NSNotification*)notification {
     [self _scheduleFireChange:notification];
-    
 }
 
 static CGRect currentFrame;
@@ -197,9 +209,7 @@ static NSNotification* nextNotification;
     if (frameEnd.origin.y > [Viewport height]) {
         frameEnd.origin.y = [Viewport height];
     }
-    DLog(@"KEYBAORD INFO \n%@\n%@", NSStringFromCGRect(frameBegin), NSStringFromCGRect(frameEnd))
     info.heightChange = (frameBegin.origin.y - frameEnd.origin.y);
-    info.height = ([Viewport height] - frameEnd.origin.y);
     return info;
 }
 
