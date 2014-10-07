@@ -34,8 +34,8 @@ static Keyboard* instance;
 + (void)initialize {
     instance = [Keyboard new];
     NSNotificationCenter* notifications = [NSNotificationCenter defaultCenter];
-    [notifications addObserver:instance selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [notifications addObserver:instance selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+//    [notifications addObserver:instance selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+//    [notifications addObserver:instance selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [notifications addObserver:instance selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
 }
 
@@ -139,25 +139,27 @@ static Keyboard* instance;
     instance.resizeBlock = nil;
 }
 
-- (void)_keyboardWillShow:(NSNotification*)notification {
-    KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:YES];
-    instance.isVisible = YES;
-    instance.visibleHeight = info.height;
-    [Events syncFire:@"KeyboardWillShow" info:info];
-}
-
-- (void)_keyboardWillHide:(NSNotification*)notification {
-    [Keyboard removeOverlay];
-    KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:NO];
-    instance.isVisible = NO;
-    instance.visibleHeight = info.height;
-    [Events syncFire:@"KeyboardWillHide" info:info];
-}
+//- (void)_keyboardWillShow:(NSNotification*)notification {
+//    KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:YES];
+//    instance.isVisible = YES;
+//    instance.visibleHeight = info.height;
+//    [Events syncFire:@"KeyboardWillShow" info:info];
+//}
+//
+//- (void)_keyboardWillHide:(NSNotification*)notification {
+//    [Keyboard removeOverlay];
+//    KeyboardEventInfo* info = [self _keyboardInfo:notification isShowing:NO];
+//    instance.isVisible = NO;
+//    instance.visibleHeight = info.height;
+//    [Events syncFire:@"KeyboardWillHide" info:info];
+//}
 
 - (void)_keyboardWillChangeFrame:(NSNotification*)notification {
     [self _scheduleFireChange:notification];
     
 }
+
+static CGRect currentFrame;
 
 static NSNotification* nextNotification;
 - (void)_scheduleFireChange:(NSNotification*)notification {
@@ -183,8 +185,10 @@ static NSNotification* nextNotification;
     if (!info.duration) {
         info.curve = 0; // UIView animation does not respect duration if curve is keyboard curve
     }
-    CGRect frameBegin = [notif.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    CGRect frameBegin = currentFrame;
     CGRect frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    currentFrame = frameEnd;
+    
     info.frameBegin = frameBegin;
     info.frameEnd = frameEnd;
     if (frameBegin.origin.y > [Viewport height]) {
