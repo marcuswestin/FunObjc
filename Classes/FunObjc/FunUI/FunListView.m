@@ -104,6 +104,13 @@ static CGFloat START_EDGE = 99999.0f;
     _delegate = delegate;
     [self _beforeRender];
     [self reloadDataForList];
+    async(^{
+        if (_startLocation == ListViewLocationTop && !_hasReachedTheVeryBottom) {
+            [_scrollView addContentOffsetY:-(_scrollView.contentInset.top + _itemMargins.top) animated:NO];
+        } else if (_startLocation == ListViewLocationBottom) {
+            [_scrollView addContentOffsetY:_scrollView.contentInset.bottom + _itemMargins.bottom animated:NO];
+        }
+    });
 }
 - (id<FunListViewDelegate>)delegate {
     return _delegate;
@@ -141,15 +148,6 @@ static CGFloat START_EDGE = 99999.0f;
 
 - (void)reloadDataForList {
     [self _renderInitialContent];
-    
-    // Top should start scrolled down below the navigation bar
-    if (_startLocation == ListViewLocationTop && !_hasReachedTheVeryBottom) {
-        async(^{ // Why does this require an async execution, when the bottom case does not?
-            [_scrollView addContentOffsetY:-(_scrollView.contentInset.top + _itemMargins.top) animated:NO];
-        });
-    } else if (_startLocation == ListViewLocationBottom) {
-        [_scrollView addContentOffsetY:_scrollView.contentInset.bottom + _itemMargins.bottom animated:NO];
-    }
 }
 
 - (void)stopScrollingList {
@@ -297,7 +295,7 @@ static CGFloat START_EDGE = 99999.0f;
         [NSException raise:@"Error" format:@"Missing FunListView delegate"];
     }
     
-    _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    [_scrollView setFrame:self.bounds];
     [_scrollView addContentInset:insetsForAll];
     [_scrollView appendTo:self];
     [_scrollView setDelegate:self];

@@ -23,7 +23,6 @@
 @end
 
 @interface FunListViewController ()
-@property id subscriber;
 @end
 
 @implementation FunListViewController
@@ -37,9 +36,10 @@
     [_listView appendTo:self.view];
     _shouldMoveWithKeyboard = YES;
     _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-    [super _funViewControllerRender:animated];
     _listView.delegate = (id<FunListViewDelegate>)self;
-    _subscriber = @1;
+
+    [super _funViewControllerRender:animated];
+    
     [_listView.scrollView addContentInsetTop:[StatusBar height]];
     if (!self.navigationController.navigationBarHidden) {
         CGFloat height = self.navigationController.navigationBar.frame.size.height;
@@ -50,7 +50,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [Keyboard onWillChange:_subscriber callback:^(KeyboardEventInfo *info) {
+    [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
         if (_shouldMoveWithKeyboard) {
             [info animate:^{
                 [self moveListWithKeyboard:info.heightChange];
@@ -70,7 +70,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [Keyboard off:_subscriber];
+    [Keyboard off:self];
 }
 
 @end

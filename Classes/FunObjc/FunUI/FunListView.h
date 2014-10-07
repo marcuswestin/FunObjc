@@ -65,7 +65,7 @@ enum ListViewDirection {
 // List View
 ////////////
 @interface FunListView : UIView <UIScrollViewDelegate>
-@property UIScrollView* scrollView;
+@property (readonly) UIScrollView* scrollView;
 @property UIEdgeInsets groupMargins;
 @property UIEdgeInsets itemMargins;
 @property (weak) id<FunListViewDelegate> delegate;
