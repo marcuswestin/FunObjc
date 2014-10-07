@@ -390,7 +390,7 @@ DeclareStyler1(keyboardReturnKeyType, UIReturnKeyType, returnKeyType,
  *************/
 DeclareStringStyler(placeholder, placeholderText,
                     if ([_view respondsToSelector:@selector(setPlaceholder:)]) {
-                        [_textField setPlaceholder:placeholderText];
+                        [_view performSelector:@selector(setPlaceholder:) withObject:placeholderText];
                     } else if ([_view isKindOfClass:[UITextView class]]) {
                         UILabel* placeholderView = [UILabel.appendTo(_textView).fill.inset(8,5,8,5).textColor(rgb(150,150,150)).textFont(_textView.font).text(placeholderText).wrapText render];
                         [_textView onTextDidChange:^(UITextView *textView) {
