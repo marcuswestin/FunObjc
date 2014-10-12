@@ -65,13 +65,13 @@ static BOOL didReset = NO;
     [fileMgr createDirectoryAtPath:_funCachesDirectory withIntermediateDirectories:NO attributes:nil error:&err];
     if (err) { return error(err); }
     
-    async(^{
-        // If resetFileRoot is called from appWillFinishLaunchingWithOptions,
-        // it gets called again when the app is terminated. Don't ask me why.
-        // Observed in iOS7 Feb 3, 2014.
-        // While the app goes ahead and uses the new state directory right away,
-        // we make the cleanup of previous state and comitting to new state async.
-        // This prevents the app from resetting state *again* on shutdown.
+//    async(^{
+//        // If resetFileRoot is called from appWillFinishLaunchingWithOptions,
+//        // it gets called again when the app is terminated. Don't ask me why.
+//        // Observed in iOS7 Feb 3, 2014.
+//        // While the app goes ahead and uses the new state directory right away,
+//        // we make the cleanup of previous state and comitting to new state async.
+//        // This prevents the app from resetting state *again* on shutdown.
         [funRootName writeToFile:_funPersistPath atomically:YES encoding:NSUTF8StringEncoding error:&err];
         if (err) { return error(err); }
         
@@ -79,7 +79,7 @@ static BOOL didReset = NO;
             [fileMgr removeItemAtPath:dir error:&err];
             if (err) { return error(err); }
         }];
-    });
+//    });
 }
 + (void)setFileRootTo:(NSString*)funRootName {
     _funDocumentsDirectory = [NSString stringWithFormat:@"%@/%@", _appDocumentsDirectory, funRootName];
