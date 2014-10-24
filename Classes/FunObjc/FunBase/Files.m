@@ -86,7 +86,7 @@ static BOOL didReset = NO;
     _funCachesDirectory = [NSString stringWithFormat:@"%@/%@", _appCachesDirectory, funRootName];
 }
 
-+ (NSDictionary*)readDocumentJson:(NSString *)filename {
++ (id)readDocumentJson:(NSString *)filename {
     return [JSON parseData:[Files readDocument:filename]];
 }
 + (id)readDocumentJson:(NSString *)filename property:(NSString *)property {

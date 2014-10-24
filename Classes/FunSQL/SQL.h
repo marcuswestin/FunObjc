@@ -12,12 +12,12 @@
 
 @interface SQLConn : NSObject
 @property FMDatabase* db;
-- (NSArray*)select:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
+- (NSMutableArray*)select:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
 - (NSDictionary*)selectOne:(NSString *)sql args:(NSArray *)args error:(NSError**)outError;
 - (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 - (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
-- (NSArray*)select:(NSString*)sql args:(NSArray*)args;
+- (NSMutableArray*)select:(NSString*)sql args:(NSArray*)args;
 - (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args;
 - (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args;
 - (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args;
@@ -49,12 +49,12 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 @interface SQL : NSObject
 + (void)autocommit:(SQLAutocommitBlock)block;
 + (void)transact:(SQLTransactionBlock)block;
-+ (NSArray*)select:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
++ (NSMutableArray*)select:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
 + (void)execute:(NSString*)sql args:(NSArray*)args error:(NSError**)outError;
-+ (NSArray*)select:(NSString*)sql args:(NSArray*)args;
++ (NSMutableArray*)select:(NSString*)sql args:(NSArray*)args;
 + (NSDictionary*)selectOne:(NSString*)sql args:(NSArray*)args;
 + (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args;
 + (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args;
