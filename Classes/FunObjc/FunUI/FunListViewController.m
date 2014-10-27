@@ -40,11 +40,11 @@
 
     [super _funViewControllerRender:animated];
     
-    [_listView.scrollView addContentInsetTop:[StatusBar height]];
-    if (!self.navigationController.navigationBarHidden) {
-        CGFloat height = self.navigationController.navigationBar.frame.size.height;
-        [_listView.scrollView addContentInsetTop:height];
-    }
+//    [_listView.scrollView addContentInsetTop:[StatusBar height]];
+//    if (!self.navigationController.navigationBarHidden) {
+//        CGFloat height = self.navigationController.navigationBar.frame.size.height;
+//        [_listView.scrollView addContentInsetTop:height];
+//    }
     // TODO Check if there is a visible navigation bar on bottom
 }
 

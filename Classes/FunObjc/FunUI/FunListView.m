@@ -422,7 +422,8 @@ static BOOL shouldScrollToTopDefaultValue = YES;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
             BOOL hasPreviousView = [_delegate listHasIndex:previousIndex];
             if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
-                [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationTop];
+                ListViewLocation location = ListViewLocationTop; // Because it needs to be rendered downwards
+                [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:location];
             }
         }
         [self extendBottom];
@@ -434,16 +435,10 @@ static BOOL shouldScrollToTopDefaultValue = YES;
         _bottomItemIndex = _startIndex;
         _topListViewIndex = _startIndex + 1;
         _topGroupId = startGroupId;
-        {
-            ListViewIndex nextIndex = _bottomItemIndex + 1;
-            ListGroupId nextGroupId = [self _groupIdForIndex:nextIndex];
-            BOOL hasNextView = [_delegate listHasIndex:nextIndex];
-            if (!hasNextView || !nextGroupId || ![startGroupId isEqual:nextGroupId]) {
-                [self _addGroupFootViewForIndex:_startIndex withGroupId:startGroupId atLocation:ListViewLocationBottom];
-            }
-        }
         [self extendTop];
-        [self extendBottom];
+        if (!_hasReachedTheVeryTop) {
+            [self extendBottom];
+        }
         
     } else {
         [NSException raise:@"Bad" format:@"Invalid listStartLocation %d", _startLocation];
