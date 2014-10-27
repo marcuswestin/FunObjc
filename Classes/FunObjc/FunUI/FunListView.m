@@ -422,7 +422,7 @@ static BOOL shouldScrollToTopDefaultValue = YES;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
             BOOL hasPreviousView = [_delegate listHasIndex:previousIndex];
             if (!hasPreviousView || !previousGroupId || ![startGroupId isEqual:previousGroupId]) {
-                ListViewLocation location = ListViewLocationTop; // Because it needs to be rendered downwards
+                ListViewLocation location = ListViewLocationBottom; // Because it needs to be rendered downwards
                 [self _addGroupHeadViewForIndex:_startIndex withGroupId:startGroupId atLocation:location];
             }
         }
