@@ -108,7 +108,14 @@ static PushAuthorizationCallback authorizationCallback;
         authorizationCallback = nil;
     };
     DLog(@"PushNotifications: Authorize");
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:NotificationTypes];
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:NotificationTypes categories:nil]];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    else
+    {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:NotificationTypes];
+    }
 }
 
 + (NSDictionary*)authorizationStatus {
