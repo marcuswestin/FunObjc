@@ -404,19 +404,20 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }];
     
     
-    ListGroupId startGroupId = [self _groupIdForIndex:_startIndex];
-    
     if (![_delegate listHasIndex:_startIndex]) {
         [self _renderEmpty];
         return; // Empty list
     }
+    
+    ListGroupId startGroupId = [self _groupIdForIndex:_startIndex];
+    _topGroupId = startGroupId;
+    _bottomGroupId = startGroupId;
     
     if (_startLocation == ListViewLocationTop) {
         // Starting at the top, render items downwards
         _topEdge = _bottomEdge = START_EDGE;
         _topListViewIndex = _startIndex;
         _bottomItemIndex = _startIndex - 1;
-        _bottomGroupId = startGroupId;
         {
             ListViewIndex previousIndex = _topListViewIndex - 1;
             ListGroupId previousGroupId = [self _groupIdForIndex:previousIndex];
@@ -434,7 +435,6 @@ static BOOL shouldScrollToTopDefaultValue = YES;
         _topEdge = _bottomEdge = START_EDGE + [self _orientedSize];
         _bottomItemIndex = _startIndex;
         _topListViewIndex = _startIndex + 1;
-        _topGroupId = startGroupId;
         [self extendTop];
         if (!_hasReachedTheVeryTop) {
             [self extendBottom];
