@@ -36,10 +36,10 @@
     [_listView appendTo:self.view];
     _shouldMoveWithKeyboard = NO;
     _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-    _listView.delegate = (id<FunListViewDelegate>)self;
 
     [super _funViewControllerRender:animated];
     
+    _listView.delegate = (id<FunListViewDelegate>)self;
 //    [_listView.scrollView addContentInsetTop:[StatusBar height]];
 //    if (!self.navigationController.navigationBarHidden) {
 //        CGFloat height = self.navigationController.navigationBar.frame.size.height;
