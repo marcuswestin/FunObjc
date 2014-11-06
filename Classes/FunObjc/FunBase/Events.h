@@ -11,6 +11,11 @@
 typedef void (^EventCallback)(id info);
 typedef id EventSubscriber;
 
+@interface ScheduledEventFire : NSObject
+- (void)fire;
+- (void)fire:(id)info;
+@end
+
 @interface Events : NSObject
 // Pass in `self` for subscriber
 + (void)on:(NSString*)signal subscriber:(EventSubscriber)subscriber callback:(EventCallback)callback;
@@ -20,4 +25,5 @@ typedef id EventSubscriber;
 + (void)fire:(NSString*)signal;
 + (void)syncFire:(NSString*)signal info:(id)info;
 + (void)syncFire:(NSString*)signal;
++ (ScheduledEventFire*)scheduleEventFire:(NSString*)signal;
 @end

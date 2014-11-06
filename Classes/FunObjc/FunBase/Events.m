@@ -23,6 +23,22 @@
 }
 @end
 
+@interface ScheduledEventFire ()
+@property NSArray* subscribers;
+@end
+@implementation ScheduledEventFire
+- (void)fire {
+    [self fire:nil];
+}
+- (void)fire:(id)info {
+    for (Subscription* subscription in _subscribers) {
+        subscription.callback(info);
+    }
+    _subscribers = nil;
+}
+
+@end
+
 @implementation Events
 static NSMutableDictionary* signals;
 #pragma mark - API
@@ -83,5 +99,10 @@ static NSMutableDictionary* signals;
     for (Subscription* subscription in callbacks) {
         subscription.callback(info);
     }
+}
++ (ScheduledEventFire *)scheduleEventFire:(NSString *)signal {
+    ScheduledEventFire* ScheduledEventFire = [ScheduledEventFire new];
+    ScheduledEventFire.subscribers = [signals[signal] copy];
+    return ScheduledEventFire;
 }
 @end

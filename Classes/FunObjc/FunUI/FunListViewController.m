@@ -34,7 +34,7 @@
     CGSize size = self.view.size;
     _listView = [[FunListView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
     [_listView appendTo:self.view];
-    _shouldMoveWithKeyboard = YES;
+    _shouldMoveWithKeyboard = NO;
     _listView.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     _listView.delegate = (id<FunListViewDelegate>)self;
 
@@ -48,8 +48,8 @@
     // TODO Check if there is a visible navigation bar on bottom
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)viewDidAppear:(BOOL)animated { // Should this be viewWillAppear?
+    [super viewDidAppear:animated];
     [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
         if (_shouldMoveWithKeyboard) {
             [info animate:^{
