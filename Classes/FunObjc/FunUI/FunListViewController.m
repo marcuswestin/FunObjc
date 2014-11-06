@@ -48,8 +48,8 @@
     // TODO Check if there is a visible navigation bar on bottom
 }
 
-- (void)viewDidAppear:(BOOL)animated { // Should this be viewWillAppear?
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [Keyboard onWillChange:self callback:^(KeyboardEventInfo *info) {
         if (_shouldMoveWithKeyboard) {
             [info animate:^{

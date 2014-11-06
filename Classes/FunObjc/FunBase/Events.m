@@ -101,8 +101,8 @@ static NSMutableDictionary* signals;
     }
 }
 + (ScheduledEventFire *)scheduleEventFire:(NSString *)signal {
-    ScheduledEventFire* ScheduledEventFire = [ScheduledEventFire new];
-    ScheduledEventFire.subscribers = [signals[signal] copy];
-    return ScheduledEventFire;
+    ScheduledEventFire* scheduledEventFire = [ScheduledEventFire new];
+    scheduledEventFire.subscribers = [signals[signal] copy];
+    return scheduledEventFire;
 }
 @end
