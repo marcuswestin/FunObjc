@@ -58,6 +58,10 @@ static NSUInteger deallocCount;
     defaultBackgroundColor = [UIColor clearColor];
 }
 
++ (instancetype)new {
+    return [self withoutState];
+}
+
 + (instancetype)withoutState {
     return [[[self class] alloc] initWithState:nil];
 }
