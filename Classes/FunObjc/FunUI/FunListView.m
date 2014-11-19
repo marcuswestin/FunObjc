@@ -663,10 +663,12 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     ListContentView* contentView = [ListContentView withFrame:frame index:index content:content];
     [_delegate listPopulate:content forIndex:index location:location];
     
-    if (_orientation == Vertical) {
-        contentView.height = (content.height + _itemMargins.top + _itemMargins.bottom);
-    } else {
-        contentView.width += (content.width + _itemMargins.left + _itemMargins.right);
+    if ([self _orientedSizeOfView:content] != 0) {
+        if (_orientation == Vertical) {
+            contentView.height = (content.height + _itemMargins.top + _itemMargins.bottom);
+        } else {
+            contentView.width += (content.width + _itemMargins.left + _itemMargins.right);
+        }
     }
     return contentView;
 }
@@ -712,10 +714,12 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }
     
     CGRect frame = view.bounds;
-    if (_orientation == Vertical) {
-        frame.size.height += _groupMargins.bottom;
-    } else {
-        frame.size.width += _groupMargins.right;
+    if ([self _orientedSizeOfView:view] != 0) {
+        if (_orientation == Vertical) {
+            frame.size.height += _groupMargins.bottom;
+        } else {
+            frame.size.width += _groupMargins.right;
+        }
     }
     ListContentView* groupView = [ListContentView withFrame:frame footGroupId:groupId];
     [groupView addSubview:view];
@@ -735,10 +739,12 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }
     
     CGRect frame = view.bounds;
-    if (_orientation == Vertical) {
-        frame.size.height += _groupMargins.top;
-    } else {
-        frame.size.width += _groupMargins.left;
+    if ([self _orientedSizeOfView:view] != 0) {
+        if (_orientation == Vertical) {
+            frame.size.height += _groupMargins.top;
+        } else {
+            frame.size.width += _groupMargins.left;
+        }
     }
     ListContentView* groupView = [ListContentView withFrame:frame headGroupId:groupId];
     [groupView addSubview:view];
