@@ -59,13 +59,15 @@ static BOOL useUnquotedKeys = NO;
     id result = [JSON parseData:data error:&err];
     if (err) {
         DLog(@"JSON parseData: %@", err);
+        DLog(@"JSON string: %@", [data toString]);
     }
     return result;
 }
 
 + (id)parseData:(NSData *)data error:(NSError *__autoreleasing *)error {
     CJSONDeserializer* deserializer = [CJSONDeserializer deserializer];
-//    deserializer.nullObject = NULL; // "If the JSON has null values they get represented as NSNull. This line lets you avoids NSNull values.
+    deserializer.options = kJSONDeserializationOptions_AllowFragments;
+    deserializer.nullObject = NULL; // "If the JSON has null values they get represented as NSNull. This line lets you avoids NSNull values.
     return [deserializer deserialize:data error:error];
 }
 
