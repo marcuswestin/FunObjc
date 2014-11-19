@@ -11,6 +11,9 @@
 
 @interface Files : NSObject
 
++ (BOOL)existsDocument:(NSString*)filename;
++ (BOOL)existsCache:(NSString*)filename;
+
 + (id)readDocumentJson:(NSString*)filename;
 + (id)readDocumentJson:(NSString*)filename property:(NSString*)property;
 + (BOOL)writeDocumentJson:(NSString*)filename object:(NSDictionary*)object;
