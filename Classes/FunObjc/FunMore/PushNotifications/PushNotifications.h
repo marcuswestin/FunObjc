@@ -23,7 +23,7 @@ typedef void (^PushNotificationCallback)(NotificationInfo* info);
 @property NSString* vendor;
 @property NSString* token;
 @end
-typedef void (^PushAuthorizationCallback)(NSError* err, PushAuthorization* auth);
+typedef void (^PushAuthorizationCallback)(NSError* err, PushAuthorization* auth, BOOL isNewToken);
 
 @interface PushNotifications : NSObject
 + (BOOL) deviceSupportsRemoteNotifications;

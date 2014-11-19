@@ -20,6 +20,13 @@ static NSString* _funPersistPath;
 
 static BOOL didReset = NO;
 
++ (BOOL)existsDocument:(NSString *)filename {
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self documentPath:filename]];
+}
++ (BOOL)existsCache:(NSString *)filename {
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self cachePath:filename]];
+}
+
 + (NSArray *)documentURLs {
     NSError* err;
     NSArray* urls = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_funDocumentsDirectory error:&err];

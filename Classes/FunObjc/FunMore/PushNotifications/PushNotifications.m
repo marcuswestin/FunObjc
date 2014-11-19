@@ -82,12 +82,13 @@ static PushAuthorizationCallback authorizationCallback;
         PushAuthorization* auth = [PushAuthorization new];
         auth.vendor = [PUSH_TYPE stringByAppendingString:PUSH_MODE]; // ios_prod, ios_sandbox, osx_prod, osx_sandbox
         auth.token = [PushNotifications tokenString:deviceToken];
-        authorizationCallback(nil, auth);
+        BOOL isNewToken = ![[Files readString:@"FunPushAuthToken"] isEqualToString:auth.token];
+        authorizationCallback(nil, auth, isNewToken);
     }];
     
     [Events on:@"Application.didFailToRegisterForRemoteNotificationsWithError" subscriber:self callback:^(NSError* err) {
         DLog(@"PushNotifications: Failed Auth");
-        authorizationCallback(err, nil);
+        authorizationCallback(err, nil, NO);
     }];
     
     [PushNotifications onPushNotification:self callback:^(NotificationInfo *info) {
@@ -103,8 +104,8 @@ static PushAuthorizationCallback authorizationCallback;
 }
 
 + (void)authorize:(PushAuthorizationCallback)callback {
-    authorizationCallback = ^(NSError *err, PushAuthorization *auth) {
-        callback(err, auth);
+    authorizationCallback = ^(NSError *err, PushAuthorization *auth, BOOL isNewToken) {
+        callback(err, auth, isNewToken);
         authorizationCallback = nil;
     };
     DLog(@"PushNotifications: Authorize");
