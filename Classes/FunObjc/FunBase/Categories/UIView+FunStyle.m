@@ -282,6 +282,12 @@ DeclareFloat3Styler(shadow, xOffset, yOffset, radius,
                     _view.layer.shadowRadius = radius;
                     _view.layer.shadowOpacity = 0.5;
                     )
+DeclareFloat3ColorStyler(shadowColor, xOffset, yOffset, radius, color,
+                         _view.layer.shadowColor = color.CGColor;
+                         _view.layer.shadowOffset = CGSizeMake(xOffset, yOffset);
+                         _view.layer.shadowRadius = radius;
+                         _view.layer.shadowOpacity = 0.5;
+                         )
 DeclareFloatStyler(radius, radius, _view.layer.cornerRadius = radius)
 
 DeclareFloatColorStyler(border, width, color,

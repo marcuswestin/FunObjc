@@ -147,6 +147,9 @@ static CGFloat START_EDGE = 99999.0f;
 }
 
 - (void)reloadDataForList {
+    if ([self.delegate respondsToSelector:@selector(listViewWillReload)]) {
+        [self.delegate listViewWillReload];
+    }
     [self _renderInitialContent];
 }
 

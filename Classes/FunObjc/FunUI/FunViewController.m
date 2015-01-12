@@ -119,7 +119,7 @@ static NSUInteger deallocCount;
 
 - (void)_funViewControllerRender:(BOOL)animated {
     self.automaticallyAdjustsScrollViewInsets = NO;
-    self.view.backgroundColor = RANDOM_COLOR;
+//    self.view.backgroundColor = RANDOM_COLOR;
     [self render:animated];
 }
 

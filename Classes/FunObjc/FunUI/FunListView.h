@@ -52,6 +52,7 @@ enum ListViewDirection {
 - (void) listSelectGroup:(ListGroupId)groupId withIndex:(ListViewIndex)index;
 - (void) listDidScroll:(CGFloat)offsetChange;
 - (void) listViewWasRemoved:(UIView*)view location:(ListViewLocation)location index:(ListViewIndex)index;
+- (void) listViewWillReload;
 @end
 
 // Stickies

@@ -135,6 +135,7 @@ typedef Styler (^StylerDate)(NSDate* date);
  *********/
 - (StylerColor1)bg;
 - (StylerFloat3)shadow;
+- (StylerFloat3Color)shadowColor;
 - (StylerFloat1)radius;
 - (Styler)round;
 - (StylerFloatColor)border;
