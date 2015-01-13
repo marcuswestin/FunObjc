@@ -19,6 +19,10 @@ static CGFloat height = 20.0;
 static BOOL isHidden;
 static CALayer* layer;
 
++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated {
+    [[UIApplication sharedApplication] setStatusBarStyle:style];
+}
+
 + (UIView *)backgroundView {
     return background;
 }

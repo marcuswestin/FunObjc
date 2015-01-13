@@ -11,6 +11,7 @@
 
 @interface StatusBar : NSObject
 
++ (void)setStyle:(UIStatusBarStyle)style animated:(BOOL)animated;
 + (void)onTap:(EventSubscriber)subscriber callback:(EventCallback)callback;
 + (void)offTap:(EventSubscriber)subscriber;
 + (void)hideWithAnimation:(UIStatusBarAnimation)statusBarAnimationStyle;
