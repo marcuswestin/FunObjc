@@ -39,7 +39,7 @@ static Keyboard* instance;
 //    [notifications addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [notifications addObserver:instance selector:@selector(_keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
     
-    currentSize = CGSizeMake([Viewport width]), 0);
+    currentSize = CGSizeMake([Viewport width], 0);
 }
 
 + (void)onWillShow:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback {
