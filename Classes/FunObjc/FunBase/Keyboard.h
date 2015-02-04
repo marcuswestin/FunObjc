@@ -13,8 +13,8 @@
 @interface KeyboardEventInfo : NSObject
 @property NSTimeInterval duration;
 @property UIViewAnimationOptions curve;
-@property CGRect frameBegin;
-@property CGRect frameEnd;
+@property CGSize sizeBegin;
+@property CGSize sizeEnd;
 @property CGFloat heightChange;
 - (void) animate:(void (^)(void))animations;
 - (void) animate:(void (^)(void))animations completion:(void (^)(BOOL finished))completion;

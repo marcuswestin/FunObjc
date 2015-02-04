@@ -39,7 +39,7 @@ static Keyboard* instance;
 //    [notifications addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [notifications addObserver:instance selector:@selector(_keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
     
-    currentFrame = CGRectMake(0, [Viewport height], [Viewport width], 0);
+    currentSize = CGSizeMake([Viewport width]), 0);
 }
 
 + (void)onWillShow:(EventSubscriber)subscriber callback:(KeyboardEventCallback)callback {
@@ -126,7 +126,7 @@ static Keyboard* instance;
         }];
     }
     UIWindow* window = [[[UIApplication sharedApplication] windows] objectAtIndex:1];
-    instance.overlay = [UIView.appendTo(window).frame(currentFrame) render];
+    instance.overlay = [UIView.appendTo(window).frame(CGRectMake(0, 0, currentSize.width, currentSize.height)) render];
     instance.resizeBlock = resizeBlock;
     renderBlock(instance.overlay);
 }
@@ -162,7 +162,7 @@ static Keyboard* instance;
 //}
 
 - (void)_keyboardDidHide:(NSNotification*)notification {
-    currentFrame = CGRectMake(0, [Viewport height], [Viewport width], 0);
+    currentSize = CGSizeMake([Viewport width], 0);
     instance.isVisible = NO;
     [Keyboard removeOverlay];
 }
@@ -171,7 +171,7 @@ static Keyboard* instance;
     [self _scheduleEventFireChange:notification];
 }
 
-static CGRect currentFrame;
+static CGSize currentSize;
 
 static NSNotification* nextNotification;
 - (void)_scheduleEventFireChange:(NSNotification*)notification {
@@ -183,11 +183,11 @@ static NSNotification* nextNotification;
     // "willShow" reports a 0 height change (because the keyboard is already visible).
     // So we wait a brief moment. In case of two "willChange", we report only the second (with 0 height change).
     ScheduledEventFire* scheduledEventFire = [Events scheduleEventFire:@"KeyboardWillChange"];
-    async(^{
+//    async(^{
         KeyboardEventInfo* info = [self _keyboardInfo:nextNotification isShowing:instance.isVisible];
         nextNotification = nil;
         [scheduledEventFire fire:info];
-    });
+//    });
 }
 
 
@@ -198,19 +198,14 @@ static NSNotification* nextNotification;
     if (!info.duration) {
         info.curve = 0; // UIView animation does not respect duration if curve is keyboard curve
     }
-    CGRect frameBegin = currentFrame;
-    CGRect frameEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    currentFrame = frameEnd;
+
+    // Keyboard frame position cannot be trusted - use only the size of the frame:
+    // http://stackoverflow.com/questions/19954459/uikeyboardframeenduserinfokey-return-wrong-origin-ios7
+    CGSize sizeBegin = currentSize;
+    CGSize sizeEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    currentSize = sizeEnd;
     
-    info.frameBegin = frameBegin;
-    info.frameEnd = frameEnd;
-    if (frameBegin.origin.y > [Viewport height]) {
-        frameBegin.origin.y = [Viewport height];
-    }
-    if (frameEnd.origin.y > [Viewport height]) {
-        frameEnd.origin.y = [Viewport height];
-    }
-    info.heightChange = (frameBegin.origin.y - frameEnd.origin.y);
+    info.heightChange = (sizeEnd.height - sizeBegin.height);
     return info;
 }
 
