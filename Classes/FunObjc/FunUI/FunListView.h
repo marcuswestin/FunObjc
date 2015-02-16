@@ -96,4 +96,5 @@ enum ListViewDirection {
 - (ListViewIndex) indexForVisibleItemViewAtPoint:(CGPoint)point;
 - (BOOL) isAtBottom;
 - (void) expandToSizeOfContent;
+- (void) selectIndex:(ListViewIndex)index;
 @end

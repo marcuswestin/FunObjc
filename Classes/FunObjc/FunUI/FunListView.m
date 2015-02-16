@@ -365,6 +365,27 @@ static BOOL shouldScrollToTopDefaultValue = YES;
     }
 }
 
+- (UIView*)viewForIndex:(ListViewIndex)index createIfNotVisible:(BOOL)createIfNotVisible {
+    ListContentView* view = [_contentViews pickOne:^BOOL(ListContentView* view, NSUInteger i) {
+        return view.index == index;
+    }];
+    if (view) {
+        return view.content;
+    } else if (createIfNotVisible) {
+        UIView* content = [[UIView alloc] initWithFrame:[self _frameForItemView]];
+        ListViewLocation location = (index < _topListViewIndex ? ListViewLocationTop : ListViewLocationBottom);
+        [_delegate listPopulate:content forIndex:index location:location];
+        return content;
+    } else {
+        return nil;
+    }
+}
+
+- (void) selectIndex:(ListViewIndex)index {
+    UIView* view = [self viewForIndex:index createIfNotVisible:YES];
+    [_delegate listSelect:index view:view pointInView:view.center];
+}
+
 - (ListContentView*)visibleContentViewAtPoint:(CGPoint)point {
     for (ListContentView* view in _contentViews) {
         if (CGRectContainsPoint(view.frame, point)) {
