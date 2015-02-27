@@ -136,4 +136,23 @@
     }
     return count;
 }
+- (NSUInteger)countOccurancesOfCharacter:(unichar)character precedingIndex:(NSUInteger)index {
+    NSUInteger count = 0;
+    for (NSUInteger i=0; i<index; i++) {
+        if ([self characterAtIndex:i] == character) {
+            count += 1;
+        }
+    }
+    return count;
+}
+
+- (NSString *)stringByRemovingCharactersOutsideCharacterSet:(NSCharacterSet *)characterSet {
+    return [[self componentsSeparatedByCharactersInSet:[characterSet invertedSet]] componentsJoinedByString:@""];
+}
+
+- (NSString *)stringByInserting:(NSString *)string at:(NSUInteger)location {
+    return [[[self substringToIndex:location]
+             stringByAppendingString:string]
+            stringByAppendingString:[self substringFromIndex:location]];
+}
 @end
