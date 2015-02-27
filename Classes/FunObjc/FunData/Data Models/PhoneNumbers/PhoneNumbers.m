@@ -15,7 +15,7 @@
 
 static NSString* locale;
 
-+ (void)load {
++ (void)initialize {
     locale = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
 }
 
@@ -56,23 +56,4 @@ static NSString* locale;
     NSRange range = [[PhoneNumbers normalize:phoneNumber] rangeOfString:@"+1"];
     return range.location == 0;
 }
-
-+ (void)autoFormat:(UITextField*)textField onValid:(void(^)(NSString* phoneNumber))handler {
-    [textField onChange:^(UIEvent *event) {
-        NSString* formatted = [PhoneNumbers format:textField.text];
-        if (!formatted) { return; }
-        textField.text = formatted;
-        
-        NSString* normalized = [PhoneNumbers normalize:formatted];
-        if (!normalized) { return; }
-        
-        if (![PhoneNumbers isValid:normalized]) { return; }
-        
-        if ([PhoneNumbers isUSPhoneNumber:normalized] && normalized.length == 12) {
-            handler(normalized);
-        }
-
-    }];
-}
-
 @end
