@@ -67,4 +67,9 @@
 - (void)shouldChange:(ShouldChangeStringCallback)shouldChangeStringCallback {
     [self funDelegate].shouldChangeStringCallback = shouldChangeStringCallback;
 }
+- (void)setSelectedRange:(NSRange)range {
+    UITextPosition *from = [self positionFromPosition:[self beginningOfDocument] offset:range.location];
+    UITextPosition *to = [self positionFromPosition:from offset:range.length];
+    [self setSelectedTextRange:[self textRangeFromPosition:from toPosition:to]];
+}
 @end

@@ -15,4 +15,5 @@ typedef BOOL (^ShouldChangeStringCallback)(NSString* fromString, NSString* toStr
 - (void)excludeInputsMatching:(NSString*)pattern;
 - (void)limitLengthTo:(NSUInteger)maxLength;
 - (void)shouldChange:(ShouldChangeStringCallback)shouldChangeStringCallback;
+- (void)setSelectedRange:(NSRange)range;
 @end
