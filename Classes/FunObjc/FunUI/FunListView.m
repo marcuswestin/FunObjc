@@ -894,7 +894,14 @@ static BOOL shouldScrollToTopDefaultValue = YES;
 }
 
 - (BOOL)isAtBottom {
-    return _scrollView.contentOffset.y >= _scrollView.contentSize.height - _scrollView.height;
+    return [self isNearBottom:0];
+}
+- (BOOL)isNearBottom:(CGFloat)delta {
+    return _scrollView.contentOffset.y + delta >= _scrollView.contentSize.height - _scrollView.height;
+}
+- (void)scrollToBottom {
+    CGPoint point = CGPointMake(0, MAX(-_scrollView.contentInset.top, _scrollView.contentSize.height - _scrollView.height + _scrollView.contentInset.bottom));
+    [_scrollView setContentOffset:point];
 }
 
 @end
