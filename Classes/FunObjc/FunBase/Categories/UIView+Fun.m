@@ -391,6 +391,14 @@ static CGFloat STATIC = 0.5f;
     [self removeFromSuperview];
     [self recursivelyCleanup];
 }
+- (UIView *)viewAtPoint:(CGPoint)point {
+    for (UIView* view in self.subviews) {
+        if (CGRectContainsPoint(view.frame, point)) {
+            return view;
+        }
+    }
+    return nil;
+}
 - (UIView *)viewDescendantAtPoint:(CGPoint)point {
     if (!CGRectContainsPoint(self.bounds, point)) {
         return nil;
