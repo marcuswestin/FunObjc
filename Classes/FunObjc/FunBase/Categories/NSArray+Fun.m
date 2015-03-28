@@ -75,6 +75,14 @@
     }
     return nil;
 }
+- (id)pickOneReverse:(Filter)pickFn {
+    NSUInteger length = [self count];
+    for (NSUInteger _i=0; _i<length; _i++) {
+        NSInteger i = length - 1 - _i;
+        if (pickFn(self[i], i)) { return self[i]; }
+    }
+    return nil;
+}
 
 - (id)item:(NSInteger)index {
     if (![self hasIndex:index]) {

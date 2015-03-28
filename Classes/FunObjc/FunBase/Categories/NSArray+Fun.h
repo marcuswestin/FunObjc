@@ -23,6 +23,7 @@ typedef BOOL (^Filter)(id val, NSUInteger i);
 - (NSInteger) sum:(MapIdToInt)mapper;
 - (NSMutableArray*) filter:(Filter)filterFn;
 - (id) pickOne:(Filter)pickFn;
+- (id) pickOneReverse:(Filter)pickFn;
 - (id) item:(NSInteger)index;
 - (id) reverseItem:(NSInteger)index;
 - (BOOL) hasIndex:(NSInteger)index;
