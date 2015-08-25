@@ -38,6 +38,7 @@ static Keyboard* instance;
     [notifications addObserver:instance selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
 //    [notifications addObserver:self selector:@selector(_keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [notifications addObserver:instance selector:@selector(_keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+    [notifications addObserver:instance selector:@selector(_keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     
     currentSize = CGSizeMake([Viewport width], 0);
 }
@@ -167,6 +168,10 @@ static Keyboard* instance;
     [Keyboard removeOverlay];
 }
 
+- (void)_keyboardDidShow:(NSNotification*)notification {
+    instance.isVisible = YES;
+}
+
 - (void)_keyboardWillChangeFrame:(NSNotification*)notification {
     [self _scheduleEventFireChange:notification];
 }
@@ -202,7 +207,13 @@ static NSNotification* nextNotification;
     // Keyboard frame position cannot be trusted - use only the size of the frame:
     // http://stackoverflow.com/questions/19954459/uikeyboardframeenduserinfokey-return-wrong-origin-ios7
     CGSize sizeBegin = currentSize;
+    // NOTE: sizeEnd doesnt set size to 0 even when the keyboard is hidding.
     CGSize sizeEnd = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+
+    //NOTE: Needs more testing
+    if (isShowing) {
+        sizeEnd = CGSizeMake(sizeEnd.width, 0);
+    }
     currentSize = sizeEnd;
     
     info.heightChange = (sizeEnd.height - sizeBegin.height);
