@@ -59,7 +59,7 @@ typedef void (^SQLTransactionBlock)(SQLConn *conn, SQLRollbackBlock rollback);
 + (NSDictionary*)selectMaybe:(NSString*)sql args:(NSArray*)args;
 + (NSNumber*)selectNumber:(NSString*)sql args:(NSArray*)args;
 + (void)execute:(NSString*)sql args:(NSArray*)args;
-+ (void)openDatabase:(NSString*)name practiceMode:(BOOL)practiceMode withMigrations:(SQLRegisterMigrations)migrationsFn;
++ (void)openDatabase:(NSString*)name practiceMode:(BOOL)practiceMode backup:(BOOL)backup withMigrations:(SQLRegisterMigrations)migrationsFn;
 + (void)removeDatabase:(NSString*)name;
 + (void)copyDatabase:(NSString*)fromName to:(NSString*)toName;
 + (void)backupDatabase:(NSString*)name;
