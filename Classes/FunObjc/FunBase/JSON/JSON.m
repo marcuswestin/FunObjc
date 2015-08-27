@@ -10,8 +10,6 @@
 #import "NSObject+Fun.h"
 #import "NSString+Fun.h"
 #import "State.h"
-#import "CJSONSerializer.h"
-#import "CJSONDeserializer.h"
 
 @implementation JSON
 
@@ -35,11 +33,7 @@ static BOOL useUnquotedKeys = NO;
     if ([obj isNull]) {
         data = [NSData data];
     } else {
-        CJSONSerializer* serializer = [CJSONSerializer serializer];
-        if (useUnquotedKeys) {
-            serializer.options = kJSONSerializationOptions_UnquotedKeys;
-        }
-        data = [serializer serializeObject:obj error:&err];
+        data = [NSJSONSerialization dataWithJSONObject:obj options:0 error:&err];
     }
 
     if (err) {
@@ -56,19 +50,18 @@ static BOOL useUnquotedKeys = NO;
 + (id)parseData:(NSData *)data {
     if (!data) { return nil; }
     NSError* err;
+    NSLog(@"PARSE DATA %@", data.toString);
     id result = [JSON parseData:data error:&err];
+    NSLog(@"DID PARSE DATA %@ %@ %@", data.toString, err, result);
     if (err) {
-        DLog(@"JSON parseData: %@", err);
-        DLog(@"JSON string: %@", [data toString]);
+        NSLog(@"JSON parseData: %@", err);
+        NSLog(@"JSON string: %@", [data toString]);
     }
     return result;
 }
 
 + (id)parseData:(NSData *)data error:(NSError *__autoreleasing *)error {
-    CJSONDeserializer* deserializer = [CJSONDeserializer deserializer];
-    deserializer.options = kJSONDeserializationOptions_AllowFragments;
-    deserializer.nullObject = NULL; // "If the JSON has null values they get represented as NSNull. This line lets you avoids NSNull values.
-    return [deserializer deserialize:data error:error];
+    return [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:error];
 }
 
 + (id)parseString:(NSString *)string {
